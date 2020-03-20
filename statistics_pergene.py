@@ -105,6 +105,8 @@ def stats_pergene(normalize,filepath, filename):
 
     print('Number of genes analyzed: ',gene_counter)
     print('Number of genes not found: ',fail_counter)
+    print('')
+    print('')
 
 
 
@@ -179,14 +181,23 @@ def stats_pergene(normalize,filepath, filename):
 
 
 
-#     n_reads,bins_reads,patches_reads = plt.hist(reads_pergene_list, bins=100,facecolor='blue',alpha=0.3, label='Reads')
-#     n_tn,bins_tn,patches_tn = plt.hist(tn_pergene_list, facecolor='red',alpha=0.5, label='Transposons')
-#     plt.scattter(reads,_pergene)
-#     plt.legend()
-#     plt.xlabel('Counts per gene')
-#     plt.ylabel('Occurance')
-#     plt.grid()
-#     plt.show()
+    fig, (ax1,ax2) = plt.subplots(1,2)
+    n_reads,bins_reads,patches_reads = ax1.hist(reads_pergene_list, density=False, bins=range(min(reads_pergene_list), max(reads_pergene_list) + 1000, 1000), facecolor='blue',alpha=0.5, label='Reads')
+    ax1.axvline(x=np.nanmedian(reads_pergene_list), linestyle='--', label='Median Reads', color='k')
+    ax1.set_xlabel('Reads per gene (all genes)')
+    ax1.set_ylabel('Occurance')
+    ax1.legend()
+    ax1.grid()
+    n_tn,bins_tn,patches_tn = ax2.hist(tn_pergene_list, density=False, bins=range(min(tn_pergene_list), max(tn_pergene_list) + 50, 50), facecolor='red',alpha=0.5, label='Transposons')
+    ax2.axvline(x=np.nanmedian(tn_pergene_list), linestyle='--', label='Median Transposons', color='k')
+    ax2.set_xlabel('Counts per gene (all genes)')
+    ax2.set_ylabel('Occurance')
+    ax2.legend()
+    ax2.grid()
+    plt.show()
+
+
+
 
     fig, (ax1, ax2) = plt.subplots(1,2)
     sns.set(style='whitegrid', palette='pastel', color_codes=True)
@@ -209,4 +220,4 @@ def stats_pergene(normalize,filepath, filename):
 
 
 if __name__ == '__main__':
-    stats_pergene('True','/Users/gregory/Documents/LaanLab/LaanLab_Data/Michel2017_WT1/','E-MTAB-4885.WT1.bam_pergene.txt')#'Cerevisiae_WT1_Michel2017_Trimmed_Aligned.sorted.bam_pergene.txt')#
+    stats_pergene('False','/Users/gregory/Documents/LaanLab/LaanLab_Data/Michel2017_WT1/','E-MTAB-4885.WT1.bam_pergene.txt')#'Cerevisiae_WT1_Michel2017_Trimmed_Aligned.sorted.bam_pergene.txt')#
