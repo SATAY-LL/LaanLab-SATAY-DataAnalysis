@@ -12,7 +12,7 @@ Currently the following data files are present:
 ## Python notebooks
 Currently the following notebooks are present:
 
-1. Statistics_pergene.ipynb: This file reads all genes from the text file that is given as output from the Matlab code of Benoit. It takes the number of reads and transposons per gene normalized for the length of the gene and determine statistical values for this.
+1. statistics_pergene.ipynb & statistics_pergene.py: This file reads all genes from the text file that is given as output from the Matlab code of Benoit. It takes the number of reads and transposons per gene normalized for the length of the gene and determine statistical values for this.
 
 ## Matlab codes
 Currently the following Matlab codes and data files are present:
