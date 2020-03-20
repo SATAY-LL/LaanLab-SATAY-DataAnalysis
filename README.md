@@ -1,2 +1,24 @@
 # LaanLab-SATAY-DataAnalysis
-This contains codes and workflows for data analysis regarding SATAY experiments.
+This contains codes, data and workflows for data analysis regarding SATAY experiments.
+
+## Data files
+Currently the following data files are present:
+
+1. Cerevisiae_EssentialGenes_list_1.txt: This is a list of known essential genes with systematic naming format.
+2. Cerevisiae_EssentialGenes_List_2.txt: This is a list of known essential genes with common naming format. Some genes may occur only in one file, so it is recommended to use both files simultaneously to have a complete list of the known essentials genes. 
+3. Yeast_Protein_Names.txt: This is a list that includes all genes with both naming convention and their ID's. It also include the length of the corresponding proteins in terms of amino acids.
+
+## Python notebooks
+Currently the following notebooks are present:
+
+1. Statistics_pergene.ipynb: This file reads all genes from the text file that is given as output from the Matlab code of Benoit. It takes the number of reads and transposons per gene normalized for the length of the gene and determine statistical values for this.
+
+## Matlab codes
+Currently the following Matlab codes and data files are present:
+
+1. tn_and_reads_per_gene.m: This inputs a .bam file and outputs the number of transposons and reads per gene. The output of this code can be used for python notebook 1.
+2. names.mat: Matlab data file with all genes names. This file is required for running the matlab code 1.
+3. yeastGFF.mat: Matlab data file with information about the genes. This file is required for running the matlab code 1.
+
+
+* Last updated March 20, 2020*
