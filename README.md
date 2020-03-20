@@ -22,4 +22,7 @@ Currently the following Matlab codes and data files are present:
 3. yeastGFF.mat: Matlab data file with information about the genes. This file is required for running the matlab code 1.
 
 
+## Coming soon...
+1. Workflow for the processing of the sequencing analysis. How to convert fastq files to bam files.
+
 *Last updated: March 20, 2020*
