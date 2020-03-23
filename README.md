@@ -1,6 +1,10 @@
 # LaanLab-SATAY-DataAnalysis
 This repository contains codes, data and workflows for data analysis regarding SATAY experiments.
 
+## Projects tab and Issues tab
+For comments, ToDo lists and general progress updates on the projects, please notify this in the Projects tab.
+Issues and questions about codes can be published in the Issues tab.
+
 ## Data files
 Currently the following data files are present:
 
@@ -22,8 +26,4 @@ Currently the following Matlab codes and data files are present:
 2. names.mat: Matlab data file with all genes names. This file is required for running the matlab code 1.
 3. yeastGFF.mat: Matlab data file with information about the genes. This file is required for running the matlab code 1.
 
-
-## Coming soon...
-1. Workflow for the processing of the sequencing analysis. How to convert fastq files to bam files.
-
-*Last updated: March 20, 2020*
+*Last updated: March 22, 2020*
