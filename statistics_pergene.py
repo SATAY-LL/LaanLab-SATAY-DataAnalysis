@@ -1,5 +1,5 @@
 ######THIS FILE LOADS A TEXT FILE WITH INFORMATION ABOUT THE NUMBER OF READS AND TRANSPOSONS PER GENE.######
-######PLOTS A HISTOGRAM OR VIOLINPLOT FOR THE NUMBER OF READS AND TRANSPOSONS DIFFERENTIATED PER ESSENTIALITY.######
+######PLOTS A HISTOGRAM AND VIOLINPLOT FOR THE NUMBER OF READS AND TRANSPOSONS DIFFERENTIATED PER ESSENTIALITY.######
 
 import os
 import numpy as np
@@ -29,29 +29,30 @@ def stats_pergene(normalize,filepath, filename):
     gene_length_dict = {}
     with open(gene_information_file) as f:
         lines = f.readlines()
-        for i in range(58,len(lines)-6):
+        for i in range(58,len(lines)-6):    #THE GENES START AT LINE 58 AND STOP 6 LINES BEFORE THE END OF THE FILE.
             n=0
             l = lines[i]
-            extra_columns = l.count(';')    #count how many times ';' occurs in a line. This is needed to get the right columns as sometimes aliases of gene names are presented in extra columns
+
+            extra_columns = l.count(';')    #COUNT HOW MANY TIMES ';' OCCURS IN A LINE. THIS IS NEEDED TO GET THE RIGHT COLUMNS AS SOMETIMES ALIASES OF GENES ARE PRESENTED IN EXTRA COLUMNS
             l_short = ' '.join(l.split())
             l_list = l_short.split(' ')
-            if l_list[1+extra_columns] == 'GAG' or l_list[1+extra_columns] == 'POL':    #these are sequences that sometimes occurs and have to be ignored
+
+            if l_list[1+extra_columns] == 'GAG' or l_list[1+extra_columns] == 'POL':    #THESE ARE SEQUENCES THAT SOMETIMES OCCUR WHICH HAVE TO BE IGNORED.
                 extra_columns = extra_columns + 1
-            gene_length_dict[l_list[0].strip(';')] = int(l_list[5+extra_columns])*3
-            gene_length_dict[l_list[1+extra_columns]] = int(l_list[5+extra_columns])*3
+            gene_length_dict[l_list[0].strip(';')] = int(l_list[5+extra_columns])*3 #DETERMINE GENE LENGTH AND STORE WITH THE CORRESPONDING GENE NAME (e.g. Cdc42)
+            gene_length_dict[l_list[1+extra_columns]] = int(l_list[5+extra_columns])*3  #DETERMINE GENE LENGTH AND STORE WITH THE CORRESPONDING GENE SYSTEMATIC NAME (e.g. YLR229C)
             if extra_columns > 0:
                 for n in range(extra_columns+1):
-                    gene_length_dict[l_list[0+n]] = int(l_list[5+extra_columns])*3
+                    gene_length_dict[l_list[0+n]] = int(l_list[5+extra_columns])*3  #DETERMINE GENE LENGTH AND STORE WITH THE CORRESPONDING GENE ALIASES (IF PRESENT).
 
 
 
-
-    gene_name_list = []
-    reads_pergene_list = []
-    tn_pergene_list = []
-    gene_essential_boolean_list = []
-    reads_pergene_norm_list = []
-    tn_pergene_norm_list = []
+    gene_name_list = [] #LIST OF ALL GENES ANALYZED AND OUTPUT BY THE MATLAB CODE OF BENOIT.
+    reads_pergene_list = [] #NUMBER OF READS PER GENE AS DETERMINED BY THE MATLAB CODE OF BENOIT.
+    tn_pergene_list = [] #NUMBER OF TRANSPOSONS PER GENE AS DETERMINED BY THE MATLAB CODE OF BENOIT.
+    gene_essential_boolean_list = [] #WHICH OF THE GENES ANALYZED ARE ESSENTIAL (MARKED AS TRUE) AND NON ESSENTIAL (MARKED AS FALSE)
+    reads_pergene_norm_list = [] #NUMBER OF READS PER GENE AS DETERMINED BY THE MATLAB CODE OF BENOIT NORMALIZED FOR THE LENGTH OF THE GENES IN TERMS OF BASEPAIRS.
+    tn_pergene_norm_list = [] #NUMBER OF TRANSPOSONS PER GENE AS DETERMINED BY THE MATLAB CODE OF BENOIT NORMALIZED FOR THE LENGTH OF THE GENES IN TERMS OF BASEPAIRS.
 
     file = os.path.join(filepath,filename)
 
@@ -59,6 +60,7 @@ def stats_pergene(normalize,filepath, filename):
         next(f)
         gene_counter = 0
         fail_counter = 0
+#         failed_genes_list = []
         for lines in f:
             split_line = lines.split('\t')
 
@@ -66,6 +68,7 @@ def stats_pergene(normalize,filepath, filename):
 
 
 
+            #APPEND A NAN-ELEMENT IF THE NUMBER OF READS OR TRANSPOSONS IS NOT PRESENT.
             if len(split_line) > 1:
                 tn_pergene = int(split_line[1])
             else:
@@ -79,7 +82,7 @@ def stats_pergene(normalize,filepath, filename):
             reads_pergene_list.append(reads_pergene)
             tn_pergene_list.append(tn_pergene)
 
-
+            #CHECK IF THE GENE IS PRESENT IN THE LIST OF ESSENTIAL GENES.
             if normalize == 'False':
                 if gene_name in known_essential_gene_list:
                     gene_essential_boolean_list.append('True') 
@@ -102,9 +105,11 @@ def stats_pergene(normalize,filepath, filename):
                     gene_counter = gene_counter + 1
                 except:
                     fail_counter = fail_counter + 1
+#                     failed_genes_list.append(gene_name)
 
     print('Number of genes analyzed: ',gene_counter)
     print('Number of genes not found: ',fail_counter)
+#     print('Genes not found: ',failed_genes_list)
     print('')
     print('')
 
@@ -181,6 +186,7 @@ def stats_pergene(normalize,filepath, filename):
 
 
 
+    #CREATE HISTOGRAMS FOR THE NUMBER OF READS AND TRANSPOSONS INSERTED PER GENE.
     fig, (ax1,ax2) = plt.subplots(1,2)
     n_reads,bins_reads,patches_reads = ax1.hist(reads_pergene_list, density=False, bins=range(min(reads_pergene_list), max(reads_pergene_list) + 1000, 1000), facecolor='blue',alpha=0.5, label='Reads')
     ax1.axvline(x=np.nanmedian(reads_pergene_list), linestyle='--', label='Median Reads', color='k')
@@ -188,6 +194,7 @@ def stats_pergene(normalize,filepath, filename):
     ax1.set_ylabel('Occurance')
     ax1.legend()
     ax1.grid()
+
     n_tn,bins_tn,patches_tn = ax2.hist(tn_pergene_list, density=False, bins=range(min(tn_pergene_list), max(tn_pergene_list) + 50, 50), facecolor='red',alpha=0.5, label='Transposons')
     ax2.axvline(x=np.nanmedian(tn_pergene_list), linestyle='--', label='Median Transposons', color='k')
     ax2.set_xlabel('Counts per gene (all genes)')
@@ -199,6 +206,7 @@ def stats_pergene(normalize,filepath, filename):
 
 
 
+    #CREATE VIOLINPLOTS FOR THE NUMBER OF READS AND TRANSPOSONS INSERTED PER GENE, DIVIDED BY ESSENTIALITY OF THE GENES.
     fig, (ax1, ax2) = plt.subplots(1,2)
     sns.set(style='whitegrid', palette='pastel', color_codes=True)
     df['Reads'] = ''
@@ -220,4 +228,4 @@ def stats_pergene(normalize,filepath, filename):
 
 
 if __name__ == '__main__':
-    stats_pergene('False','/Users/gregory/Documents/LaanLab/LaanLab_Data/Michel2017_WT1/','E-MTAB-4885.WT1.bam_pergene.txt')#'Cerevisiae_WT1_Michel2017_Trimmed_Aligned.sorted.bam_pergene.txt')#
+    stats_pergene('True','/Users/gregory/Documents/LaanLab/LaanLab_Data/Michel2017_WT1/','E-MTAB-4885.WT1.bam_pergene.txt')#'Cerevisiae_WT1_Michel2017_Trimmed_Aligned.sorted.bam_pergene.txt')#
