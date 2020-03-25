@@ -6,7 +6,7 @@ For comments, ToDo lists and general progress updates on the projects, please no
 Issues and questions about codes can be published in the Issues tab.
 
 ## Docs
-Files with detailed notes about analysis, datafiles and software.
+Files with detailed notes about analysis, datafiles and software (including an installation guide).
 
 ## Data files
 Currently the following data files are present:
