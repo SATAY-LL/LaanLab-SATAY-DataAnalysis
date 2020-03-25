@@ -34,7 +34,7 @@ To run a program in the command line, you need to specify the entire path to the
 An easier way is to add the program to the windows path. This can be done with the command
 `setx PATH '/path/to/program'`.
 To check if the program is added to the path, use
-`echo %PATH%`.
+`echo $PATH$`.
 
 Some programs requires java to be installed. To check if java is installed, run the command 'java -version' in the command line.
 If it is not installed, download and install it from [<https://www.java.com/nl/download/>](url)
