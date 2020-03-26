@@ -5,6 +5,9 @@ This repository contains codes, data and workflows for data analysis regarding S
 For comments, ToDo lists and general progress updates on the projects, please notify this in the Projects tab.
 Issues and questions about codes can be published in the Issues tab.
 
+## Docs
+Files with detailed notes about analysis, datafiles and software (including an installation guide).
+
 ## Data files
 Currently the following data files are present:
 
