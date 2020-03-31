@@ -4,7 +4,7 @@ output: pdf_document
 documentclass: article
 classoption: onecolumn
 pdf_document:
-latex_engine: pdflatex
+pdf-engine: pdflatex
 toc: true
 lof: False
 numberSections: true
