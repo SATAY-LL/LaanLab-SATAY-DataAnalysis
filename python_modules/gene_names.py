@@ -8,7 +8,8 @@ def list_gene_names(gene_information_file = None):
     '''
 
     if gene_information_file == None:
-        gene_information_file = r'X:\tnw\BN\LL\Shared\Gregory\Gene_Database\Yeast_Protein_Names.txt'
+        gene_information_file = r'Yeast_Protein_Names.txt'
+        #gene_information_file = r'X:\tnw\BN\LL\Shared\Gregory\Gene_Database\Yeast_Protein_Names.txt'
 
     gene_name_list = []
     gene_counter = 0
@@ -55,7 +56,8 @@ def gene_aliases(gene_information_file = None):
     '''
 
     if gene_information_file == None:
-        gene_information_file = r'X:\tnw\BN\LL\Shared\Gregory\Gene_Database\Yeast_Protein_Names.txt'
+        gene_information_file = r'Yeast_Protein_Names.txt'
+        #gene_information_file = r'X:\tnw\BN\LL\Shared\Gregory\Gene_Database\Yeast_Protein_Names.txt'
 
 
     aliases_designation_dict = {}
