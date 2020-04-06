@@ -6,7 +6,7 @@ For comments, ToDo lists and general progress updates on the projects, please no
 Issues and questions about codes can be published in the Issues tab.
 
 ## Docs
-Files with detailed notes about analysis, datafiles and software (including an installation guide).
+Files with detailed notes about analysis, datafiles, software and workflows (including an installation guide).
 
 ## Data files
 Currently the following data files are present:
@@ -17,16 +17,15 @@ Currently the following data files are present:
 4. S288C_reference_sequence_R64-2-1_20150113.fsa: Reference sequence for wild type cells of *S.Cerevisiae* from the S288C strain.
 5. E-MTAB-4885.WT1.bam_pergene.txt: This file is an example of how the result looks like after processing and can be used as a test file. It contains a list of all analyzed genes with the respective read and transposon counts. This file can be input in the statistics_pergene.py code.
 
-## Python notebooks
-Currently the following notebooks are present:
+## Python scripts and modules
+Data analysis created with python are located in the folder for python scripts.
+Python functions are placed the python modules folder.
 
-1. statistics_pergene.ipynb & statistics_pergene.py: This file reads all genes from the text file that is given as output from the Matlab code of Benoit. It takes the number of reads and transposons per gene normalized for the length of the gene and determine statistical values for this.
-
-## Matlab codes
+## Matlab codes for transposon mapping
 Currently the following Matlab codes and data files are present:
 
 1. tn_and_reads_per_gene.m: This inputs a .bam file and outputs the number of transposons and reads per gene. The output of this code can be used for python notebook 1.
 2. names.mat: Matlab data file with all genes names. This file is required for running the matlab code 1.
 3. yeastGFF.mat: Matlab data file with information about the genes. This file is required for running the matlab code 1.
 
-*Last updated: March 22, 2020*
+*Last updated: April 6, 2020*
