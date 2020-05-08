@@ -9,13 +9,20 @@ Issues and questions about codes can be published in the Issues tab.
 Files with detailed notes about analysis, datafiles, software and workflows (including an installation guide).
 
 ## Data files
-Currently the following data files are present:
+Currently the following data files and folder are present:
 
 1. Cerevisiae_EssentialGenes_list_1.txt: This is a list of known essential genes with systematic naming format.
 2. Cerevisiae_EssentialGenes_List_2.txt: This is a list of known essential genes with common naming format. Some genes may occur only in one file, so it is recommended to use both files simultaneously to have a complete list of the known essential genes. 
 3. Yeast_Protein_Names.txt: This is a list that includes all genes with both naming convention and their ID's. It also include the length of the corresponding proteins in terms of amino acids.
 4. S288C_reference_sequence_R64-2-1_20150113.fsa: Reference sequence for wild type cells of *S.Cerevisiae* from the S288C strain.
 5. E-MTAB-4885.WT1.bam_pergene.txt: This file is an example of how the result looks like after processing and can be used as a test file. It contains a list of all analyzed genes with the respective read and transposon counts. This file can be input in the statistics_pergene.py code.
+
+### test_data
+This folder (located in the Data files folder) contains three files that are the result of the processing by the Matlab code of the Kornmann lab (see 'matlab codes for transposon mapping').
+
+1. E-MTAB-4885.WT1.bam.wig: Contains the number of reads per insertion location.
+2. E-MTAB-4885.WT1.bam.bed: Contains the number of reads oer insertion location. This file is similar to the .wig file, but in the .bed file the number of reads are given by (reads*20)+100
+3. E-MTAB-4885.WT1.bam_pergene.txt: Contain the number of insertions and number of reads per gene. For this an overview is created of most known genes (6603 genes are considered).
 
 ## Python scripts and modules
 Data analysis created with python are located in the folder for python scripts.
@@ -28,4 +35,4 @@ Currently the following Matlab codes and data files are present:
 2. names.mat: Matlab data file with all genes names. This file is required for running the matlab code 1.
 3. yeastGFF.mat: Matlab data file with information about the genes. This file is required for running the matlab code 1.
 
-*Last updated: April 6, 2020*
+*Last updated: May 8, 2020*
