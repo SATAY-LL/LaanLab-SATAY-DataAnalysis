@@ -15,7 +15,6 @@ Currently the following data files and folder are present:
 2. Cerevisiae_EssentialGenes_List_2.txt: This is a list of known essential genes with common naming format. Some genes may occur only in one file, so it is recommended to use both files simultaneously to have a complete list of the known essential genes. 
 3. Yeast_Protein_Names.txt: This is a list that includes all genes with both naming convention and their ID's. It also include the length of the corresponding proteins in terms of amino acids.
 4. S288C_reference_sequence_R64-2-1_20150113.fsa: Reference sequence for wild type cells of *S.Cerevisiae* from the S288C strain.
-5. E-MTAB-4885.WT1.bam_pergene.txt: This file is an example of how the result looks like after processing and can be used as a test file. It contains a list of all analyzed genes with the respective read and transposon counts. This file can be input in the statistics_pergene.py code.
 
 ### test_data
 This folder (located in the Data files folder) contains three files that are the result of the processing by the Matlab code of the Kornmann lab (see 'matlab codes for transposon mapping').
