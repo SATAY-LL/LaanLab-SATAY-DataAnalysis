@@ -1,6 +1,7 @@
-'''This module includes two functions, 'chromosome_position' and 'gene_position'.
-Both do not require an input with the full path to the file 'Saccharomyces_cerevisiae.R64-1-1.99.gff3' (which can be downloaded from https://www.ensembl.org/Saccharomyces_cerevisiae/Info/Index).
+'''This module includes three functions, 'chromosome_position', 'chromosomename_roman_to_arabic' and 'gene_position'.
+Except for 'chromosomename_roman_to_arabic', the functions require an input with the full path to the file 'Saccharomyces_cerevisiae.R64-1-1.99.gff3' (which can be downloaded from https://www.ensembl.org/Saccharomyces_cerevisiae/Info/Index).
 If no input is given, the program automatically searches for the file at in the current directory.
+The function 'chromosomename_roman_to_arabic' does not take any input. It returns two conversion lists for numbers 1 to 16 to get from arabic to roman numerals or vice versa, respectively.
 '''
 def chromosome_position(gff_file = None):
     '''Get the start and end position of each chromosome and determine their respective length.
@@ -59,6 +60,9 @@ def chromosome_position(gff_file = None):
 
 
 def chromosomename_roman_to_arabic():
+    '''This creates two dictionaries for translating the chromosome names from roman to arabic numerals or vice versa.
+    The call is like this: arabic_to_roman_dict, roman_to_arabic_dict = chromosomename_roman_to_arabic()
+    '''
     num_arabic = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
     num_roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI']
     
@@ -83,8 +87,9 @@ def chromosomename_roman_to_arabic():
 def gene_position(gff_file = None):
     '''Get the start and end position of each gene and determine their respective length.
     Input is a .gff file downloaded from https://www.ensembl.org/Saccharomyces_cerevisiae/Info/Index
-    Output is a dictionary that includes all gene names as keys. The values are lists with two numbers.
-    The first is the chromosome number the gene belong to, the second is the start position, the third is the end position of the gene in terms of basepairs.
+    Output is a dictionary that includes all gene names as keys. The values are lists with four inputs.
+    The first is the chromosome number the gene belong to, the second is the start position, the third is the end position of the gene in terms of basepairs, the fourth is the reading orientation of the gene.
+    The reading orientation is indicated with a '+' (forward reading) or '-' (reverse reading).
     '''
 
     if gff_file == None:
@@ -100,7 +105,8 @@ def gene_position(gff_file = None):
                     gene_chr = line_list[0]
                     gene_start = line_list[3]
                     gene_end = line_list[4]
-                    gene_position = [gene_chr,gene_start,gene_end]
+                    gene_orien = line_list[6]
+                    gene_position = [gene_chr,gene_start,gene_end,gene_orien]
                     
                     gene_name_string = line_list[8].split(';')[0]
                     gene_name = gene_name_string.split(':')[1]
@@ -109,5 +115,6 @@ def gene_position(gff_file = None):
 
     return(gene_pos_dict)
 
+
 if __name__ == '__main__':
-    chromosomename_roman_to_arabic()
+    gene_position()
