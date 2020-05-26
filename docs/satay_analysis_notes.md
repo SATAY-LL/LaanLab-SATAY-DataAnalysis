@@ -1,5 +1,5 @@
 ---
-title: "Notes and details for SATAY analysis"
+title: "Notes and Workflow for SATAY analysis"
 output: pdf_document
 documentclass: article
 classoption: onecolumn
@@ -24,6 +24,16 @@ cref: true
 crossref: true
 colorlinks: true
 ---
+# Summary
+
+This file discusses the general outline of the experiments and interpretation of experiments using SAturated Transposon Analysis in Yeast (SATAY).
+The introduction explains the purpose of the experiments and what kind of results we expect and how to interpret these results.
+The Methods and File types section explains the different kind of files used during processing and analysis and how to read and use them.
+It also explains some custom made software for analyzing the data.
+This software is stored in the [Github page](<https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis>) of the this research.
+The steps needed for the processing and initial analysis of the data is explained in the Data Analysis section.
+This includes a detailed step-by-step tutorial on how to use the different software packages and what steps need to be taken for the processing to go from the raw sequencing reads to the location of all the transposon insertion and the number of reads at each location.
+
 # Introduction
 
 About 20% of the genes in wild type *Saccharomyces Cerevisiae* are essential, meaning that they cannot be deleted without crippling the cell to such an extent that it either cannot survive (lethality) or multiply
@@ -150,17 +160,16 @@ The other way around might also occcur, where essential genes are partly toleran
 This is shown by Michel et.al. to be caused that some regions (that code for specific subdomains of the proteins) of the essential genes are dispensable.
 The transposons in these essential genes are clearly located at a specific region in the gene, the one that codes for a non-essential subdomain.
 However, this is not always possible, as in some cases deletion of non-essential subdomains of essential genes create unstable, unexpressed or toxin proteins.
-The difference in essentiality between subdomains in a single protein only happens in essential genes, not in non-essential genes. 
+The difference in essentiality between subdomains in a single protein only happens in essential genes, not in non-essential genes.
 Michel et.al. devised an algorithm to estimate the likelihood $L$ of an essential gene having an essential sub domain and a non-essential subdomain:
 
 $$L = \frac{\text{d }N_{\text{cds}}}{l_{\text{cds}}}$$,
 
-Where $d$ is the longest interval (in terms of base pairs) between 5
-neighboring transposons in a Coding DNA Sequence (cds) ($\geq 300$ bp), $N_{cds}$ is the total number transposons mapping in the cds
-($\geq 20$) transposons) and $l_{cds}$ is the total length of
-the CDS. Additionally, it must hold that $0.1 l_{cds} \leq d \leq 0.9 l_{cds}$.
+Where $d$ is the longest interval (in terms of base pairs) between 5 neighboring transposons in a Coding DNA Sequence (cds) ($\geq 300$ bp), $N_{cds}$ is the total number transposons mapping in the cds ($\geq 20$) transposons) and $l_{cds}$ is the total length of the CDS.
+Additionally, it must hold that $0.1 l_{cds} \leq d \leq 0.9 l_{cds}$.
 
-Because of the reasons mentioned here, not a simple binary conclusion can be made solely based on the amount of transposon insertions or the number of reads.
+It is expected that only essential genes cary essential subdomains, and indeed what was found by Michel et.al. that the genes with the highest likelihood were mostly also genes previously annotated as essential by other studies.
+Because of the reasons mentioned before, not a simple binary conclusion can be made solely based on the amount of transposon insertions or the number of reads.
 Instead, a gene with little reads *might* be essential, but to be sure the results from other experiments need to be implemented as well, for example where the cells were grown in a different growth conditions.
 Therefore, SATAY analysis says something about the relative fitness of the cells in the current conditions.
 
@@ -392,7 +401,7 @@ For example, the distribution of transposons in WT cells in the data from Michel
 
 In this figure, both the reads and the transposon counts are normalized with respect to the length of each gene (hence the graph represents the read density and transposon density).
 High transposon counts only occurs for non-essential genes, and therefore when a high transposon count is seen, it can be assigned nonessential with reasonable certainty.
-However, when the transposon count is low the there is a significant overlap between the two distribution and therefore there is no certainty whether this gene is essential or not (see also the section about 'Interpreting Transposon Counts & Reads').
+However, when the transposon count is low the there is a significant overlap between the two distributions and therefore there is no certainty whether this gene is essential or not (see also the section about 'Interpreting Transposon Counts & Reads').
 
 The data is also sensitive to postprocessing.
 It is expected that the trimming of the sequences is an important step.
@@ -407,15 +416,19 @@ Significant attention needs to be given to the postprocessing of the data.
 
 To create a visual overview where the insertions are and how many reads there are for each insertion, a profile plot is created for each chromosome.
 
-![Read profile plot for chromosome XV (note the y-axis is logarithmic scale).](./media/Read_ProfilePlot_chrxv.png)
+![Read profile plot for chromosome XV (note the y-axis is in logarithmic scale).](./media/Read_ProfilePlot_chrxv.png)
 
 The bars indicate the absolute number of reads for all insertions located in the bars (bar width is 545bp).
 The colored background indicate the location of genes, where green are the annotated essential genes and red the non-essential genes.
 In general, the essential genes have no or little reads whereas the non-essential genes have many reads.
 Note that at location 564476 the ADE2 gene is located that has significant more reads than any other location in the genome, which has to do the way the plasmid is designed (see Michel et.al. 2017).
+The examples used here are from a dataset discussed in the paper by Michel et.al. 2017 which used centromeric plasmids where the transposons are excised from.
+The transposons tend to reinsert in the chromosome near the chromosomal pericentromeric region causing those regions to have about 20% more insertions compared to other chromosomal regions.
 
 This figure gives a rough overview that allows for identifying how well the data fits the expectation.
 Also an alternative version of this plot is made (`TransposonRead_Profile_Compare.py`) that makes a similar plot for two datasets at the same time, allowing the comparison of the two datasets with each other and with the expectation.
+
+![Comparison of the same datasets, but with different processing steps. Shown here is the transposon count for the two files including the absolute difference between the two datasets show in blue. Note also here that some regions has a higher likelihood of bearing transposons compared to the surrounding regions.](./media/Cerevisiae_Michel2017_WT2_Compare_chromIX.png)
 
 ### Profile plot number of reads per individual genes
 (*See `gene_reads.py`*)
@@ -476,6 +489,12 @@ Before alignment, the data needs to be checked for quality and possibly trimmed 
 When the location of the reads relative to a reference sequence are known, the insertion sites of the transposons can be determined.
 With this, a visualization can be made that shows the number of transposon insertions per gene.
 
+A short overview is given for different software tools that can be used for processing and analyzing the data.
+Next, a step-by-step tutorial is given as an example how to process the data.
+Most of this is done using command line based tools.
+
+An overview of the different steps including some software that can handle this is show here:
+
 1. Checking the raw FASTA or FASTQ data can be done using the
     ([**FASTQC**](<https://www.bioinformatics.babraham.ac.uk/projects/fastqc/>)) software (Windows, Linux, Mac. Requires Java).
     This gives a quality report (see accompanying tutorial) for the sequence reads and can be run non-interactively using the command line.
@@ -503,16 +522,18 @@ With this, a visualization can be made that shows the number of transposon inser
     Visualization of the genomic dataset can be done using ([**IGV**](<https://software.broadinstitute.org/software/igv/home>)) (Windows, Linux, Mac) or SAMtools’ tview function.
     Also ([**sambamba**](<https://lomereiter.github.io/sambamba/>)) (Linux, Mac) can be used, especially for sorting and indexing the bam files.
 
-7. Creating transposon insertion maps for the genome (see <https://sites.google.com/site/satayusers/>) and comparison essential genes between different genetic backgrounds using Venn diagrams, customized software needs to be created.
+7. Creating transposon insertion maps for the genome (see the [satay users website](<https://sites.google.com/site/satayusers/>)) and comparison essential genes between different genetic backgrounds using Venn diagrams, customized software needs to be created.
 
 ### 0. Initializing
 
 The next steps are not obligatory, but might help in organizing the data.
-The bold printed commands are put so that they can be copied directly to the bash (note to modify the respective paths on your own machine).
+The **bold** printed commands are put so that they can be copied directly to the bash.
+(Note to modify the respective paths on your own machine in this Initialization step).
+If the paths below are correctly defined, the boldface commands defined in the different processing steps can be literally copied and pasted in the bash.
 
-1. Create an empty folder
+1. Create an empty folder.
 
-2. Add the .fastq file (and unzip if necessary).
+2. Add the .fastq file to the folder (and unzip if necessary).
 
 3. Add the following empty folders for the outcomes of the different processing steps:
 
@@ -522,14 +543,14 @@ The bold printed commands are put so that they can be copied directly to the bas
 
     C. filename_Aligned
 
-4. Start the command line using GitBash.
+4. Start the command line using GitBash (or whatever else you prefer).
 
-5. It might be handy to be able to define variables, for example for the paths to the difference programs and files so that these do not have te be entered each time.
+5. It might be handy to be able to define variables, for example for the paths to the difference programs and files so that these do not have te be entered every single time.
 For this start with the command:
 
 **`#!/bin/bash`**.
 
-6. Define the following variables (when using git bash, copy and paste the commands using `shift+Ins`):
+6. Define the following variables. (When using git bash, copy and paste the commands using `shift+Ins`. Remember to first alter the respective variables given below to the paths and filenames in your computer):
 
     A. Path to the folder containing the .fastq file(**`pathdata='/C/Users/gregoryvanbeek/Desktop/Cerevisiae_WT2_Seqdata_Michel2017/'`**).
 
@@ -554,6 +575,8 @@ Some useful commands:
 2. `gunzip`: Unzip a .gz file.
 
 3. `bunzip`: Unzip a .bz file.
+
+4. `${}`: when using a variable, the name of the variable should be placed between curly brackets and should start with a dollar sign (`$`), otherwise the bash won't recognize the name as a variable.
 
 ### 1. Quality checking of the sequencing reads; FASTQC (0.11.9)
 
@@ -655,14 +678,16 @@ Easiest is to copy an existing .fasta file that comes with Trimmomatic and addin
 For MiSeq sequencing, it is advised to use the TruSeq3 adapter file that needs to be copied to the data folder (see below for detailed explanation).
 For this use the command:
 
- **`cp ${path_trimm_software}'adapters/''TruSeq3-SE.fa' ${pathdata}`**
+ `cp ${path_trimm_software}'adapters/''TruSeq3-SE.fa' ${pathdata}`
 
 Open the .fa file and copy any sequences in the file using a similar style as the sequences that are already present.
 Typically it is useful to clip overrepresented sequences that start with 'CATG' or 'GATC' which are the recognition sites for NlaIII and DpnII respectively.
+Note that the trimming is performed in the order in which the steps are given as input.
+Typically the adapter clipping is performed as one of the first steps and removing short sequences as one of the final steps.
 
 A typical command for trimmomatic looks like this:
 
-**`java -jar ${path_trimm_software}'trimmomatic-0.39.jar' SE -phred33 ${pathdata}${filename} ${path_trimm_out}${filename::-6}'_trimmed.fastq' ILLUMINACLIP:'TruSeq3-SE.fa':2:30:10 SLIDINGWINDOW:5:20 MINLEN:40`**
+**`java -jar ${path_trimm_software}'trimmomatic-0.39.jar' SE -phred33 ${pathdata}${filename} ${path_trimm_out}${filename::-6}'_trimmed.fastq' ILLUMINACLIP:'TruSeq3-SE.fa':2:30:10 LEADING:14 TRAILING:14 SLIDINGWINDOW:10:14 MINLEN:30`**
 
 Check the quality of the trimmed sequence using the command:
 
@@ -701,9 +726,10 @@ High values for short reads (so many perfect matches are needed) allows for clip
 Note a bug in the software is that the FASTA file with the adapters need to be located in your current folder.
 A path to another folder with the adapter files yields an error. [optional] [<https://wiki.bits.vib.be/index.php/Parameters_of_Trimmomatic>];
 
-- `SLIDINGWINDOW` Sliding window trimming which cuts out sequences within the window if the average quality score within the window is lower than a certain threshold. Parameters should be given as : `L_window:Q_min` where `L_window` is the window size (in terms of basepairs) and `Q_min` the average threshold quality. [optional];
+- `SLIDINGWINDOW` Sliding window trimming which cuts out sequences within the window if the average quality score within the window is lower than a certain threshold. Parameters should be given as `SLIDINGWINDOW:L_window:Q_min` where `L_window` is the window size (in terms of basepairs) and `Q_min` the average threshold quality. [optional];
 
 - `LEADING` Cut the bases at the start (5’ end) of a read if the quality is below a certain threshold. Note that when, for example, the parameter is set to 3, the quality score Q=0 to Q=2 will be removed.
+Parameters should be given as `LEADING:Q_min` where `Q_min` is the threshold quality score.
 All basepairs will be removed until the first basepair that has a quality score above the given threshold. [optional];
 
 - `TRAILING` Cut the bases at the end (3’ end) of a read if the quality is below a certain threshold. Note that when, for example, the parameter is set to 3, the quality score Q=0 to Q=2 will be removed.
@@ -735,30 +761,55 @@ done
 
 Where `xxx` should be replaced with the commands for trimmomatic.
 
-### 3. Sequence alignment and Reference sequence indexing; BWA (0.7.17) (Linux)
-
-The reads from sequencing are aligned to a reference genome.
-This is done in the Linux Virtual Machine, so the trimmed reads needs to be copied to the shared folder with the command (note the accolades for the path_sharedfolder since this path contains a space and otherwise it is not correctly implemented):
+Next the sequences alignment is performed which is done in the Linux Virtual Machine.
+Before starting the Linux Virtual Machine, the trimmed reads need to be copied to the shared folder with the command (note the accolades for the path_sharedfolder since this path contains a space and otherwise it is not correctly implemented):
 
 **`cp ${path_trimm_out}${filename::-6}'_trimmed.fastq' "${path_sharedfolder}"`**
 
-The alignment can be completed using different algorithms within BWA, but the ‘Maximal Exact Matches’ (MEM) algorithm is the recommended one (which is claimed to be the most accurate and fastest algorithm and is compatible with many downstream analysis tools).
-For full documentation see [<http://bio-bwa.sourceforge.net/bwa.shtml>].
+Now the protocol continues in the Linux Virtual Machine.
+
+### 3. Sequence alignment and Reference sequence indexing; BWA (0.7.17) (Linux)
+
+The reads from sequencing are aligned to a reference genome.
+This is done in the Linux Virtual Machine, so the previously defined variables do not work anymore in the Virtual Machine.
+If wanted, new variables can be defined within the Linux VM terminal.
+
+A. **`#!/bin/bash`**
+
+B. **`pathvm_sharedfolder='/media/sf_VMSharedFolder_Ubuntu64_1/'`**
+
+C. **`filenamevm='Cerevisiae_WT2_Michel2017.fastq'`**
+
+C. **`pathvm_refgenome=~/Documents/Reference_Sequences/Reference_Sequence_S288C/S288C_reference_sequence_R64-2-1_20150113.fsa`**
+
+D. **`pathvm_data=~/Documents/satay_data/Michel_WT2/`**
+
+E. **`mkdir ${pathvm_data}`**
+
+F. **`mv ${pathvm_sharedfolder}${filenamevm} ${pathvm_data}`**
+
+(If the installation protocol is followed that is located in the same folder as this file [Installation_Guide_SATAY_Analysis_Software], then BWA, SAMTools and SAMBamba is already added to the system path in the Virtual Machine, so no paths need to be explicitely defined for this.
+If the software is not added to the system path of the Virtual Machine, variables can be defined as well that store the absolute paths of the software packages).
+
+The alignment can be completed using different algorithms within BWA, but the ‘Maximal Exact Matches’ (MEM) algorithm is the recommended one (which is claimed to be the most accurate and fastest algorithm and is compatible with many downstream analysis tools, see [documentation](<http://bio-bwa.sourceforge.net/bwa.shtml>) for more information).
 BWA uses a FM-index, which uses the Burrows Wheeler Transform (BWT), to exactly align all the reads to the reference genome at the same time.
 Each alignment is given a score, based on the number of matches, mismatches and potential gaps and insertions.
 The highest possible score is 60, meaning that the read aligns perfectly to the reference sequence (this score is saved in the SAM file as MAPQ).
-Besides the required 11 fields in the SAM file, BWA gives some optional fields to indicate various aspects of the mapping, for example the alignment score (for a complete overview and explanation, see the documentation).
+Besides the required 11 fields in the SAM file, BWA gives some optional fields to indicate various aspects of the mapping, for example the alignment score (for a complete overview and explanation, see the [documentation](<http://bio-bwa.sourceforge.net/bwa.shtml>)).
 The generated SAM file also include headers where the names of all chromosomes are shown (lines starting with SQ).
 These names are used to indicate where each read is mapped to.
 
-Before use, the reference sequence should be indexed so that the program knows where to find potential alignment sites. This only has to be done once for each reference genome.
-It is recommended to copy the reference genome and remove the ‘write’ permission using the command line `chmod –w /path/to/backup/reference/sequence`.
-After this, index the reference genome using the command `bwa index /path/to/reference/sequence/file.fasta`
+Before use, the reference sequence should be indexed so that the program knows where to find potential alignment sites.
+This only has to be done *once* for each reference genome.
+Index the reference genome using the command
+
+`bwa index /path/to/reference/sequence/file.fasta`
+
 This creates 5 more files in the same folder as the reference genome that BWA uses to speed up the process of alignment.
 
 The alignment command should be given as
 
-`bwa mem [options] /path/to/reference/sequence/file.fasta /path/to/data/file.fastq > /path/to/output/file.sam`
+**`bwa mem [options] ${pathvm_refgenome} ${pathvm_data}${filenamevm} > ${pathvm_data}${filenamevm}'.sam'`**
 
 where `[options]` can be different statements as given in the
 documentation. Most importantly are:
@@ -772,6 +823,9 @@ documentation. Most importantly are:
 - `-E` Gap extension penalty (default is 1)
 
 - `-U` Penalty for unpaired reads (default is 9; only of use in case of paired-end sequencing).
+
+Note that this process might take a while.
+After BWA is finished, a new .sam file is created in the same folder as the .fastq file.
 
 ### 4. Converting SAM file to BAM file; SAMtools (1.7) and sambamba (0.7.1) (Linux)
 
@@ -803,7 +857,9 @@ SAMtools allows for different additional processing of the data. For an overview
 
 - `stats` Generate statistics.
 
-- `tview` This function creates a text based Pileup file that is used to assess the data with respect to the reference genome. The output is represented as characters that indicate the relation between the aligned and the reference sequence. The meaning of the characters are:
+- `tview` This function creates a text based Pileup file that is used to assess the data with respect to the reference genome.
+The output is represented as characters that indicate the relation between the aligned and the reference sequence.
+The meaning of the characters are:
 
   - . :base match on the forward strand
 
@@ -827,30 +883,49 @@ SAMtools allows for different additional processing of the data. For an overview
   - \* : Placeholder for a deleted base in a multiple basepair
     deletion.
 
-  - quickcheck : Checks if a .bam or .sam file is ok. If there is no output, the file is good. If and only if there are warnings, an output is generated. If an output is wanted anyways, use the command `samtools quickcheck –v [input.bam] &&echo ‘All ok’ || echo ‘File failed check’`
+  - `quickcheck` Checks if a .bam or .sam file is ok. If there is no output, the file is good. If and only if there are warnings, an output is generated. If an output is wanted anyways, use the command `samtools quickcheck –v [input.bam] &&echo ‘All ok’ || echo ‘File failed check’`
 
-Create a .bam file using the command `samtools view –b <InputFile.sam> <OutputFile.bam>`. Check if everything is ok with the .bam file using
-`samtools quickcheck <InputFile.bam>`. If no output is generated, the
-file is good. If desired, more information can be obtained using
-`samtools flagstat <InputFile.bam>` or `samtools stats <InputFile.bam>`.
+Create a .bam file using the command
 
-For many downstream tools, the .bam file needs to be sorted. This can be
-done using SAMtools, but this might give problems. A faster and more
-reliable method is using the software sambamba using the command
-`sambamba-0.7.1 sort –m 500MB <InputFile.bam>` (where `–m` allows for
-specifying the memory usage which is 500MB in this example). This
-creates a file with the extension .sorted.bam, which is the sorted
-version of the original bam file. Also an index is created with the
-extenstion .bam.bai. If this latter file is not created, it can be made using the command `sambamba-0.7.1 index <InputFile.bam>`.
+**`samtools view –b ${pathvm_data}${filenamevm}'.sam' > ${pathvm_data}${filenamevm}'.bam'`.**
+
+Check if everything is ok with the .bam file using
+
+**`samtools quickcheck ${pathvm_data}${filenamevm}'.bam'`**.
+
+If no output is generated, the file is good.
+If desired, more information can be obtained using `samtools flagstat ${pathvm_data}${filenamevm}'.bam'` or `samtools stats ${pathvm_data}${filenamevm}'.bam'`.
+
+For many downstream tools, the .bam file needs to be sorted.
+This can be done using SAMtools, but this might give problems.
+A faster and more reliable method is using the software sambamba using the command
+
+**`sambamba-0.7.1-linux-static sort –m 500MB ${pathvm_data}${filenamevm}'.bam'`**
+
+(where `–m` allows for specifying the memory usage which is 500MB in this example).
+This creates a file with the extension .sorted.bam, which is the sorted version of the original bam file.
+Also an index is created with the extenstion .bam.bai.
+If this latter file is not created, it can be made using the command
+
+`sambamba-0.7.1-linux-static index  ${pathvm_data}${filenamevm}'.bam'`.
+
+Now the reads are aligned to the reference genome and sorted and indexed.
+Further analysis is done in windows, meaning that the sorted .bam files needs to be moved to the shared folder.
+
+**`mv ${pathvm_data}${filenamevm}'.'* ${pathvm_sharedfolder}`**
+
+Next, the data analysis is performed using custom made codes in Matlab.
 
 ### 5. Determining transposon insertions: Matlab (Code from Benoit [Michel et. al. 2017])
 
-This Matlab code is provided by Benoit and is based on the paper by
-Michel et. al. [<https://sites.google.com/site/satayusers/complete-protocol/bioinformatics-analysis/matlab-script>].
-Running the code requires the user to select a .bam file. In the same
-folder as the bam file the Matlab variables ‘yeastGFF.mat’ and
-‘names.mat’ should be present (which can be found on the website cited
-above). Line numbers correspond to the original, unaltered code.
+Before the data can be used as an input for the Matlab code provided by the Kornmann lab, it needs to be copied from the shared folder to the data folder using the command:
+
+**`mv "${path_sharedfolder}/"* ${path_align_out}`**
+
+The Matlab code is provided by Benoit (see the [website](https://sites.google.com/site/satayusers/complete-protocol/bioinformatics-analysis/matlab-script)) and is based on the [paper by Michel et. al.](<https://elifesciences.org/articles/23570>).
+Running the code requires the user to select a .bam file.
+In the same folder as the bam file the Matlab variables ‘yeastGFF.mat’ and ‘names.mat’ should be present (which can be found on the [website cited above](https://sites.google.com/site/satayusers/complete-protocol/bioinformatics-analysis/matlab-script)).
+Line numbers correspond to the original, unaltered code.
 
 [line1-13] After loading the .BAM file, the ‘baminfo’ command is used
 to collect the properties for the sequencing data. These include (among
