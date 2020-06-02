@@ -1003,8 +1003,13 @@ Check if everything is ok with the .bam file using
 
 **`samtools quickcheck ${pathvm_data}${filenamevm}'.bam'`**.
 
+This checks if the file appears to be intact by checking the header is valid, there are sequences in the beginning of the file and that there is a valid End-Of_File command at the end.
+It thus check only the beginning and the end of the file and therefore any errors in the middle of the file are not noted.
+But this makes this command really fast.
 If no output is generated, the file is good.
 If desired, more information can be obtained using `samtools flagstat ${pathvm_data}${filenamevm}'.bam'` or `samtools stats ${pathvm_data}${filenamevm}'.bam'`.
+Especially the latter can be a bit overwhelming with data, but this gives a thorough description of the quality of the bam file.
+For more information see [this documentation](http://www.htslib.org/doc/1.6/samtools.html).
 
 For many downstream tools, the .bam file needs to be sorted.
 This can be done using SAMtools, but this might give problems.
