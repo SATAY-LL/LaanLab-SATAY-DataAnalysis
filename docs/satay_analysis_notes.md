@@ -124,8 +124,8 @@ Currently the idea is to use machine learning that uses the results from the tra
 Once cells have a transposon inserted somewhere in the DNA, the cells are let to grow so they can potentially generate a few new generations.
 A cell with a tranposon inserted in an essential part of its DNA grows very slowly or might not grow at all (due to its decreased fitness).
 Since the sequencing starts only at the location of a transposon insertion (see experimental methods section), it can be concluded that roughly each read from the sequencing corresponds with a transposon insertion (roughly mainly because transposon inserted in essential genes can generate no reads).
-Cells with a transposon inserted in an essential genomic region, will not have divided and therefore will not have a contribution to the sequencing reads.
-When the reads are aligned to a reference sequence and the number of reads are mapped against the genome, empty regions indicate possible essential genes.
+Cells with a transposon inserted in an essential genomic region, will not have divided and therefore does not contribute to the sequencing reads.
+When the reads are aligned to a reference genome and the number of reads are mapped against the reference, empty regions indicate possible essential genes.
 Negative selection can thus be found by looking for empty regions in the reads mapping.
 When a transposon is inserted in a non-essential genomic region, these cells can still divide and give rise to offspring and after sequencing the non-essential regions will be represented by relatively many reads.
 
@@ -136,7 +136,7 @@ Therefore it is hard to tell the fitness of cells when a transposon is inserted 
 
 Ideally only the transposons inserted in non-essential genomic regions will have reads (since only these cells can create a colony before sequencing), creating a clear difference between the essential and non-essential genes.
 However, sometimes non-essential genes also have few or no transposon insertion sites.
-According to [Michel et.al.](https://elifesciences.org/articles/23570) this can have 3 main reasons.
+According to [Michel et.al.](https://elifesciences.org/articles/23570) this can have 4 main reasons.
 
 1. During alignment of the reads, the reads that represent repeated DNA sequences are discarded, since there is no unique way of fitting
  them in the completed sequence.
@@ -148,11 +148,11 @@ According to [Michel et.al.](https://elifesciences.org/articles/23570) this can 
  Some dubious ORF might overlap with essential proteins, so although these ORF themselves are not essential, the overlapping part is and therefore they do not show any transposons.
 
 3. Some genes are essential only in specific conditions.
- For example, genes that are involved in galactose metabolism are typically not essential, as inhibition of these genes block the cell’s ability to digest galactose, but it can still survive on other nutrition’s.
+ For example, genes that are involved in galactose metabolism are typically not essential, as inhibition of these genes block the cell’s ability to digest galactose, but it can still survive on other nutritions.
  In lab conditions however, the cells are typically grown in galactose rich media, and inhibiting the genes for galactose metabolism cause starvation of the cells.
 
 4. A gene might not be essential, but its deletion might cripple the cell so that the growth rate decreases significantly.
- When the cells are grown, the more healthy cells grow much faster and, after some time, occur more frequently in the population than these crippled cells and therefore these cells might not generate many reads or no reads at all.
+ When the cells are grown, the more healthy cells grow much faster and, after some time, occur more frequently in the population than these crippled cells.
  In the processing, it might therefore look as if these genes are essential, but in fact they are not.
  The cells just grow very slowly.
 
@@ -215,9 +215,9 @@ All contigs should be assembled to form (a large part of) the target genome.
 
 The sequence assembly problem can be described as: *Given a set of sequences, find the minimal length string containing all members of the set as substrings*.
 
-The reads from the sequencing can be single-end or paired-end, which indicates how the sequencing is performed.
-In paired-end sequencing, the reads are sequenced from both directions, making the assembly easier and more reliable, but results in twice as many reads as single-end reads.
-The reason of the more reliable results has to do with ambiguous reads that might occur in the single-end sequencing.
+The reads from the sequencing can be single-read or paired-end, which indicates how the sequencing is performed.
+In paired-end sequencing, the reads are sequenced from both directions, making the assembly easier and more reliable, but results in twice as many reads as single-read reads.
+The reason of the more reliable results has to do with ambiguous reads that might occur in the single-read sequencing.
 Here, a read can be assigned to two different locations on the reference genome (and have the same alignment score).
 In these cases, it cannot be determined where the read should actually be aligned (hence its position is ambiguous).
 In paired-end sequencing, each DNA fragment has primers on both ends, meaning that the sequencing can start in both the 5’-3’ direction and in the 3’-5’ direction.
@@ -788,12 +788,12 @@ If not sure, check if the .fastq file contains, for example, an exclamation mark
 In case of SE, a single output file needs to be specified.
 Needs to have the same extension as the input file (e.g. .fastq) [required];
 
-- `ILLUMINACLIP:TruSeq3-SE.fa:2:15` or `ILLUMINACLIP:TruSeq3-PE.fa:2:30:10` (for Single End reads or Paired End reads respectively). This cuts the adapter and other Illumina specific sequences from the reads.
+- `ILLUMINACLIP:TruSeq3-SE.fa:2:30:10` or `ILLUMINACLIP:TruSeq3-PE.fa:2:30:10` (for Single End reads or Paired End reads respectively). This cuts the adapter and other Illumina specific sequences from the reads.
 The first parameter after `:` indicates a FASTA file (this should be located in the same folder as the sequencing data).
-The second paramter indicates the Seed Mismatches which indicates the maximum mismatch count that still allows for a full match to be performed.
-The third parameter (for SE, fourth parameter for PE) is the Simple Clip Threshold which specifies how accurate the match between the adapter and the read.
+The second parameter is the Seed Mismatches which indicates the maximum mismatch count that still allows for a full match to be performed.
 The third parameter for PE sets the Palindrome Clip Threshold specifies how accurate the match between the two 'adapter
-ligated' reads must be for PE palindrome read alignment.
+ligated' reads must be for PE palindrome read alignment (Works only for PE, but needs to be set for SE as well).
+The fourth parameter is the Simple Clip Threshold which specifies how accurate the match between the adapter and the read.
 
 A number of adapters are stored in the ‘adapters’ folder at the location where the trimmomatic program is saved.
 In case of MiSeq sequencing, the TruSeq3 adapter file is advised.
@@ -809,7 +809,7 @@ A path to another folder with the adapter files yields an error. [optional] [<ht
 
 - `SLIDINGWINDOW` Sliding window trimming which cuts out sequences witin the window and all the subsequent basepairs in the read if the average quality score within the window is lower than a certain threshold.
 The window moves from the 5'-end to the 3'-end.
-Note that if the first few reads of a sequence if of low quality, but the remaining of the sequence is of high quality, the entire sequence will be removed just because of the first few bad quality nucleotides.
+Note that if the first few reads of a sequence is of low quality, but the remaining of the sequence is of high quality, the entire sequence will be removed just because of the first few bad quality nucleotides.
 If this sitatuation occurs, it might be useful to first apply the HEADCROP option (see below).
 Parameters should be given as `SLIDINGWINDOW:L_window:Q_min` where `L_window` is the window size (in terms of basepairs) and `Q_min` the average threshold quality. [optional];
 
@@ -932,7 +932,7 @@ Use either `minkmerhits`, `minkmerfraction` or `mincovfraction`, but setting mul
 Basically this indicates how many errors are allowed between a read and and an adapter sequence to still count as an exact match.
 Typically does not need to be set any higher than 1, unless the reads are of very low quality.
 Note that high values of hdist also requires much more memory in the computer.
-13. `restrictleft` and `restrictright`. Only look for kmers left or right number bases.
+13. `restrictleft` and `restrictright`. Only look for kmers in the left or right number bases.
 14. `tpe` and `tbo`: This is only relevant for paired-end reads.
 `tpe` cuts both the forward and the reverse read to the same length and `tbo` trims the reads if they match any adapter sequence while considering the overlap between two paired reads.
 

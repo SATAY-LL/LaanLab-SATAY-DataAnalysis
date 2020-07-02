@@ -27,22 +27,14 @@ colorlinks: true
 ## Introduction
 
 This file discusses the installation procedures for the programs required for whole genome sequencing analysis and transposon mapping. The numbering corresponds with the order in which this software is used.
-Note that a part of the software is for windows and Linux, and a part is for Linux only. Therefore a virtual machine is included to run Ubuntu (or another unix based operating system to your liking).
+The processing software runs entirely in Linux, hence a Virtual Machine is used in which all the software runs.
 For a more detailed workflow and the commands of all the individual commands, see [satay_analysis_notes.md](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/dev_Gregory/docs/satay_analysis_notes.md).
 
-A Linux vrtual machine is already created that is completely set up and includes all the software discussed below.
+A Linux virtual machine is already created that is completely set up and includes all the software discussed below (located in the N-drive in the *VirtualMachines* folder called VM_Ubuntu64_1.vhd).
 This is located on the N-drive in the 'VirtualMacines' folder.
 Step 0 below discusses how this virtual machine can be installed on your computer and how to use it.
-The following steps are only important when you want to create a virtual machine from scratch so you can set it up completely to your liking or using another operating system than Ubuntu that is used existing virtual machine on the N-drive.
-
-To run a program in the command line, you need to specify the entire path to the location where the program is installed.
-An easier way is to add the program to the system path. This can be done with the command
-`setx PATH '/path/to/program'`.
-To check if the program is added to the path, use
-`echo $PATH$`.
-
-Some programs requires java to be installed. To check if java is installed, run the command 'java -version' in the command line.
-If it is not installed, download and install it from [https://www.java.com/nl/download/](url)
+After completing step 0, the virtual machine is ready to run.
+The following steps are *only* important when you want to create a virtual machine from scratch so you can set it up completely to your liking or using another operating system than Ubuntu which is used in the existing virtual machine on the N-drive.
 
 ## Using the already existing virtual machine
 
@@ -51,7 +43,7 @@ If it is not installed, download and install it from [https://www.java.com/nl/do
 [https://www.virtualbox.org/](url)
 
 Running a virtual machine requires VirtualBox (VB), which can be downloaded from the above link and installed using the normal procedure for installing software on Windows machines.
-The memory of the virtual machine (called the virtual hard drive (vhd)) is stored on the N-drive in the VirtualMachines folder with the name VM_Ubuntu64_1.vhd.
+The memory of the virtual machine (called the virtual hard drive (vhd)) is stored on the N-drive in the *VirtualMachines* folder with the name VM_Ubuntu64_1.vhd.
 **Before using this virtual machine, make sure you make a copy of the virtual hard drive** either to your local machine or, when there is not enough memory on your computer, somewhere on the drives in your personal folder.
 The file is over 50Gb in size, so it might be troublesome to store it locally.
 When storing it on the drives, make sure it has a stable internet connection when you use it since when the connection is lost, the virtual machine crashes as it cannot access its memory anymore.
@@ -78,7 +70,7 @@ For this, apply the following steps:
 4. Restart the system.
 
 Things that might not be working yet are the guest additions.
-These are needed for optimizing the virtual machines performance and are needed for allowing the virtual machine to communicate with some of the hardware of the physical machine like screen size and shared folders (for example, if you use VirtualBox for first time, the screen of the virtual machine might be tiny, but this is because it can not yet communicate the screen size of your physical computer).
+These are needed for optimizing the virtual machines performance and are needed for allowing the virtual machine to communicate with some of the hardware of the physical machine like screen size and shared folders (for example, if you use VirtualBox for first time, the screen of the virtual machine might be tiny, but this is because it does not yet recognize the screen size of your physical computer).
 
 To set up the guest additions use the following commands and options
 
@@ -89,7 +81,8 @@ To set up the guest additions use the following commands and options
 5. Start the VM and check if the shared folder is present (either on the desktop, the files folder or in the media folder).
 6. To automatically resize the screen of the virtual machine, go to the 'view' tab in the top of the screen and select 'Auto-resize guest display'.
 
-The desktop of the virtual machine include the shared folder and a text file with the commands for the preprocessing pipeline.
+The desktop of the virtual machine include the shared folder and a README file.
+The home directory of the VM (which is the default location where the terminal app opens from which all the commands are entered) includes the file processing_workflow.sh which is a workflow that automatically performs all the processing steps.
 In the files app, the documents folder includes three subfolders:
 
 - data_processing: This location can be used to temporarily store the sequencing data.
@@ -100,8 +93,21 @@ In the files app, the documents folder includes three subfolders:
 
 The adapters.fasta file in which the adapter sequences are stored that are used during trimming is located in ~/Documents/Software/BBMap/bbmap/resources/adapters.fa.
 Documents that are placed in the shared folder can be seen in both the virtual machine and the host computer.
+For a more detailed explanation of the Virtual Machine layout and how to use the workflow_processing.sh file, see the README file on the desktop of the VM.
 
 ## Creating a virtual machine from scratch
+
+This and the following steps are only necessary when creating a virtual machine yourself.
+When you want to use the existing virtual machine where all the software is already installed, only follow step 0.
+
+To run a program in the command line, you need to specify the entire path to the location where the program is installed.
+An easier way is to add the program to the system path. This can be done with the command
+`setx PATH '/path/to/program'`.
+To check if the program is added to the path, use
+`echo $PATH$`.
+
+Some programs requires java to be installed. To check if java is installed, run the command 'java -version' in the command line.
+If it is not installed, download and install it from [https://www.java.com/nl/download/](url)
 
 ### 1. VirtualBox-6.1.4
 
@@ -248,3 +254,53 @@ Click the IGV_Win_2.8.0-installer and run the install process.
 
 This code relates the number of reads and transposon counts to the genes.
 This code is provided from the Kornmann-Lab.
+
+### 9. Removing unused software
+
+The installed version of Ubuntu comes with different application by default, for example an email application (thunderbird), an alternative to the Microsoft office package (LibreOffice) and some games.
+These application you will most likely not use and to save memory on your Virtual Machine, these can be uninstalled.
+To do this, go to the 'Ubuntu Software' application and go the tab 'installed'.
+Uninstall everything here that you are not planning to use.
+You can (re)install application here as well.
+
+## Installing additional software in Virtual Machine
+
+### 10. upgrading Python
+
+By default, Linux comes with Python already installed.
+In the terminal application, run the command `python --version` or `python3 --version` to see which version is installed.
+If python3 is installed with version 3.6, then this should be updated to python 3.7 or above.
+This can be done using the procedure explained on [this website](https://dev.to/serhatteker/how-to-upgrade-to-python-3-7-on-ubuntu-18-04-18-10-5hab).
+Running the command `python3.7` should open python 3.7 instead of version 3.6.
+
+Note that it might happen that the terminal does not launch anymore after upgrading the python version.
+This is something to do with the not properly removing one of the installation packages.
+To sort this out, go to the 'Ubuntu Sofware' application and install 'xterm'.
+When opening xterm, enter the commands `sudo rm /usr/bin/python3` followed by `sudo ln -s python3.6 /usr/bin/python3`.
+After this, close xterm and terminal should now launch again.
+
+### 11. Getting miniconda for install python packages
+
+The default Python application is quite bare equiped (for example it doesn't include numpy or matplotlib).
+These packages can be installed using a package installer.
+Two commonly used ones are pip and conda.
+Here we use conda.
+Conda is part of Anaconda, which is a distribution for Python and R.
+Installing Anaconda gives you a graphical user interface and many preinstalled packages, but this takes up a lot of space and many of these packages you probably do not need.
+To save memory on the virtual machine, install the minimal version of Anaconda called Miniconda.
+
+1. Download the Linux installer for Miniconda from [the conda website](https://docs.conda.io/en/latest/miniconda.html#linux-installers) (download the Linux 64 bit version).
+2. Check the hash code from the download by typing in the command `sha256sum [path/to/Miniconda3-latest-Linux-x86_64.sh]` (where the [path/to/Miniconda3-latest-Linux-x86_64.sh] needs to be replaced with the correct path and filename).
+This hash code should match exactly the has code provided on the download website.
+3. If the hash code is correct, run the command `bash [path/to/Miniconda3-latest-Linux-x86_64.sh]`.
+Accept the license agreement and enter the location where the software needs to be installed (or leave this at the default location).
+When the installer prompts `Do you wish the installer to initialize Miniconda3 by running conda init`, enter `yes`.
+4. Restart the terminal.
+5. Check the installation by running the command `conda list`, which should give you a list of packages that are installed in Python.
+
+To add a package run the command `conda install [package]`, where [package] should be replaced by the name of the package that you want to install.
+Recommended to install at least numpy and matplotlib.
+Conda uses specific locations to search for packages called channels.
+If you want some specific bioinformatic tools, it might be necessary to add the channel 'Bioconda' to Miniconda.
+To do this run the command `conda config --add channels bioconda`.
+Now, more packages can be installed, for example [pysam](https://pysam.readthedocs.io/en/latest/api.html) to read bam files in python.
