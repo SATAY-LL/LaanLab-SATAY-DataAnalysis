@@ -1089,257 +1089,62 @@ Further analysis is done in windows, meaning that the sorted .bam files needs to
 
 Next, the data analysis is performed using custom made codes in Matlab in Windows.
 
-### 5. Determining transposon insertions: Matlab (Code from Benoit [Michel et. al. 2017])
+### 5. Determining transposon insertions: Python or Matlab (Matlab code from Kornmann lab [Michel et. al. 2017])
 
-Before the data can be used as an input for the Matlab code provided by the Kornmann lab, it needs to be copied from the shared folder to the data folder using the command:
+After creating the .bam file, the location of the transposon insertions and the number of reads per insertion needs to be determined.
+For this, no standard software is available, instead a custom made python script is used.
+This python script is heavily based on the [Matlab script created by the Kornmann lab](<https://sites.google.com/site/satayusers/complete-protocol/bioinformatics-analysis/matlab-script>) as described in the paper by Michel et.al., 2017.
 
-**`mv "${path_sharedfolder}/"* ${path_align_out}`**
+The goal of this software is to create an overview of all insertion locations in the genome with the number of reads at those locations and to determine the number of insertions and reads for each gene.
 
-The Matlab code is provided by Benoit (see the [website](https://sites.google.com/site/satayusers/complete-protocol/bioinformatics-analysis/matlab-script)) and is based on the [paper by Michel et. al.](<https://elifesciences.org/articles/23570>).
-Running the code requires the user to select a .bam  or .sorted.bam file (or .ordered.bam which is similar to the .sorted.bam).
-If the .bam file is chosen or there is no .bam.bai (bam index-)file present in the same folder, the script will automatically generate the .sorted.bam and a .bam.bai file.
-In the same folder as the bam file the Matlab variables ‘yeastGFF.mat’ and ‘names.mat’ should be present (which can be found on the [website cited above](https://sites.google.com/site/satayusers/complete-protocol/bioinformatics-analysis/matlab-script)).
-The script will generate a number of files (some of them are explained below):
+In order to run the python script in Linux, go to the location where the script is stored and enter the command
 
-1. .sorted.bam (if not present already)
+`python3 transposonmapping_satay.py /location/to/file.bam`
 
-2. .bam.bai (if not present already)
+The python script loads a .bam file together with its .bam.bai index file (the .bam.bai script is required).
+For this it requires the [pysam](<https://pysam.readthedocs.io/en/latest/api.html>) package which partly relies on the SAMTools software, hence this is only available on Linux (or Mac) systems (also when running the python on its own, so without the workflow, this python script will only work in Linux or Mac).
+Additional files required for the python script to work are (see also `N:\tnw\BN\LL\Shared\VirtualMachines\`):
 
-3. .sorted.bam.linearindex
+- [Yeast_Protein_Names.txt](<https://www.uniprot.org/docs/yeast>); includes all names for each gene including any aliases and different naming conventions.
+- Saccharomyces_cerevisiae.R64-1-1.99.gff3; includes for each gene the location in the genome.
+- [Cerevisiae_EssentialGenes_List_1](<https://rdrr.io/bioc/SLGI/man/essglist.html>); List of all essential genes.
+- [Cerevisiae_EssentialGenes_list_2](<http://www.essentialgene.org/>); List of all essential genes. This list and the previous list are very similar, but each of them contain some unique essential genes and to make sure as many essential genes are considered, both lists are used.
 
-4. .sorted.bam.mat (used as a backup of the matlab script results)
+The python scripts starts with loading the .bam file using pysam and determining some properties of the file, like the lengths and names of the chromosomes as used in the file and the number of mapped reads.
+After that, the script loops over all reads in each chromosome and gets the insertion location, orientation and length of the reads.
+The orientation of the reads are given by a flag, which typically is either 0 (forward orientation) or 16 (reverse orientation).
+The position of the reads is corrected if it is in reverse orientation.
+The most important results are stored in the variables `tncoordinates_array` (which stores the exact location of each read) and `readnumb_array` which stores the number of reads for each of the insertions.
+To count the number of reads, it is assumed that all insertions that are within two basepairs of each other belong together and hence the reads of those insertions are all summed up.
+This is to allow for small uncertainties during sequencing and alignment.
+The position of the total number of reads are determined by averaging the locations of the summed reads.
+When taking the sum of multiple reads, the highest read count is discarded (e.g. when the following number of reads are summed, [3,7,14], the value 14 is discarded and thus the total number of reads of those three insertions is 3+7=10 reads).
+This is orignally considered in the Matlab code by the Kornmann lab to reduce noise in the read data.
+See [the discussion on the SATAY user forum](<https://groups.google.com/forum/#!category-topic/satayusers/bioinformatics/uaTpKsmgU6Q>) for a more detailed explaination.
 
-5. .sorted.bam_pergene.txt (contains information about transposons and reads for individual genes)
+Next, all the essential genes are retrieved from the additional files that were loaded in the beginning.
+Then, the chromosomes are concatenated into one large genome, so that the numbering of the basepair positions does not start at 0 for each chromosome, but rather continues counting upwards for the subsequent chromosomes.
+Finally, for all genes the number of insertions and reads are determined by checking the position of the genes and counting all transposons and reads that fall within the range of the gene.
 
-6. .sorted.bam.bed (contains information about the location and the number of reads per transposon insertion)
+The data is stored in multiple files
+- .bed file
+- .wig file
+- _pergene.txt file
+- _peressential.txt file
 
-7. .sorted.bam.wig (contains information about the location and the number of reads per transposon insertion)
+The .bed file (Browser Extensible Data) is used for storing the locations of the insertions and the number of reads.
+The different columns in the file are separated by spaces.
+The first column indicates the chromosome number (e.g. `chrI`), the second and third column the start and end position respectively, the fourth column includes a dummy variable (this is needed to comply the standard layout of the bed format) and the fifth column is the number of reads.
+For the number of the reads, the equation 20*reads+100 is used that linearly scales the values to enhance the contrast (e.g. 4 reads is represented as 180).
 
-The line numbers below correspond to the original, unaltered code.
+The .wig file (Wiggle) contains similar information as the .bed file, but the layout is different.
+This file contains two columns separated by a space where the first column represents the location of the insertion and the second column the number of reads (the actual number of reads, thus not the using the equation as used in the .bed file).
+A difference between the .bed file and the .wig file is that in the in .wig file the insertions with different orientations are summed.
+In the .bed file a distinction is made between reads that come from transposons with different orientation, but this is not done in the .wig file.
 
-[line1-13] After loading the .BAM file, the ‘baminfo’ command is used
-to collect the properties for the sequencing data. These include (among
-others) [<https://nl.mathworks.com/help/bioinfo/ref/baminfo.html>]:
-
-- `SequenceDictionary`: Includes the number of basepairs per
-    chromosome.
-
-- `ScannedDictionary`: Which chromosomes are read (typically 16 and
-    the mitochondrial chromosome).
-
-- `ScannedDictionaryCount`: Number of reads aligned to each reference
-    sequence.
-
-[line22-79] Then, a for-loop over all the chromosomes starts (17 in
-total, 16 chromosomes and a mitochondrial chromosome). The for-loop
-starts with a BioMap command which gets the columns of the SAM-file. The
-size of the columns corresponds with the number of reads aligned to each
-reference sequence (see also the ‘baminfo’ field `ScannedDictionaryCount`). The collected information is:
-
-- `SequenceDictionary`: Chromosome number where the reads are
-    collected for (given in roman numerals or ‘Mito’ for mitochondrial).
-    (QNAME)
-
-- `Reference`: Chromosome number that is used as reference sequence.
-    (RNAME)
-
-- `Signature`: CIGAR string. (CIGAR)
-
-- `Start`: Start position of the first matched basepair given in terms
-    of position number of the reference sequence. (POS)?
-
-- `MappingQuality`: Value indicating the quality of the mapping. When
-    60, the mapping has the smallest chance to be wrong. (MAPQ)
-
-- `Flag`: Flag of the read. (FLAG)
-
-- `MatePosition`: (PNEXT)?
-
-- `Quality`: Quality score given in FASTQ format. Each ASCII symbol
-    represents an error probability for a base pair in a read. See
-    [<https://drive5.com/usearch/manual/quality_score.html>] for a
-    conversion table. (QUAL)
-
-- `Sequence`: Nucleotide sequence of the read. Length should math the
-    length of the corresponding ‘Quality’ score. (SEQ)
-
-- `Header`: Associated header for each read sequence.
-
-- `Nseqs`: Integer indicating the number of read sequences for the
-    current chromosome.
-
-- `Name`: empty
-
-(Note: Similar information can be obtained using the ‘bamread’ command
-(although his is slower than ‘BioMap’), which gives a structure element
-with fields for each piece of information. This can be accessed using:
-`bb = bamread(file,infobam.SequenceDictionary(kk).SequenceName,\[1
-infobam.SequenceDictionary(kk).SequenceLength\]))`
-`bb(x).’FIELD’ %where x is a row (i.e. a specific read) and FIELD
-is the string of the field.`)
-
-After extracting the information from the SAM-file (using the ‘BioMap’
-command), the starting site is defined for each read. This is depended
-on the orientation of the read sequence. If this is normal orientation
-it has flag=0, if it is in reverse orientation it has flag=16. If the
-read sequence is in reverse orientation, the length of the read sequence
-(‘readlength’ variable) needs to be added to the starting site (‘start’
-variable). The corrected starting sites of all reads are saved in a new
-variable (‘start2’). Note that this changes the order of which the reads
-are stored. To correct this, the variables ‘start2’ and ‘flag2’ are
-sorted in ascending order.
-
-Now, all the reads in the current chromosome are processed. Data is
-stored in the ‘’tncoordinates’ variable. This consists of three numbers;
-the chromosome number (‘kk’), start position on the chromosome
-(‘start2’) and the flag (‘flag2’). All reads that have the same
-starting position and the same flag (i.e. the same reading orientation)
-are stored as a single row in the ‘tncoordinates’ variable (for this the
-average starting position is taken). This results in an array where each
-row indicates a new starting position and the reading orientation. The
-number of measurements that were averaged for a read is stored in the
-variable ‘readnumb’. This is important later in the program for
-determining the transposons.
-
-This is repeated for each chromosome due to the initial for-loop. The
-‘tnnumber’ variable stores the number of unique starting positions and
-flags for each chromosome (this does not seem to be used anywhere else
-in the program).
-
-[line94-120] After getting the needed information from the SAM-file,
-the data needs to be compared with the literature. For this yeastGFF.mat
-is used (provided by Benoit et. al.) that loads the variable ‘gff’. This
-includes all genes (from SGD) and the essential genes (from YeastMine).
-(Note that a similar list can be downloaded from the SGD website as a
-text file). The file is formatted as a matrix with in each row a DNA
-element (e.g. genes) and each column represent a different piece of
-information about that element. The used columns are:
-
-1. Chromosome number (represented as roman numerals)
-
-2. Data source (either SGD, YeastMine or landmark. Represented as a
-    string)
-
-3. Type of the DNA element, e.g. gene. The first element of a
-    chromosome is always the ‘omosome’, which is the entire chromosome
-    (Represented as a string)
-
-4. Start coordinates (in terms of base pairs. Represented as an
-    integer)
-
-5. End coordinates (in terms of base pairs. Represented as an integer)
-
-6. A score value. Always a ‘.’ Represented as a string indicating a
-    dummy value.
-
-7. Reading direction (+ for forward reading (5’-3’), - for reverse
-    reading (3’-5’), ‘.’ If reading direction is undetermined.
-    Represented as a string)
-
-8. Always a ‘.’ Except when the element is a Coding DNA Sequence (CDS),
-    when this column become a ‘0’. A CDS always follows a gene in the
-    list and the value indicates how many basepairs should be removed
-    from the beginning of this feature in order to reach the first codon
-    in the next base (Represented as a string)
-
-9. Other information and notes (Represented as a string)
-
-From the ‘gff’ variable, all the genes are searched and stored in the
-variable ‘features.genes’ (as a struct element). The same thing is done
-for the essential genes by searching for genes from the ‘YeastMine’
-library and these are stored in ‘features.essential’ (as a struct
-element). This results in three variables:
-
-- `features`: struct element that includes the fields ‘genes’ and
-    ‘essential’ that include numbers representing in which rows of the
-    ‘gff’ variable the (essential) gene can be found (note that the
-    essential genes are indicated by ‘ORF’ from ’Yeastmine’ in the ‘gff’
-    variable).
-
-- `genes`: struct element storing the start and end coordinates (in
-    basepairs) and the chromosome number where the gene is found.
-
-- `essential`: struct element. Same as ‘genes’, but then for essential
-    genes as found by the ‘YeastMine’ database.
-
-This can be extended with other features (e.g. rRNA, see commented out
-sections in the code).
-
-[line124-160] Next all the data is stored as if all the chromosomes
-are put next to each other. In the `tncoordinates` variable, for each
-chromosome the counting of the basepairs starts at 1. The goal of this
-section is to continue counting such that the first basepair number of a
-chromosome continues from the last basepair number of the previous
-chromosome (i.e. the second chromosome is put after the first, the third
-chromosome is put after the second etc., to create one very long
-chromosome spanning the entire DNA). The first chromosome is skipped
-(i.e. the for-loop starts at 2) because these basepairs does not need to
-be added to a previous chromosome. This is repeated for the start and
-end coordinates of the (essential) genes.
-
-[line162-200] Now the number of transposons is determined which is
-done by looking at the number of reads per gene. First, all the reads
-are found that have a start position between the start and end position
-of the known genes. The indices of those reads are stored in the
-variable ‘xx’. In the first for-loop of the program (see lines 22-79)
-the reads (or measurements) that had the same starting position and flag
-where averaged and represented as a single read. To get the total number
-of reads per gene the number of measurements that were used for
-averaging the reads corresponding to the indices in ‘xx’ are summed (the
-value stored in the variable ‘readnumb’). This is repeated for all genes
-and the essential genes using a for-loop. The maximum value is
-subtracted as a feature to suppress noise or unmeaningful data (see a
-more detailed explanation the discussion by Galih in the forum of Benoit [<https://groups.google.com/forum/#!category-topic/satayusers/bioinformatics/uaTpKsmgU6Q>]).
-
-[line226-227] Next all variables in the Matlab workspace are saved
-using the same name as the .bam file, but now with the .mat extension.
-The program so far does not need to be ran all over again but loading
-the .mat file loads all the variables.
-
-Next a number of files are generated (.bed, .txt and .wig).
-
-[line238-256] A .bed file is generated that can be used for
-visualization of the read counts per insertion site. This contains
-the information stored in the ‘tncoordinates’ variable. This includes
-the chromosome number and the start position of the reads. The end
-position of the reads is taken as the start position +1 (The end
-position is chosen like this just to visualize the transposon insertion
-site). The third column is just a dummy variable and can be ignored. As
-the reads were averaged if multiple reads shared the same location on
-the genome, the total number of reads is taken from the ‘readnumb’
-variable and is stored in the fourth column of the file using the
-equation 100+readnumb(i)\*20 (e.g. a value of 4 in `readnumb` is stored as 180 in the .bed file).
-
-In general a .bed file can contain 12 columns, but only the first three
-columns are obligatory. These are the chromosome number, start position
-and end position (in terms of basepairs), respectively. More information
-can be added as is described in the links below. If a column is filled,
-then all the previous columns need to be filled as well. If this
-information is not present or wanted, the columns can be filled with a
-dummy character (typically a dot is used) [<https://bedtools.readthedocs.io/en/latest/content/general-usage.html>] [<https://learn.gencore.bio.nyu.edu/ngs-file-formats/bed-format/>].
-
-[line238-256] Next a text file is generated for storing information
-about the transposon counts per gene. This is therefore a summation of
-all the transposons that have an insertion site within the gene. (To
-check a value in this file, look up the location of a gene present in
-this file. Next look how many transposon are located within the range
-spanned by the gene using the .bed file). To create this the names.mat
-file is needed to create a list of gene names present in the first
-column. The transposon count is taken from the `tnpergene` variable and
-is stored in the second column of the file. The third is the number of
-reads per gene which is taken from the `readpergene` variable (which is
-calculated by `readnumb-max(readnumb)` where the `readnumb` variable is
-used for keeping track of the number of reads that were used to average
-the reads).
-
-[line260-299] Creating a .wig file. This indicates the transposon
-insertion sites (in terms of basepairs, starting counting from 1 for
-each new chromosome). The file consists of two columns. The first column
-represent the insertion site for each transposons and the second column
-is the number of reads in total at that location. The
-information is similar to that found in the .bed file, but here the
-read count is the actual count (and thus not used the equation
-100+transposon_count*20 as is done in the .bed file).
+Finally two more file are created that include the number of insertions and reads per gene.
+This includes all genes (or only all annotated essential genes in case of _peressential.txt).
+These files contain three tab separated columns where in the first column the gene name is given (standard name is, e.g. Cdc42 or Bem1), the second column contains the number of insertions within the gene and the third column includes the number of reads.
 
 # Bibliography
 

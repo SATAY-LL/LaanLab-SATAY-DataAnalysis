@@ -26,12 +26,12 @@ from essential_genes_names import list_known_essentials
 
 
 
-# bam_arg = sys.argv[1]
+bam_arg = sys.argv[1]
 
 
 
 #%%
-def transposonmapper(bamfile=None, gfffile=None, essentialfiles=None, genenamesfile=None):
+def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenamesfile=None):
     '''
     This function is created for analysis of SATAY data using the species Saccharomyces Cerevisiae.
     It outputs the following files that store information regarding the location of all insertions:
@@ -274,7 +274,7 @@ def transposonmapper(bamfile=None, gfffile=None, essentialfiles=None, genenamesf
     
     # GET ALIASES OF ALL GENES
     names_path = os.path.join(files_path,'Yeast_Protein_Names.txt')
-    aliases_designation_dict = gene_aliases(names_path)[0] #'YMR056C' \ ['AAC1'], ...
+    aliases_designation_dict = gene_aliases(names_path)[0] #'YMR056C' | ['AAC1'], ...
 
 
     
