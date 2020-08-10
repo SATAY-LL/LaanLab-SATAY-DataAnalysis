@@ -8,13 +8,14 @@ For more information about this code and the project, see github.com/Gregory94/L
 This code is based on the Matlab code created by the Kornmann lab which is available at: sites.google.com/site/satayusers/
 
 __Author__ = Gregory van Beek. LaanLab, department of Bionanoscience, Delft University of Technology
-__version__ = 1.3
-__Date last update__ = 2020-08-07
+__version__ = 1.4
+__Date last update__ = 2020-08-09
 
 Version history:
     1.1; Added code for creating two text files for storing insertion locations per gene and per essential gene [2020-07-27]
     1.2; Improved searching algorithm for essential genes [2020-08-06]
     1.3; Load file containing all essential genes so that a search for essential genes in multiple file is not needed anymore. This file is created using Create_EssentialGenes_list.py located in the same directory as this code [2020-08-07]
+    1.4; Fixed bug where the gene position and transposon insertion location did not start at zero for each chromosome, causing confusing values to be stored in the _pergene_insertions.txt and _peressential_insertions.txt files [2020-08-09]
 """
 
 import os, sys
@@ -29,12 +30,12 @@ from chromosome_and_gene_positions import chromosomename_roman_to_arabic, gene_p
 from gene_names import gene_aliases
 
 
-# bam_arg = sys.argv[1]
+bam_arg = sys.argv[1]
 
 
 
 #%%
-def transposonmapper(bamfile=None, gfffile=None, essentialfiles=None, genenamesfile=None):
+def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenamesfile=None):
     '''
     This function is created for analysis of SATAY data using the species Saccharomyces Cerevisiae.
     It outputs the following files that store information regarding the location of all insertions:
@@ -442,16 +443,19 @@ def transposonmapper(bamfile=None, gfffile=None, essentialfiles=None, genenamesf
         f.write('Gene name\tChromosome\tStart location\tEnd location\tInsertion locations\tReads per insertion location\n')
 
         for gene in tncoordinates_pergene_dict:
+            gene_chrom = ref_tid_roman_dict.get(genecoordinates_dict.get(gene)[0])
+            tncoordinates = [ins - chr_summedlength_dict.get(gene_chrom) for ins in tncoordinates_pergene_dict[gene][3]]
+
             if gene in aliases_designation_dict:
                 gene_alias = aliases_designation_dict.get(gene)[0]
             else:
                 gene_alias = gene
-            f.write(gene_alias + '\t' + str(tncoordinates_pergene_dict[gene][0]) + '\t' + str(tncoordinates_pergene_dict[gene][1]) + '\t' + str(tncoordinates_pergene_dict[gene][2]) + '\t' + str(tncoordinates_pergene_dict[gene][3]) + '\t' + str(tncoordinates_pergene_dict[gene][4]) + '\n')
+
+            f.write(gene_alias + '\t' + str(tncoordinates_pergene_dict[gene][0]) + '\t' + str(tncoordinates_pergene_dict[gene][1] - chr_summedlength_dict.get(gene_chrom)) + '\t' + str(tncoordinates_pergene_dict[gene][2] - chr_summedlength_dict.get(gene_chrom)) + '\t' + str(tncoordinates) + '\t' + str(tncoordinates_pergene_dict[gene][4]) + '\n')
 
 
 
-    del (gene, gene_alias, pergeneinsertionsfile)
-
+    del (gene, gene_chrom, tncoordinates, gene_alias, pergeneinsertionsfile)
 
 #%% CREATE TEXT FILE WITH LOCATION OF INSERTIONS AND READS PER ESSENTIAL GENE
     peressentialinsertionsfile = bamfile+'_peressential_insertions.txt'
@@ -463,16 +467,20 @@ def transposonmapper(bamfile=None, gfffile=None, essentialfiles=None, genenamesf
         f.write('Essential gene name\tChromosome\tStart location\tEnd location\tInsertion locations\tReads per insertion location\n')
 
         for essential in tncoordinates_peressential_dict:
+            gene_chrom = ref_tid_roman_dict.get(genecoordinates_dict.get(essential)[0])
+            tncoordinates = [ins - chr_summedlength_dict.get(gene_chrom) for ins in tncoordinates_peressential_dict[essential][3]]
+
             if essential in aliases_designation_dict:
                 essential_alias = aliases_designation_dict.get(essential)[0]
             else:
                 essential_alias = essential
-            f.write(essential_alias + '\t' + str(tncoordinates_peressential_dict[essential][0]) + '\t' + str(tncoordinates_peressential_dict[essential][1]) + '\t' + str(tncoordinates_peressential_dict[essential][2]) + '\t' + str(tncoordinates_peressential_dict[essential][3]) + '\t' + str(tncoordinates_peressential_dict[essential][4]) + '\n')
+
+            f.write(essential_alias + '\t' + str(tncoordinates_peressential_dict[essential][0]) + '\t' + str(tncoordinates_peressential_dict[essential][1] - chr_summedlength_dict.get(gene_chrom)) + '\t' + str(tncoordinates_peressential_dict[essential][2] - chr_summedlength_dict.get(gene_chrom)) + '\t' + str(tncoordinates) + '\t' + str(tncoordinates_peressential_dict[essential][4]) + '\n')
 
 
 
-    del (essential, essential_alias, peressentialinsertionsfile)
-    
+    del (essential, gene_chrom, tncoordinates, essential_alias, peressentialinsertionsfile)
+
 #%% ADD INSERTIONS AT SAME LOCATION BUT WITH DIFFERENT ORIENTATIONS TOGETHER (FOR STORING IN WIG-FILE)
     wigfile = bamfile+'.wig'
     print('Writing wig file at: ', wigfile)
