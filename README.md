@@ -21,6 +21,9 @@ Currently the following data files and folder are present:
 4. Yeast_Protein_Names.txt: This is a list that includes all genes with both naming convention and their ID's. It also include the length of the corresponding proteins in terms of amino acids.
 5. S288C_reference_sequence_R64-2-1_20150113.fsa: Reference sequence for wild type cells of *S.Cerevisiae* from the S288C strain.
 6. Saccharomyces_cerevisiae.R64-1-1.99.gff3: Information file for all CDS in the *S.Cerevisiae* genome in .gff format.
+7. S_Cerevisiae_protein_designation_name_full_genome.txt: Includes all gene names present in *S.Cerevisiae* in designation naming convention.
+8. S_Cerevisiae_protein_oln_name_full_genome.txt: Includes all gene names present in *S.Cerevisiae* in oln naming convention.
+9. SGD_features.tab: Includes all features (e.g. genes, ars, telomeres etc.) present in the *S.Cerevisiae* genome (this file has a readme).
 
 ### test_data
 

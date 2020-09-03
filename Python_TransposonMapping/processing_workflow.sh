@@ -14,6 +14,7 @@
 ### When selecting one trimming software, the options of the other program will be ignored.
 ### The workflow will ask after the first quality report if you want to continue.
 ### Pressing 'n' will abort the workflow and allows you to make changes according to the quality report.
+### The quality report can be accessed at the location ~/Documents/data_processing/[yourdatafolder]/fastqc_out/[filename].html
 ### Restarting the workflow cause it to skip over the initial quality report (unless you deleted it) and continues with the trimming and alignment steps.
 ### In case of emergency, press ctrl-c (possibly multiple times) in the terminal.
 
@@ -24,10 +25,10 @@
 ####################### USER SETTINGS ######################
 
 # Define filename (can also be a zipped file ending with .gz)
-filename='SRR062634.filt.fastq.gz'
+filename='ERR1533147.fastq.gz'
 
 # Define foldername where the analysis results are stored
-foldername='SRR062634_test'
+foldername='wt1_testfolder_w303'
 
 
 ###### Set options for trimming software ######
@@ -52,7 +53,7 @@ trimming_settings_trimmomatic='ILLUMINACLIP:adapters.fa:0:30:10 SLIDINGWINDOW:10
 # Set options for alignment software (bwa mem)
 alignment_settings='-B 2 -O 3'
 
-# Set which reference genome you want to use (type 's' for S288C or 'w' for W303)
+# Set which reference genome you want to use (type 's' for S288C or 'w' for W303) !!!W303 GIVES ERROR IN TRANSPOSONMAPPING_SATAY.PY!!!
 refgenome='s'
 
 
@@ -60,7 +61,7 @@ refgenome='s'
 sort_and_index='y'
 
 
-# Apply transposon mapping
+# Apply transposon mapping (requires sort_and_index='y')
 mapping='y'
 
 
@@ -116,7 +117,8 @@ then
 	echo 'Reference genome:' ${name_refgenome}
 elif [[ ${refgenome} =~ ^[wW]$ ]]
 then
-	path_refgenome=/home/gregoryvanbeek/Documents/Reference_Sequences/Reference_Sequence_W303/W303_SGD_2015_JRIU00000000.fsa
+	#path_refgenome=/home/gregoryvanbeek/Documents/Reference_Sequences/Reference_Sequence_W303/W303_SGD_2015_JRIU00000000.fsa
+        path_refgenome=/home/gregoryvanbeek/Documents/Reference_Sequences/Reference_Sequence_W303_1/Cerevisiae_W303_Ref_LYZE01_1_default_headers.fsa_nt
 	name_refgenome='W303'
 	echo 'Reference genome:' ${name_refgenome}
 else

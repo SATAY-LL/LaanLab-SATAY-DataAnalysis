@@ -65,7 +65,6 @@ def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenam
 #%% LOADING BAM FILE
     if bamfile is None:
         path = os.path.join('/home', 'gregoryvanbeek', 'Documents', 'data_processing')
-        # filename = 'E-MTAB-4885.WT2.bam'
         filename = 'SRR062634.filt_trimmed.sorted.bam'
         bamfile = os.path.join(path,filename)
     else:
