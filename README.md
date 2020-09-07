@@ -27,7 +27,7 @@ Currently the following data files and folder are present:
 
 ### test_data
 
-This folder (located in the Data files folder) contains three files that are the result of the processing by the Matlab code of the Kornmann lab (see 'matlab codes for transposon mapping').
+This folder (located in the Data files folder) contains six files that are the result of the processing by the python code for transposon analysis (see the folder 'python_TransposonMapping; transposonsmapping_satay.py' (works only in Linux, for Windows try Matlab_TransposonMapping; tn_and_reads_per_gene.m, which generates only the first three files in the below list)).
 
 1. ... .wig: Contains the number of reads per insertion location in wig format.
 2. ... .bed: Contains the number of reads oer insertion location in bed format. This file is similar to the .wig file, but in the .bed file the number of reads are given by (reads*20)+100
@@ -59,4 +59,4 @@ This folder also include processing_workflow shell script that is used to call a
 For setting up a virtual environment including all software tools required for running this workflow, see the installation guide in the docs folder on this Github page.
 Note: The python code only works in Linux operating systems.
 
-*Last updated: August 3, 2020*
+*Last updated: August 7, 2020*
