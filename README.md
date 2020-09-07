@@ -2,7 +2,7 @@
 
 This repository contains codes, data and workflows for data analysis regarding SATAY experiments.
 
-## Projects tab and Issues tab
+## [Projects tab](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/projects/1) and [Issues tab](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/issues)
 
 For comments, ToDo lists and general progress updates on the projects, please notify this in the [Projects tab](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/projects/1).
 Issues and questions about codes can be published in the [Issues tab](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/issues).
