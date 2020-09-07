@@ -49,7 +49,7 @@ Currently the following Matlab codes and data files are present:
 
 1. [tn_and_reads_per_gene.m](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Matlab_TransposonMapping/tn_and_reads_per_gene.m): This inputs a .bam file and outputs the number of transposons and reads per gene.
 2. [names.mat](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Matlab_TransposonMapping/names.mat): Matlab data file with all genes names. This file is required for running the matlab code 1.
-3. [yeastGFF.mat](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Matlab_TransposonMapping/yeastGFF.mat): Matlab data file with information about the genes. This file is required for running the matlab code 1.
+3. [yeastGFF.mat](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Matlab_TransposonMapping/yeastGFF.mat): Matlab data file with information about the genes. This file is required for running [the matlab code]((https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Matlab_TransposonMapping/tn_and_reads_per_gene.m)).
 
 ## [Python_TransposonMapping](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/tree/master/Python_TransposonMapping)
 
