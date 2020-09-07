@@ -59,4 +59,7 @@ This folder also include [processing_workflow shell script](https://github.com/G
 For setting up a virtual environment including all software tools required for running this workflow, see the [installation guide](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/docs/Installation_Guide_SATAY_Analysis_Software.pdf) in the [docs](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/tree/master/docs) folder on this Github page.
 Note: The python code only works in Linux operating systems. For running a similar code on Windows, try the [tn_and_reads_per_gene.m matlab](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Matlab_TransposonMapping/tn_and_reads_per_gene.m) code, which generates a subset of the files that are generated in the python code (see also the 'test_data' section in this readme file).
 
+## License
+[LaanLab for Bionanoscience, Delft university of Technology](https://www.tudelft.nl/en/faculty-of-applied-sciences/about-faculty/departments/bionanoscience/research/research-labs/liedewij-laan-lab/research-projects/evolvability-and-modularity-of-essential-functions-in-budding-yeast/)
+
 *Last updated: August 7, 2020*
