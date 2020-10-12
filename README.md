@@ -66,4 +66,4 @@ Note: The python code only works in Linux operating systems. For running a simil
 ## License
 [LaanLab for Bionanoscience, Delft university of Technology](https://www.tudelft.nl/en/faculty-of-applied-sciences/about-faculty/departments/bionanoscience/research/research-labs/liedewij-laan-lab/research-projects/evolvability-and-modularity-of-essential-functions-in-budding-yeast/)
 
-*Last updated: September 7, 2020*
+*Last updated: October 12, 2020*
