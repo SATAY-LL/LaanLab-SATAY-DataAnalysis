@@ -23,8 +23,9 @@ Version history:
         - 'Nreadsperbp_normalized' to 'Nreads_normalized'
         - 'Nreadsperbp_central80p_normalized' to 'Nreads_truncatedgene_normalized'
         - 'Nreadsperbp_normalized_byNCregions' to 'Nreads_normalized_byNCregions'
+    1.2: [20-10-2020] Removed the normalization since this was outdated.
         
-__Version__: 1.1
+__Version__: 1.2
 __Date__: 14-10-2020
 __Author__: Gregory van Beek
 """
@@ -42,11 +43,11 @@ from chromosome_and_gene_positions import chromosome_position, chromosomename_ro
 from chromosome_names_in_files import chromosome_name_wigfile
 from gene_names import list_gene_names, gene_aliases
 from read_sgdfeatures import sgd_features
-from normalize_reads import reads_normalization_fixed_window #reads_normalization_dynamic_window
+#from normalize_reads import reads_normalization_fixed_window #reads_normalization_dynamic_window
 
 
 #%%
-def dna_features(region, wig_file, pergene_insertions_file, variable="reads", normalize=True, normalization_window_size=20000, plotting=True, savefigure=False, verbose=True):
+def dna_features(region, wig_file, pergene_insertions_file, variable="reads", plotting=True, savefigure=False, verbose=True):
     '''This function inputs a wig file and pergene_insertions file created using transposonmapping_satay.py.
     Optional is to define with data is displayed, which can be either "insertions" or "reads".
     Output is a dataframe including major information about all genomic features and optionally a barplot indicating the number of transposons per genomic region.
@@ -120,7 +121,7 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", no
                     del (region_alias, gene_alias_dict)
                 else:
                     print(warningmessage)
-#                    return()
+                    return()
             if plotting == True:
                 create_plottitle = region
             region_type = 'Gene'
@@ -128,7 +129,7 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", no
 
         else:
             print(warningmessage)
-#            return()
+            return()
 
 
     elif type(region) == list:
@@ -139,7 +140,7 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", no
                 chrom = chromosomename_roman_to_arabic()[0].get(region[0])
         else:
             print(warningmessage)
-#            return()
+            return()
         roi_start = region[1]
         roi_end = region[2]
         region_type = 'Chromosome'
@@ -152,13 +153,13 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", no
             roi_end = None
         else:
             print(warningmessage)
-#            return()
+            return()
         region_type = 'Chromosome'
 
 
     else:
         print(warningmessage)
-#        return()
+        return()
 
 
     del (warningmessage)
@@ -337,22 +338,9 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", no
             f_previous = f_current
         i += 1
 
-#    N_reads_per_bp_list = []
-#    N_reads_per_bp_central80p_list = []
-#    N_insrt_per_bp_list = []
-#    N_insrt_per_bp_central80p_list = []
     N_reads_per_ins_list = []
     N_reads_per_ins_truncatedgene_list = []
     for i in range(len(N_reads_list)):
-#        N_reads_per_bp_list.append(N_reads_list[i]/N_bp_list[i])
-#        N_insrt_per_bp_list.append(N_insrt_list[i]/N_bp_list[i])
-#        if not feature_NameAndType_list[i][1] == None and feature_NameAndType_list[i][1].startswith('Gene'):
-#            N_reads_per_bp_central80p_list.append(N_reads_truncatedgene_list[i]/(N_bp_list[i]-200))#*0.8
-#            N_insrt_per_bp_central80p_list.append(N_insrt_truncatedgene_list[i]/(N_bp_list[i]-200))#*0.8
-#        else:
-#            N_reads_per_bp_central80p_list.append(N_reads_list[i]/N_bp_list[i])
-#            N_insrt_per_bp_central80p_list.append(N_insrt_list[i]/N_bp_list[i])
-
         if N_insrt_list[i] == 0:
             N_reads_per_ins_list.append(0)
             N_reads_per_ins_truncatedgene_list.append(0)
@@ -426,10 +414,6 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", no
                     'Ninsertions_truncatedgene':N_insrt_truncatedgene_list,
                     'Nreads':N_reads_list,
                     'Nreads_truncatedgene':N_reads_truncatedgene_list,
-#                    'Ninsertionsperbp':N_insrt_per_bp_list,
-#                    'Ninsertionsperbp_gene_central80p':N_insrt_per_bp_central80p_list,
-#                    'Nreadsperbp':N_reads_per_bp_list,
-#                    'Nreadsperbp_gene_central80p':N_reads_per_bp_central80p_list,
                     'Nreadsperinsrt':N_reads_per_ins_list,
                     'Nreadsperinsrt_truncatedgene':N_reads_per_ins_truncatedgene_list}
 
@@ -450,7 +434,7 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", no
 
 #%% NORMALIZE USING WINDOWS
 
-    dna_df2, window_edge_list = reads_normalization_fixed_window(dna_df2, len_chr, normalization_window_size, wig_file)
+    #dna_df2, window_edge_list = reads_normalization_fixed_window(dna_df2, len_chr, normalization_window_size, wig_file)
 
 #%% CREATE BAR PLOT
     if plotting == True:
@@ -495,19 +479,11 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", no
         ax = plt.subplot(grid[0:19,0])
         if variable == "insertions":
             ax.bar(feature_middle_pos_list, list(dna_df2['Ninsertions']), feature_width_list, color=barcolor_list)
-    #        ax.set_ylim(0, max(dna_df2['Ninsertionsperbp']) + 0.1*max(dna_df2['Ninsertionsperbp']))
             ax.set_ylabel("Transposons per region", fontsize=textsize, color=textcolor)
         elif variable == "reads":
-            if normalize == False:
-                ax.bar(feature_middle_pos_list, list(dna_df2['Nreads']), feature_width_list, color=barcolor_list)
-                ax.set_ylabel("Reads per region", fontsize=textsize, color=textcolor)
-#                ax.set_ylim(0.0,10.0)
-            elif normalize == True:
-                ax.bar(feature_middle_pos_list, list(dna_df2['Nreads_normalized_byNCregions']), feature_width_list, color=barcolor_list)
-#                ax.bar(feature_middle_pos_list, list(dna_df2['Nreads_normalized']), feature_width_list, color=barcolor_list)
-#                ax.bar(feature_middle_pos_list, list(dna_df2['Nreads_normalized']), feature_width_list, color=barcolor_list)
-                ax.set_ylabel("Normalized reads per region", fontsize=textsize, color=textcolor)
-#                ax.set_ylim(0.0, 150.0)
+            ax.bar(feature_middle_pos_list, list(dna_df2['Nreads']), feature_width_list, color=barcolor_list)
+            ax.set_ylabel("Reads per region", fontsize=textsize, color=textcolor)
+
 
         if roi_start != None and roi_end != None and roi_start < len_chr and roi_end < len_chr:
             ax.set_xlim(roi_start, roi_end)
@@ -530,16 +506,6 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", no
         for text in leg.get_texts():
             text.set_color(textcolor)
         del text
-
-
-        count = 0
-        for i in range(len(window_edge_list)-1):
-            if count%2 == 0:
-                ax.axvspan(window_edge_list[i], window_edge_list[i+1], facecolor=[0.0,0.0,0.0,0.1])
-            else:
-                ax.axvspan(window_edge_list[i], window_edge_list[i+1], facecolor=[0.0,0.0,0.0,0.0])
-            count += 1
-
 
         axc = plt.subplot(grid[19,0])
 
@@ -576,16 +542,14 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", no
 
 
         if savefigure == True:
-            if normalize == True and variable == 'reads':
-                saving_name = os.path.join(file_dirname,'GenomicFeaturesReads_Barplot_Chrom'+chrom+'_Normalized_with_Windowsize_'+str(normalization_window_size))
-            elif normalize == False and variable == 'reads':
+            if variable == 'reads':
                 saving_name = os.path.join(file_dirname,'GenomicFeaturesReads_Barplot_Chrom'+chrom+'_NonNormalized')
             else:
                 saving_name = os.path.join(file_dirname,'GenomicFeaturesInsertions_Barplot_Chrom'+chrom+'_NonNormalized')
             plt.savefig(saving_name, orientation='landscape', dpi=200)
             plt.close()
 
-        del (barcolor_list, codingdna_color, essential_color, feature_middle_pos_list, feature_width_list, noncoding_color, nonessential_color, textcolor, textsize, l, counter, width, normalization_window_size)
+        del (barcolor_list, codingdna_color, essential_color, feature_middle_pos_list, feature_width_list, noncoding_color, nonessential_color, textcolor, textsize, l, counter, width)
 
 
 #%% RETURN STATEMENT
@@ -621,24 +585,20 @@ def feature_position(feature_dict, chrom, start_chr, dna_dict, feature_type=None
 
 #%%
 if __name__ == '__main__':
-    dna_df2 = dna_features(region = 'I',#['xiii', 0, 14790],
+    dna_df2 = dna_features(region = 'x',#['xiii', 0, 14790],
                  wig_file = r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\Data_Files\test_data\Kornmannlab_dataset_WT1\ERR1533147_trimmed.sorted.bam.wig",
                  pergene_insertions_file = r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\Data_Files\test_data\Kornmannlab_dataset_WT1\ERR1533147_trimmed.sorted.bam_pergene_insertions.txt",
                  variable="reads",
-                 normalization_window_size=20000,
-                 normalize=True,
                  plotting=True,
                  savefigure=False,
-                 verbose=False)
+                 verbose=True)
 
 
 #    for chrom in ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI']:
 #        dna_df2 = dna_features(region = chrom,
-#                     wig_file = r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\Data_Files\test_data\Kornmannlab_dataset_WT1\ERR1533147_trimmed.sorted.bam.wig",
-#                     pergene_insertions_file = r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\Data_Files\test_data\Kornmannlab_dataset_WT1\ERR1533147_trimmed.sorted.bam_pergene_insertions.txt",
+#                     wig_file = r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\Data_Files\test_data\KornmannLab_dataset_dDpl1\E-MTAB-4885.Dpl1Kan.sorted.bam.wig",
+#                     pergene_insertions_file = r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\Data_Files\test_data\KornmannLab_dataset_dDpl1\E-MTAB-4885.Dpl1Kan.sorted.bam_pergene_insertions.txt",
 #                     variable="reads",
-#                     normalization_window_size=20000,
-#                     normalize=True,
 #                     plotting=False,
 #                     savefigure=False,
 #                     verbose=True)
