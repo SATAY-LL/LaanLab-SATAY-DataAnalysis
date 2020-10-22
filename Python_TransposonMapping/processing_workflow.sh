@@ -23,12 +23,15 @@
 
 
 ####################### USER SETTINGS ######################
+# Define whether data is paired-end ('t' for paired-end, 'f' for single end)
+paired='t'
 
-# Define filename (can also be a zipped file ending with .gz)
-filename='ERR1533147.fastq.gz'
+# Define filename (can also be a zipped file ending with .gz). Use filename2 for paired end or leave empty for single end or interleaved paired end (i.e. paired end reads are in single file).
+filename1='SRR062634.filt.fastq.gz'
+filename2=''
 
 # Define foldername where the analysis results are stored
-foldername='wt1_testfolder_w303'
+foldername='test_folder'
 
 
 ###### Set options for trimming software ######
@@ -42,7 +45,7 @@ trimming_settings_bbduk='ktrim=r k=4 hdist=0 qtrim=r trimq=4'
 ###################
 
 ### trimmomatic ###
-trimmomatic_initialization='SE -phred33'
+trimmomatic_initialization='-phred33'
 trimming_settings_trimmomatic='ILLUMINACLIP:adapters.fa:0:30:10 SLIDINGWINDOW:10:4 MINLEN:30'
 ## Set adapter sequences
 ## Open file using xdg-open ~/Documents/Software/BBMap/bbmap/resources/adapters.fa
@@ -52,9 +55,6 @@ trimming_settings_trimmomatic='ILLUMINACLIP:adapters.fa:0:30:10 SLIDINGWINDOW:10
 
 # Set options for alignment software (bwa mem)
 alignment_settings='-B 2 -O 3'
-
-# Set which reference genome you want to use (type 's' for S288C or 'w' for W303) !!!W303 GIVES ERROR IN TRANSPOSONMAPPING_SATAY.PY!!!
-refgenome='s'
 
 
 # Create sorted and indexed bam file ('y' for yes, 'n' for no)?
@@ -66,7 +66,7 @@ mapping='y'
 
 
 # Save sam file ('y' for yes, 'n' for no)? This file is always converted to its binary equivalent (.bam ) and the sam file is rarely used but takes up relatively a lot of memory.
-delete_sam='n'
+delete_sam='y'
 
 ############################################################
 
@@ -78,17 +78,23 @@ delete_sam='n'
 # When False, the program continues automatically.
 ask_user=T
 
+refgenome='s'
 
 
 
-echo 'Preparing processing for' ${filename} '...'
+
+echo 'Preparing processing for' ${filename1} '...'
 echo ''
 
 # Define filename for trimming and alignment results
-filename_trimmed=${filename%.fastq*}'_trimmed.fastq'
-filename_sam=${filename%.fastq*}'_trimmed.sam'
-filename_bam=${filename%.fastq*}'_trimmed.bam'
-filename_sort=${filename%.fastq*}'_trimmed.sorted.bam'
+filename_trimmed1=${filename1%.fastq*}'_trimmed.fastq'
+if ! [[ -z ${filename2} ]] #if not filename2 is empty string
+then
+	filename_trimmed2=${filename2%.fastq*}'_trimmed.fastq'
+fi
+filename_sam=${filename1%.fastq*}'_trimmed.sam'
+filename_bam=${filename1%.fastq*}'_trimmed.bam'
+filename_sort=${filename1%.fastq*}'_trimmed.sorted.bam'
 
 # Define full path to data folder and create it if it doesn't exists
 pathdata=~/Documents/data_processing/${foldername}
@@ -141,10 +147,14 @@ path_python_codes=~/Documents/Software/python_codes/
 
 
 # Check if datafile is already in the datafolder. If not, move it to the datafolder
-[ -e ${path_sf}${filename} ] && echo 'Moving' ${filename} 'to' ${foldername} '...' && mv ${path_sf}${filename} ${pathdata} && echo 'Moving complete.' && sleep 1s
+[ -e ${path_sf}${filename1} ] && echo 'Moving' ${filename1} 'to' ${foldername} '...' && mv ${path_sf}${filename1} ${pathdata} && echo 'Moving complete.' && sleep 1s
+[ ! -e ${pathdata}/${filename1} ] && echo 'ERROR:' ${filename1} 'does not exists in' $(basename ${pathdata}) '. Cannot proceeed with processing.' && exit 1
 
-[ ! -e ${pathdata}/${filename} ] && echo 'ERROR:' ${filename} 'does not exists in' $(basename ${pathdata}) '. Cannot proceeed with processing.' && exit 1
-
+if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+then
+	[ -e ${path_sf}${filename2} ] && echo 'Moving' ${filename2} 'to' ${foldername} '...' && mv ${path_sf}${filename2} ${pathdata} && echo 'Moving complete.' && sleep 1s
+	[ ! -e ${pathdata}/${filename2} ] && echo 'ERROR: Paired end file' ${filename2} 'does not exists in' $(basename ${pathdata}) '. Cannot proceeed with processing.' && exit 1
+fi
 
 
 
@@ -152,28 +162,37 @@ path_python_codes=~/Documents/Software/python_codes/
 ### Creating log file
 echo ''
 echo 'Creating log file ...'
-echo ${filename}	$(date +%F_%T) > ${pathdata}/${filename%.fastq*}'_log.txt'
-echo '' >> ${pathdata}/${filename%.fastq*}'_log.txt'
-echo 'Trimming options:' >> ${pathdata}/${filename%.fastq*}'_log.txt'
+echo ${filename1}	$(date +%F_%T) > ${pathdata}/${filename1%.fastq*}'_log.txt'
+if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+then
+	echo 'Paired end reads with paired file:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+	echo ${filename2} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filename2} ]]
+then
+	echo 'Paired end reads with paired reads in same file' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+fi
+
+echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo 'Trimming options:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
 
 if [[ ${trimming_software} =~ ^[bB]$ ]]
 then
-	echo 'BBDuk' >> ${pathdata}/${filename%.fastq*}'_log.txt'
-	echo ${trimming_settings_bbduk} >> ${pathdata}/${filename%.fastq*}'_log.txt'
+	echo 'BBDuk' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+	echo ${trimming_settings_bbduk} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
 elif [[ ${trimming_software} =~ ^[tT]$ ]]
 then
-	echo 'Trimmomatic' >> ${pathdata}/${filename%.fastq*}'_log.txt'
-	echo ${trimmomatic_initialization} ${trimming_settings_trimmomatic} >> ${pathdata}/${filename%.fastq*}'_log.txt'
+	echo 'Trimmomatic' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+	echo ${trimmomatic_initialization} ${trimming_settings_trimmomatic} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
 fi
 
-echo '' >> ${pathdata}/${filename%.fastq*}'_log.txt'
-echo 'Alignment options:' >> ${pathdata}/${filename%.fastq*}'_log.txt'
-echo ${alignment_settings} >> ${pathdata}/${filename%.fastq*}'_log.txt'
-echo '' >> ${pathdata}/${filename%.fastq*}'_log.txt'
-echo 'Reference genome used:' ${name_refgenome} >> ${pathdata}/${filename%.fastq*}'_log.txt'
-echo '' >> ${pathdata}/${filename%.fastq*}'_log.txt'
-echo 'Adapter sequences from adapters.fa:' >> ${pathdata}/${filename%.fastq*}'_log.txt'
-cat ${path_bbduk_adapters} >> ${pathdata}/${filename%.fastq*}'_log.txt'
+echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo 'Alignment options:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo ${alignment_settings} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo 'Reference genome used:' ${name_refgenome} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo 'Adapter sequences from adapters.fa:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+cat ${path_bbduk_adapters} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
 
 
 
@@ -186,12 +205,19 @@ echo ''
 
 
 # Quality checking raw data
-if [[ ! -e ${path_fastqc_out}/${filename%.fastq*}'_fastqc.html' ]]
+if [[ ! -e ${path_fastqc_out}/${filename1%.fastq*}'_fastqc.html' ]]
 then
 	echo 'Quality checking raw data ...'
-	fastqc --outdir ${path_fastqc_out} ${pathdata}/${filename}
+	fastqc --outdir ${path_fastqc_out} ${pathdata}/${filename1}
 	echo 'Quality checking raw data completed. Results are stored at' ${path_fastqc_out}
 	echo ''
+
+	if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+	then
+		fastqc --outdir ${path_fastqc_out} ${pathdata}/${filename2}
+		echo 'Quality checking raw data paired end reads completed. Results are stored at' ${path_fastqc_out}
+		echo ''
+	fi
 else
 	echo 'Quality report raw data already exists. Skipping fastqc'
 fi
@@ -210,17 +236,51 @@ fi
 # Trimming
 if [[ ${trimming_software} =~ ^[bB]$ ]]
 then
-	echo 'Data trimming using bbduk ...'
-	${path_bbduk_software}bbduk.sh -Xmx1g in=${pathdata}/${filename} out=${path_trimm_out}/${filename_trimmed} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
-	echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed}
-	echo ''
+	if [[ ${paired} =~ ^[fF]$ ]]
+	then
+		echo 'Data trimming using bbduk single end reads...'
+		${path_bbduk_software}bbduk.sh -Xmx1g in=${pathdata}/${filename1} out=${path_trimm_out}/${filename_trimmed1} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
+		echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed1}
+		echo ''
+	elif [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+	then
+		echo 'Data trimming using bbduk paired end reads...'
+		${path_bbduk_software}bbduk.sh -Xmx1g in1=${pathdata}/${filename1} out1=${path_trimm_out}/${filename_trimmed1} in2=${pathdata}/${filename2} out2=${path_trimm_out}/${filename_trimmed2} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
+		echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed1} 'and for the paired end reads in' ${path_trimm_out}/${filename_trimmed2}
+		echo ''
+
+	elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filename2} ]]
+	then
+		echo 'Data trimming using bbduk paired end reads...'
+		${path_bbduk_software}bbduk.sh -Xmx1g interleaved=t in=${pathdata}/${filename1} out=${path_trimm_out}/${filename_trimmed1} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
+		echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed1}
+		echo ''
+	fi
+
 elif [[ ${trimming_software} =~ ^[tT]$ ]]
 then
-	echo 'Data trimming using trimmomatic ...'
-	currentpath=$(pwd)
-	cd ${path_bbduk_software}/resources/
-	java -jar ${path_trimm_software}trimmomatic-0.39.jar ${trimmomatic_initialization} ${pathdata}/${filename} ${path_trimm_out}/${filename_trimmed} ${trimming_settings_trimmomatic}
-	cd ${currentpath}
+	if [[ ${paired} =~ ^[fF]$ ]]
+	then
+		echo 'Data trimming using trimmomatic ...'
+		currentpath=$(pwd)
+		cd ${path_bbduk_software}/resources/
+		java -jar ${path_trimm_software}trimmomatic-0.39.jar SE ${trimmomatic_initialization} ${pathdata}/${filename1} ${path_trimm_out}/${filename_trimmed1} ${trimming_settings_trimmomatic}
+		cd ${currentpath}
+
+	elif [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+	then
+		echo 'Data trimming using trimmomatic ...'
+		currentpath=$(pwd)
+		cd ${path_bbduk_software}/resources/
+		java -jar ${path_trimm_software}trimmomatic-0.39.jar PE ${trimmomatic_initialization} ${pathdata}/${filename1} ${pathdata}/${filename2} ${path_trimm_out}/${filename_trimmed1} ${path_trimm_out}/${filename_trimmed1%_trimmed.fastq*}'_trimmedorphanedreads.fastq' ${path_trimm_out}/${filename_trimmed2} ${path_trimm_out}/${filename_trimmed1%_trimmed.fastq*}'_trimmedorphanedreads.fastq' ${trimming_settings_trimmomatic}
+		cd ${currentpath}
+
+	elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filename2} ]]
+	then
+		echo 'Enter two input files for using paired end reads with Trimmomatic.'
+		exit 1
+	fi
+
 else
 	echo 'Trimming software not recognized, please check settings'
 	exit 1
@@ -228,13 +288,26 @@ fi
 
 # Quality report trimmed data
 echo 'Quality checking trimmed data ...'
-fastqc --outdir ${path_fastqc_out} ${path_trimm_out}/${filename_trimmed}
+fastqc --outdir ${path_fastqc_out} ${path_trimm_out}/${filename_trimmed1}
 echo 'Quality checking trimmed data completed. Results are stored at' ${path_fastqc_out}
 echo ''
+if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+then
+	echo 'Quality checking trimmed data paired end reads ...'
+	fastqc --outdir ${path_fastqc_out} ${path_trimm_out}/${filename_trimmed2}
+	echo 'Quality checking trimmed data paired end reads completed. Results are stored at' ${path_fastqc_out}
+	echo ''
+fi
 
 # Sequence alignment
 echo 'Sequence alignment ...'
-bwa mem ${alignment_settings} ${path_refgenome} ${path_trimm_out}/${filename_trimmed} > ${path_align_out}/${filename_sam}
+if [[ ${paired} =~ ^[fF]$ ]] || [[ -z ${filename2} ]]
+then
+	bwa mem ${alignment_settings} ${path_refgenome} ${path_trimm_out}/${filename_trimmed1} > ${path_align_out}/${filename_sam}
+elif [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+then 
+	bwa mem ${alignment_settings} ${path_refgenome} ${path_trimm_out}/${filename_trimmed1} ${path_trimm_out}/${filename_trimmed2} > ${path_align_out}/${filename_sam}
+fi
 echo 'Sequence alignment is completed. Results are stored in' ${path_align_out}/${filename_sam}
 echo ''
 
