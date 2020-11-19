@@ -66,19 +66,13 @@ mapping='y'
 
 
 # Save sam file ('y' for yes, 'n' for no)? This file is always converted to its binary equivalent (.bam ) and the sam file is rarely used but takes up relatively a lot of memory.
-delete_sam='y'
+delete_sam='n'
+
+# Determine whether the script should automatically continue after creating the first quality report. Set to yes if you might want to make changes depending on the quality report of the raw data.
+qualitycheck_interrupt=T
 
 ############################################################
 
-
-
-
-
-# Ask for confirmation to continue after quality report raw data (t for True or f for False).
-# When False, the program continues automatically.
-ask_user=T
-
-refgenome='s'
 
 
 
@@ -116,19 +110,13 @@ path_align_out=${pathdata}/align_out
 path_sf=/media/sf_VMSharedFolder_Ubuntu64_1/
 
 # Define paths to reference genomes (both S288C and W303)
-if [[ ${refgenome} =~ ^[sS]$ ]]
+path_refgenome=/home/gregoryvanbeek/Documents/Reference_Sequences/Reference_Sequence_S288C/S288C_reference_sequence_R64-2-1_20150113.fsa
+name_refgenome='S288C'
+if [! -d ${path_refgenome}] #if path to reference genome does not exist
 then
-	path_refgenome=/home/gregoryvanbeek/Documents/Reference_Sequences/Reference_Sequence_S288C/S288C_reference_sequence_R64-2-1_20150113.fsa
-	name_refgenome='S288C'
-	echo 'Reference genome:' ${name_refgenome}
-elif [[ ${refgenome} =~ ^[wW]$ ]]
-then
-	#path_refgenome=/home/gregoryvanbeek/Documents/Reference_Sequences/Reference_Sequence_W303/W303_SGD_2015_JRIU00000000.fsa
-        path_refgenome=/home/gregoryvanbeek/Documents/Reference_Sequences/Reference_Sequence_W303_1/Cerevisiae_W303_Ref_LYZE01_1_default_headers.fsa_nt
-	name_refgenome='W303'
-	echo 'Reference genome:' ${name_refgenome}
+	echo 'ERROR: Reference genome not found at location:' ${path_refgenome} && exit 1
 else
-	echo 'ERROR: Reference genome not defined. Please check settings.' && exit 1
+	echo 'Reference genome:' ${name_refgenome}
 fi
 
 # Define path bbduk software
@@ -223,7 +211,7 @@ else
 fi
 
 
-if [[ ${ask_user} =~ ^[tT]$ ]]
+if [[ ${qualitycheck_interrupt} =~ ^[tT]$ ]]
 then
 	read -p 'Continue processing? (press "y" if yes, press "n" if no): ' -n 1 -r
 	echo
