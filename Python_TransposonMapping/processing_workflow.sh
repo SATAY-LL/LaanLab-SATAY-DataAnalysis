@@ -28,12 +28,8 @@ paired=F
 
 
 # Define filename (can also be a zipped file ending with .gz). Use filename2 for paired end or leave empty for single end or interleaved paired end (i.e. paired end reads are in single file).
-filename1='SRR062634.filt.fastq.gz'
-filename2=''
-
-
-# Define foldername where the analysis results are stored. This will be stored at the location where the data files are stored.
-foldername='test_folder'
+filepath1=/home/gregoryvanbeek/Documents/data_processing/testfolder/SRR062634.filt.fastq.gz
+filepath2=''
 
 
 ###### Set options for trimming software ######
@@ -55,10 +51,6 @@ trimming_settings_trimmomatic='ILLUMINACLIP:adapters.fa:0:30:10 SLIDINGWINDOW:10
 ###############################################
 
 
-# Open adapters.fa file after the first quality check in order to change the adapters for trimming.
-open_adapters=T
-
-
 # Set options for alignment software (bwa mem)
 alignment_settings='-B 2 -O 3'
 
@@ -75,16 +67,20 @@ mapping=T
 delete_sam=F
 
 
+# Open adapters.fa file after the first quality check in order to change the adapters for trimming.
+open_adapters=F
+
+
 # Create quality report of raw data (before trimming)?
-quality_check_raw=T
+quality_check_raw=F
 
 
 # Create quality report of trimmed data (after trimming)?
-quality_check_trim=T
+quality_check_trim=F
 
 
 # Determine whether the script should automatically continue after creating the first quality report. Set to yes if you might want to make changes depending on the quality report of the raw data.
-qualitycheck_interrupt=T
+qualitycheck_interrupt=F
 
 ############################################################
 
@@ -92,8 +88,34 @@ qualitycheck_interrupt=T
 
 
 
-echo 'Preparing processing for' ${filename1} '...'
+echo 'Preparing processing for' $(basename ${filepath1}) '...'
 echo ''
+
+
+datapath=$(dirname ${filepath1})
+filename1=$(basename ${filepath1})
+if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+then
+	filename2=$(basename ${filepath2})
+fi
+
+
+
+if [ ! -f $filepath1 ]
+then
+	echo 'ERROR: File' ${filepath1} 'not found.' && exit 1
+fi
+
+
+if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+then
+	if [ ! -f $filepath2 ]
+	then
+		echo 'ERROR: File' ${filepath2} 'not found.' && exit 1
+	fi
+fi
+
+
 
 # Define filename for trimming and alignment results
 filename_trimmed1=${filename1%.fastq*}'_trimmed.fastq'
@@ -105,9 +127,6 @@ filename_sam=${filename1%.fastq*}'_trimmed.sam'
 filename_bam=${filename1%.fastq*}'_trimmed.bam'
 filename_sort=${filename1%.fastq*}'_trimmed.sorted.bam'
 
-# Define full path to data folder and create it if it doesn't exists
-pathdata=~/Documents/data_processing/${foldername}
-[ ! -d ${pathdata} ] && echo 'Creating datafolder ...' && mkdir ${pathdata}
 
 # Define path output directory fastqc
 path_fastqc_out=${pathdata}/fastqc_out
@@ -147,55 +166,6 @@ path_trimm_software=~/Documents/Software/Trimmomatic-0.39/
 path_python_codes=~/Documents/Software/python_codes/
 [ ! -d ${path_python_codes} ] && echo 'WARNING: Path to python codes does not exists.'
 
-
-
-# Check if datafile is already in the datafolder. If not, move it to the datafolder
-[ -e ${path_sf}${filename1} ] && echo 'Moving' ${filename1} 'to' ${foldername} '...' && mv ${path_sf}${filename1} ${pathdata} && echo 'Moving complete.' && sleep 1s
-[ ! -e ${pathdata}/${filename1} ] && echo 'ERROR:' ${filename1} 'does not exists in' $(basename ${pathdata}) '. Cannot proceeed with processing.' && exit 1
-
-if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
-then
-	[ -e ${path_sf}${filename2} ] && echo 'Moving' ${filename2} 'to' ${foldername} '...' && mv ${path_sf}${filename2} ${pathdata} && echo 'Moving complete.' && sleep 1s
-	[ ! -e ${pathdata}/${filename2} ] && echo 'ERROR: Paired end file' ${filename2} 'does not exists in' $(basename ${pathdata}) '. Cannot proceeed with processing.' && exit 1
-fi
-
-
-
-
-### Creating log file
-echo ''
-echo 'Creating log file ...'
-echo ${filename1}	$(date +%F_%T) > ${pathdata}/${filename1%.fastq*}'_log.txt'
-if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
-then
-	echo 'Paired end reads with paired file:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-	echo ${filename2} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filename2} ]]
-then
-	echo 'Paired end reads with paired reads in same file' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-fi
-
-echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-echo 'Trimming options:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-
-if [[ ${trimming_software} =~ ^[bB]$ ]]
-then
-	echo 'BBDuk' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-	echo ${trimming_settings_bbduk} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-elif [[ ${trimming_software} =~ ^[tT]$ ]]
-then
-	echo 'Trimmomatic' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-	echo ${trimmomatic_initialization} ${trimming_settings_trimmomatic} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-fi
-
-echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-echo 'Alignment options:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-echo ${alignment_settings} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-echo 'Reference genome used:' ${name_refgenome} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-echo 'Adapter sequences from adapters.fa:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-cat ${path_bbduk_adapters} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
 
 
 
@@ -365,13 +335,57 @@ fi
 
 
 
-echo 'Processing completed.'
-
 if [[ ${delete_sam} =~ ^[tT]$ ]]
 then
 	echo 'Removing .sam file ...'
 	rm ${path_align_out}/${filename_sam}
 	echo 'sam file removed.'
 fi
+
+
+
+
+
+
+### Creating log file
+echo ''
+echo 'Creating log file ...'
+echo ${filename1}	$(date +%F_%T) > ${pathdata}/${filename1%.fastq*}'_log.txt'
+if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+then
+	echo 'Paired end reads with paired file:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+	echo ${filename2} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filename2} ]]
+then
+	echo 'Paired end reads with paired reads in same file' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+fi
+
+echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo 'Trimming options:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+
+if [[ ${trimming_software} =~ ^[bB]$ ]]
+then
+	echo 'BBDuk' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+	echo ${trimming_settings_bbduk} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+elif [[ ${trimming_software} =~ ^[tT]$ ]]
+then
+	echo 'Trimmomatic' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+	echo ${trimmomatic_initialization} ${trimming_settings_trimmomatic} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+fi
+
+echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo 'Alignment options:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo ${alignment_settings} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo 'Reference genome used:' ${name_refgenome} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo 'Adapter sequences from adapters.fa:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+cat ${path_bbduk_adapters} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+
+
+
+
+
+echo 'Processing completed.'
 
 
