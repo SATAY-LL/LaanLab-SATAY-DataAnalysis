@@ -140,8 +140,11 @@ filename_sort=${filename1%$extension*}'_trimmed.sorted.bam'
 
 
 # Define path output directory fastqc
-path_fastqc_out=${pathdata}/fastqc_out
-[ ! -d ${path_fastqc_out} ] && echo 'Creating fastqc output folder ...' && mkdir ${path_fastqc_out} || echo 'Folder for fastqc output exists with name:' $(basename ${path_fastqc_out})
+if [[ ${quality_check_raw} =~ ^[tT]$ ]] && [[ ${quality_check_trim} =~ ^[tT]$ ]]
+then
+	path_fastqc_out=${pathdata}/fastqc_out
+	[ ! -d ${path_fastqc_out} ] && echo 'Creating fastqc output folder ...' && mkdir ${path_fastqc_out} || echo 'Folder for fastqc output exists with name:' $(basename ${path_fastqc_out})
+fi
 
 # Define path output directory trimming
 path_trimm_out=${pathdata}/trimm_out
@@ -157,7 +160,7 @@ path_sf=/media/sf_VMSharedFolder_Ubuntu64_1/
 # Define paths to reference genomes (both S288C and W303)
 path_refgenome=/home/gregoryvanbeek/Documents/Reference_Sequences/Reference_Sequence_S288C/S288C_reference_sequence_R64-2-1_20150113.fsa
 name_refgenome='S288C'
-if [ ! -d ${path_refgenome}] #if path to reference genome does not exist
+if [ ! -f ${path_refgenome} ] #if path to reference genome does not exist
 then
 	echo 'ERROR: Reference genome not found at location:' ${path_refgenome} && exit 1
 else
