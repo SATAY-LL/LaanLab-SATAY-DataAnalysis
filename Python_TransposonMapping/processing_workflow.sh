@@ -120,7 +120,7 @@ fi
 
 
 # Get extension of the file
-extension='.'$(echo $filename1 | rev | cut -d. -f2 | rev)
+extension='.'$(echo $filename1 | rev | cut -d. -f1 | rev)
 if [[ extension='.gz' ]]
 then
 	extension='.'$(echo $filename1 | rev | cut -d. -f2 | rev)
@@ -128,16 +128,15 @@ fi
 
 
 
-
 # Define filename for trimming and alignment results
-filename_trimmed1=${filename1%.fastq*}'_trimmed.fastq'
+filename_trimmed1=${filename1%$extension*}'_trimmed.fastq'
 if ! [[ -z ${filename2} ]] #if not filename2 is empty string
 then
-	filename_trimmed2=${filename2%.fastq*}'_trimmed.fastq'
+	filename_trimmed2=${filename2%$extension*}'_trimmed.fastq'
 fi
-filename_sam=${filename1%.fastq*}'_trimmed.sam'
-filename_bam=${filename1%.fastq*}'_trimmed.bam'
-filename_sort=${filename1%.fastq*}'_trimmed.sorted.bam'
+filename_sam=${filename1%$extension*}'_trimmed.sam'
+filename_bam=${filename1%$extension*}'_trimmed.bam'
+filename_sort=${filename1%$extension*}'_trimmed.sorted.bam'
 
 
 # Define path output directory fastqc
@@ -192,7 +191,7 @@ echo ''
 # Quality checking raw data
 if [[ ${quality_check_raw} =~ ^[tT]$ ]]
 then
-	if [[ ! -e ${path_fastqc_out}/${filename1%.fastq*}'_fastqc.html' ]]
+	if [[ ! -e ${path_fastqc_out}/${filename1%$extension*}'_fastqc.html' ]]
 	then
 		echo 'Quality checking raw data ...'
 		fastqc --outdir ${path_fastqc_out} ${pathdata}/${filename1}
@@ -362,37 +361,37 @@ fi
 ### Creating log file
 echo ''
 echo 'Creating log file ...'
-echo ${filename1}	$(date +%F_%T) > ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo ${filename1}	$(date +%F_%T) > ${pathdata}/${filename1%$extension*}'_log.txt'
 if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
 then
-	echo 'Paired end reads with paired file:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-	echo ${filename2} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+	echo 'Paired end reads with paired file:' >> ${pathdata}/${filename1%$extension*}'_log.txt'
+	echo ${filename2} >> ${pathdata}/${filename1%$extension*}'_log.txt'
 elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filename2} ]]
 then
-	echo 'Paired end reads with paired reads in same file' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+	echo 'Paired end reads with paired reads in same file' >> ${pathdata}/${filename1%$extension*}'_log.txt'
 fi
 
-echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-echo 'Trimming options:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo '' >> ${pathdata}/${filename1%$extension*}'_log.txt'
+echo 'Trimming options:' >> ${pathdata}/${filename1%$extension*}'_log.txt'
 
 if [[ ${trimming_software} =~ ^[bB]$ ]]
 then
-	echo 'BBDuk' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-	echo ${trimming_settings_bbduk} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+	echo 'BBDuk' >> ${pathdata}/${filename1%$extension*}'_log.txt'
+	echo ${trimming_settings_bbduk} >> ${pathdata}/${filename1%$extension*}'_log.txt'
 elif [[ ${trimming_software} =~ ^[tT]$ ]]
 then
-	echo 'Trimmomatic' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-	echo ${trimmomatic_initialization} ${trimming_settings_trimmomatic} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+	echo 'Trimmomatic' >> ${pathdata}/${filename1%$extension*}'_log.txt'
+	echo ${trimmomatic_initialization} ${trimming_settings_trimmomatic} >> ${pathdata}/${filename1%$extension*}'_log.txt'
 fi
 
-echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-echo 'Alignment options:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-echo ${alignment_settings} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-echo 'Reference genome used:' ${name_refgenome} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-echo '' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-echo 'Adapter sequences from adapters.fa:' >> ${pathdata}/${filename1%.fastq*}'_log.txt'
-cat ${path_bbduk_adapters} >> ${pathdata}/${filename1%.fastq*}'_log.txt'
+echo '' >> ${pathdata}/${filename1%$extension*}'_log.txt'
+echo 'Alignment options:' >> ${pathdata}/${filename1%$extension*}'_log.txt'
+echo ${alignment_settings} >> ${pathdata}/${filename1%$extension*}'_log.txt'
+echo '' >> ${pathdata}/${filename1%$extension*}'_log.txt'
+echo 'Reference genome used:' ${name_refgenome} >> ${pathdata}/${filename1%$extension*}'_log.txt'
+echo '' >> ${pathdata}/${filename1%$extension*}'_log.txt'
+echo 'Adapter sequences from adapters.fa:' >> ${pathdata}/${filename1%$extension*}'_log.txt'
+cat ${path_bbduk_adapters} >> ${pathdata}/${filename1%$extension*}'_log.txt'
 
 
 
