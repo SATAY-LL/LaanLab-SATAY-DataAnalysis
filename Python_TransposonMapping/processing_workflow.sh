@@ -24,7 +24,7 @@
 
 ####################### USER SETTINGS ######################
 # Define whether data is paired-end ('t' for paired-end, 'f' for single end)
-paired='t'
+paired=F
 
 # Define filename (can also be a zipped file ending with .gz). Use filename2 for paired end or leave empty for single end or interleaved paired end (i.e. paired end reads are in single file).
 filename1='SRR062634.filt.fastq.gz'
@@ -58,15 +58,15 @@ alignment_settings='-B 2 -O 3'
 
 
 # Create sorted and indexed bam file ('y' for yes, 'n' for no)?
-sort_and_index='y'
+sort_and_index=T
 
 
-# Apply transposon mapping (requires sort_and_index='y')
-mapping='y'
+# Apply transposon mapping (requires sort_and_index=T)
+mapping=T
 
 
 # Save sam file ('y' for yes, 'n' for no)? This file is always converted to its binary equivalent (.bam ) and the sam file is rarely used but takes up relatively a lot of memory.
-delete_sam='n'
+delete_sam=F
 
 # Create quality report of raw data (before trimming)?
 quality_check_raw=T
@@ -326,7 +326,7 @@ samtools quickcheck ${path_align_out}/${filename_bam}
 echo ''
 
 # Indexing and sorting bam file
-if [[ ${sort_and_index} =~ ^[yY]$ ]]
+if [[ ${sort_and_index} =~ ^[tT]$ ]]
 then
 	echo 'Indexing bam file ...'
 	sambamba-0.7.1-linux-static sort -m 500MB ${path_align_out}/${filename_bam}
@@ -336,7 +336,7 @@ fi
 
 
 # Transposon mapping
-if [[ ${mapping} =~ ^[yY]$ ]]
+if [[ ${mapping} =~ ^[tT]$ ]]
 then
 	echo 'Transposon mapping ...'
 	cd ~/Documents/Software/python_codes
@@ -352,7 +352,7 @@ fi
 # Moving results to shared folder.
 echo 'Processing completed.'
 
-if [[ ${delete_sam} =~ ^[yY]$ ]]
+if [[ ${delete_sam} =~ ^[tT]$ ]]
 then
 	echo 'Removing .sam file ...'
 	rm ${path_align_out}/${filename_sam}
