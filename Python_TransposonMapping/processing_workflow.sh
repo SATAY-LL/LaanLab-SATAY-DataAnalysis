@@ -2,20 +2,22 @@
 
 ### This workflow is developed for automatically preprocessing sequencing data.
 ### The variables stored in the USER SETTINGS block should be checked and potentially changed for each dataset.
-### The other lines can be left as they are.
-### A folder with name given in the 'foldername' variable is created in '~/Documents/data_processing'.
-### Within this folder, three more folders are generated for the output of the quality report, trimming and alignment.
+### The other lines should be left as they are.
+### Within the folder where the datafile is located, three more folders are generated for the output of the quality report, trimming and alignment.
 ### Settings for trimming and alignment should be set in the 'trimming_settings' and 'alignment_settings' variables respectively.
 ### Adapter sequences for trimming should be stored in '~/Documents/Software/BBMap/bbmap/resources/adapters.fa' respecting fasta convention.
-### The software is called in this order: 1.Quality checking (fastqc) 2.trimming (bbduk) 3.Quality checking trimmed data (fastqc) 4.alignment (bwa) 5.converting sam to bam (samtools) 6.indexing bam file (sambamba) 7.transposon mapping (python).
-### Finally, the data file and all the created files are moved to the shared folder.
+### The software is called in this order: 1.Quality checking (fastqc) 2.trimming (bbduk or trimmomatic) 3.Quality checking trimmed data (fastqc) 4.alignment (bwa) 5.converting sam to bam (samtools) 6.indexing bam file (sambamba) 7.transposon mapping (python).
+### The quality checking (either before or after trimming) can be disabled.
+###
 ### There are two trimming software packages, 'bbduk' and 'trimmomatic'.
 ### You can use either one of them by settings the appropriate option in the USER SETTINGS.
 ### When selecting one trimming software, the options of the other program will be ignored.
-### The workflow will ask after the first quality report if you want to continue.
+###
+### The workflow will ask after the first quality report if you want to continue (if enabled).
 ### Pressing 'n' will abort the workflow and allows you to make changes according to the quality report.
-### The quality report can be accessed at the location ~/Documents/data_processing/[yourdatafolder]/fastqc_out/[filename].html
+### The quality report can be accessed at the location [yourdatafolder]/fastqc_out/[filename].html
 ### Restarting the workflow cause it to skip over the initial quality report (unless you deleted it) and continues with the trimming and alignment steps.
+###
 ### In case of emergency, press ctrl-c (possibly multiple times) in the terminal.
 
 
@@ -68,7 +70,7 @@ delete_sam=F
 
 
 # Open adapters.fa file after the first quality check in order to change the adapters for trimming.
-open_adapters=F
+#open_adapters=F
 
 
 # Create quality report of raw data (before trimming)?
@@ -92,7 +94,7 @@ echo 'Preparing processing for' $(basename ${filepath1}) '...'
 echo ''
 
 
-datapath=$(dirname ${filepath1})
+pathdata=$(dirname ${filepath1})
 filename1=$(basename ${filepath1})
 if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
 then
@@ -101,7 +103,7 @@ fi
 
 
 
-if [ ! -f $filepath1 ]
+if [ ! -f ${filepath1} ]
 then
 	echo 'ERROR: File' ${filepath1} 'not found.' && exit 1
 fi
@@ -109,11 +111,21 @@ fi
 
 if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
 then
-	if [ ! -f $filepath2 ]
+	if [ ! -f ${filepath2} ]
 	then
 		echo 'ERROR: File' ${filepath2} 'not found.' && exit 1
 	fi
 fi
+
+
+
+# Get extension of the file
+extension='.'$(echo $filename1 | rev | cut -d. -f2 | rev)
+if [[ extension='.gz' ]]
+then
+	extension='.'$(echo $filename1 | rev | cut -d. -f2 | rev)
+fi
+
 
 
 
@@ -146,7 +158,7 @@ path_sf=/media/sf_VMSharedFolder_Ubuntu64_1/
 # Define paths to reference genomes (both S288C and W303)
 path_refgenome=/home/gregoryvanbeek/Documents/Reference_Sequences/Reference_Sequence_S288C/S288C_reference_sequence_R64-2-1_20150113.fsa
 name_refgenome='S288C'
-if [! -d ${path_refgenome}] #if path to reference genome does not exist
+if [ ! -d ${path_refgenome}] #if path to reference genome does not exist
 then
 	echo 'ERROR: Reference genome not found at location:' ${path_refgenome} && exit 1
 else
@@ -210,12 +222,12 @@ then
 fi
 
 
-if [[ ${open_adapters} =~ ^[tT]$ ]]
-then
-	echo "Adapter.fa file is being opened..."
-	xdg-open ~/Documents/Software/BBMap/bbmap/resources/adapters.fa
-	read -s -p "Press enter to continue"
-fi
+#if [[ ${open_adapters} =~ ^[tT]$ ]]
+#then
+#	echo "Adapter.fa file is being opened..."
+#	xdg-open ~/Documents/Software/BBMap/bbmap/resources/adapters.fa
+#	read -s -p "Press enter to continue"
+#fi
 
 
 # Trimming
