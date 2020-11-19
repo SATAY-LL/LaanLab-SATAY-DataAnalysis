@@ -26,9 +26,11 @@
 # Define whether data is paired-end ('t' for paired-end, 'f' for single end)
 paired=F
 
+
 # Define filename (can also be a zipped file ending with .gz). Use filename2 for paired end or leave empty for single end or interleaved paired end (i.e. paired end reads are in single file).
 filename1='SRR062634.filt.fastq.gz'
 filename2=''
+
 
 # Define foldername where the analysis results are stored. This will be stored at the location where the data files are stored.
 foldername='test_folder'
@@ -53,6 +55,10 @@ trimming_settings_trimmomatic='ILLUMINACLIP:adapters.fa:0:30:10 SLIDINGWINDOW:10
 ###############################################
 
 
+# Open adapters.fa file after the first quality check in order to change the adapters for trimming.
+open_adapters=T
+
+
 # Set options for alignment software (bwa mem)
 alignment_settings='-B 2 -O 3'
 
@@ -68,11 +74,14 @@ mapping=T
 # Save sam file ('y' for yes, 'n' for no)? This file is always converted to its binary equivalent (.bam ) and the sam file is rarely used but takes up relatively a lot of memory.
 delete_sam=F
 
+
 # Create quality report of raw data (before trimming)?
 quality_check_raw=T
 
+
 # Create quality report of trimmed data (after trimming)?
 quality_check_trim=T
+
 
 # Determine whether the script should automatically continue after creating the first quality report. Set to yes if you might want to make changes depending on the quality report of the raw data.
 qualitycheck_interrupt=T
@@ -231,6 +240,14 @@ then
 fi
 
 
+if [[ ${open_adapters} =~ ^[tT]$ ]]
+then
+	echo "Adapter.fa file is being opened..."
+	xdg-open ~/Documents/Software/BBMap/bbmap/resources/adapters.fa
+	read -s -p "Press enter to continue"
+fi
+
+
 # Trimming
 if [[ ${trimming_software} =~ ^[bB]$ ]]
 then
@@ -280,8 +297,7 @@ then
 	fi
 
 else
-	echo 'Trimming software not recognized, please check settings'
-	exit 1
+	echo 'Trimming software not recognized, please check settings' && exit 1
 fi
 
 
@@ -349,7 +365,6 @@ fi
 
 
 
-# Moving results to shared folder.
 echo 'Processing completed.'
 
 if [[ ${delete_sam} =~ ^[tT]$ ]]
@@ -358,12 +373,5 @@ then
 	rm ${path_align_out}/${filename_sam}
 	echo 'sam file removed.'
 fi
-
-echo 'Moving results to shared folder ...'
-mv ${pathdata} ${path_sf}
-[ -d ${path_sf}$(basename ${pathdata}) ] && echo 'Files sucessfully moved to shared folder.' || 'WARNING: Files not moved to shared folder.'
-
-
-
 
 
