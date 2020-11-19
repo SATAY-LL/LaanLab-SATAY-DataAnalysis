@@ -30,7 +30,7 @@ paired='t'
 filename1='SRR062634.filt.fastq.gz'
 filename2=''
 
-# Define foldername where the analysis results are stored
+# Define foldername where the analysis results are stored. This will be stored at the location where the data files are stored.
 foldername='test_folder'
 
 
@@ -67,6 +67,12 @@ mapping='y'
 
 # Save sam file ('y' for yes, 'n' for no)? This file is always converted to its binary equivalent (.bam ) and the sam file is rarely used but takes up relatively a lot of memory.
 delete_sam='n'
+
+# Create quality report of raw data (before trimming)?
+quality_check_raw=T
+
+# Create quality report of trimmed data (after trimming)?
+quality_check_trim=T
 
 # Determine whether the script should automatically continue after creating the first quality report. Set to yes if you might want to make changes depending on the quality report of the raw data.
 qualitycheck_interrupt=T
@@ -193,33 +199,37 @@ echo ''
 
 
 # Quality checking raw data
-if [[ ! -e ${path_fastqc_out}/${filename1%.fastq*}'_fastqc.html' ]]
+if [[ ${quality_check_raw} =~ ^[tT]$ ]]
 then
-	echo 'Quality checking raw data ...'
-	fastqc --outdir ${path_fastqc_out} ${pathdata}/${filename1}
-	echo 'Quality checking raw data completed. Results are stored at' ${path_fastqc_out}
-	echo ''
-
-	if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+	if [[ ! -e ${path_fastqc_out}/${filename1%.fastq*}'_fastqc.html' ]]
 	then
-		fastqc --outdir ${path_fastqc_out} ${pathdata}/${filename2}
-		echo 'Quality checking raw data paired end reads completed. Results are stored at' ${path_fastqc_out}
+		echo 'Quality checking raw data ...'
+		fastqc --outdir ${path_fastqc_out} ${pathdata}/${filename1}
+		echo 'Quality checking raw data completed. Results are stored at' ${path_fastqc_out}
 		echo ''
+
+		if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+		then
+			fastqc --outdir ${path_fastqc_out} ${pathdata}/${filename2}
+			echo 'Quality checking raw data paired end reads completed. Results are stored at' ${path_fastqc_out}
+			echo ''
+		fi
+	else
+		echo 'Quality report raw data already exists. Skipping fastqc'
 	fi
-else
-	echo 'Quality report raw data already exists. Skipping fastqc'
-fi
 
 
-if [[ ${qualitycheck_interrupt} =~ ^[tT]$ ]]
-then
-	read -p 'Continue processing? (press "y" if yes, press "n" if no): ' -n 1 -r
-	echo
-	if [[ ! $REPLY =~ ^[yY]$ ]]
+	if [[ ${qualitycheck_interrupt} =~ ^[tT]$ ]]
 	then
-		exit 1
+		read -p 'Continue processing? (press "y" if yes, press "n" if no): ' -n 1 -r
+		echo
+		if [[ ! $REPLY =~ ^[yY]$ ]]
+		then
+			exit 1
+		fi
 	fi
 fi
+
 
 # Trimming
 if [[ ${trimming_software} =~ ^[bB]$ ]]
@@ -274,18 +284,23 @@ else
 	exit 1
 fi
 
+
 # Quality report trimmed data
-echo 'Quality checking trimmed data ...'
-fastqc --outdir ${path_fastqc_out} ${path_trimm_out}/${filename_trimmed1}
-echo 'Quality checking trimmed data completed. Results are stored at' ${path_fastqc_out}
-echo ''
-if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+if [[ ${quality_check_trim} =~ ^[tT]$ ]]
 then
-	echo 'Quality checking trimmed data paired end reads ...'
-	fastqc --outdir ${path_fastqc_out} ${path_trimm_out}/${filename_trimmed2}
-	echo 'Quality checking trimmed data paired end reads completed. Results are stored at' ${path_fastqc_out}
+	echo 'Quality checking trimmed data ...'
+	fastqc --outdir ${path_fastqc_out} ${path_trimm_out}/${filename_trimmed1}
+	echo 'Quality checking trimmed data completed. Results are stored at' ${path_fastqc_out}
 	echo ''
+	if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+	then
+		echo 'Quality checking trimmed data paired end reads ...'
+		fastqc --outdir ${path_fastqc_out} ${path_trimm_out}/${filename_trimmed2}
+		echo 'Quality checking trimmed data paired end reads completed. Results are stored at' ${path_fastqc_out}
+		echo ''
+	fi
 fi
+
 
 # Sequence alignment
 echo 'Sequence alignment ...'
