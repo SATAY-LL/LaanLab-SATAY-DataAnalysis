@@ -140,7 +140,7 @@ filename_sort=${filename1%$extension*}'_trimmed.sorted.bam'
 
 
 # Define path output directory fastqc
-if [[ ${quality_check_raw} =~ ^[tT]$ ]] && [[ ${quality_check_trim} =~ ^[tT]$ ]]
+if [[ ${quality_check_raw} =~ ^[tT]$ ]] || [[ ${quality_check_trim} =~ ^[tT]$ ]]
 then
 	path_fastqc_out=${pathdata}/fastqc_out
 	[ ! -d ${path_fastqc_out} ] && echo 'Creating fastqc output folder ...' && mkdir ${path_fastqc_out} || echo 'Folder for fastqc output exists with name:' $(basename ${path_fastqc_out})
