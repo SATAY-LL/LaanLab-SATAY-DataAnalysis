@@ -30,7 +30,7 @@ paired=F
 
 
 # Define filename (can also be a zipped file ending with .gz). Use filename2 for paired end or leave empty for single end or interleaved paired end (i.e. paired end reads are in single file).
-filepath1=/home/laanlab/Documents/satay/datasets/SRR062634.filt.fastq.gz
+filepath1=/home/laanlab/Documents/satay/datasets/testfolder/SRR062634.filt.fastq.gz
 filepath2=''
 
 
@@ -40,6 +40,7 @@ trimming_software='b'
 
 ###    bbduk    ###
 trimming_settings_bbduk='ktrim=r k=4 hdist=0 qtrim=r trimq=4'
+#trimming_settings_bbduk='ktrim=r k=4 hdist=0 qtrim=r trimq=4 tpe tbo'
 ## Set adapter sequences
 ## Open file using xdg-open /home/laanlab/Documents/satay/software/bbmap/resources/adapters.fa
 ###################
@@ -74,11 +75,11 @@ delete_sam=F
 
 
 # Create quality report of raw data (before trimming)?
-quality_check_raw=F
+quality_check_raw=T
 
 
 # Create quality report of trimmed data (after trimming)?
-quality_check_trim=F
+quality_check_trim=T
 
 
 # Determine whether the script should automatically continue after creating the first quality report. Set to yes if you might want to make changes depending on the quality report of the raw data.
@@ -96,7 +97,7 @@ echo ''
 
 pathdata=$(dirname ${filepath1})
 filename1=$(basename ${filepath1})
-if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filepath2} ]]
 then
 	filename2=$(basename ${filepath2})
 fi
@@ -109,7 +110,7 @@ then
 fi
 
 
-if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filepath2} ]]
 then
 	if [ ! -f ${filepath2} ]
 	then
@@ -155,7 +156,7 @@ path_align_out=${pathdata}/align_out
 [ ! -d ${path_align_out} ] && echo 'Creating alignment output folder ...' && mkdir ${path_align_out} || echo 'Folder for alignment output exists with name:' $(basename ${path_align_out})
 
 # Define paths to reference genomes (both S288C and W303)
-path_refgenome=/home/laanlab/Documents/satay/reference_sequences/Cerevisiae_S288C_RefR64-2-1/S288C_reference_sequence_R64-2-1_20150113.fsa
+path_refgenome=/home/laanlab/Documents/satay/reference_sequences/Cerevisiae_S288C_reference/S288C_reference_sequence_R64-2-1_20150113.fsa
 name_refgenome='S288C'
 if [ ! -f ${path_refgenome} ] #if path to reference genome does not exist
 then
@@ -165,16 +166,16 @@ else
 fi
 
 # Define path bbduk software
-path_bbduk_software=/home/laanlab/Documents/satay/software/bbmap
+path_bbduk_software=/home/laanlab/Documents/satay/software/bbmap/
 path_bbduk_adapters=${path_bbduk_software}/resources/adapters.fa
 [ ! -d ${path_ddbuk_software} ] && echo 'WARNING: Path to bbduk software does not exists.'
 
 # Define path trimmomatic software
-path_trimm_software=/home/laanlab/Documents/satay/software/Trimmomatic-0.39
+path_trimm_software=/home/laanlab/Documents/satay/software/Trimmomatic-0.39/
 [ ! -d ${path_trimm_software} ] && echo 'WARNING: Path to trimmomatic software does not exists.'
 
 # Define path to python script
-path_python_codes=/home/laanlab/Documents/satay/software/python_codes
+path_python_codes=/home/laanlab/Documents/satay/software/python_codes/
 [ ! -d ${path_python_codes} ] && echo 'WARNING: Path to python codes does not exists.'
 
 
@@ -198,7 +199,7 @@ then
 		echo 'Quality checking raw data completed. Results are stored at' ${path_fastqc_out}
 		echo ''
 
-		if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+		if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filepath2} ]]
 		then
 			fastqc --outdir ${path_fastqc_out} ${pathdata}/${filename2}
 			echo 'Quality checking raw data paired end reads completed. Results are stored at' ${path_fastqc_out}
@@ -235,20 +236,20 @@ then
 	if [[ ${paired} =~ ^[fF]$ ]]
 	then
 		echo 'Data trimming using bbduk single end reads...'
-		${path_bbduk_software}bbduk.sh -Xmx1g in=${pathdata}/${filename1} out=${path_trimm_out}/${filename_trimmed1} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
+		${path_bbduk_software}bbduk.sh -Xmx2g in=${pathdata}/${filename1} out=${path_trimm_out}/${filename_trimmed1} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
 		echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed1}
 		echo ''
-	elif [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+	elif [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filepath2} ]]
 	then
 		echo 'Data trimming using bbduk paired end reads...'
-		${path_bbduk_software}bbduk.sh -Xmx1g in1=${pathdata}/${filename1} out1=${path_trimm_out}/${filename_trimmed1} in2=${pathdata}/${filename2} out2=${path_trimm_out}/${filename_trimmed2} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
+		${path_bbduk_software}bbduk.sh -Xmx2g in1=${pathdata}/${filename1} out1=${path_trimm_out}/${filename_trimmed1} in2=${pathdata}/${filename2} out2=${path_trimm_out}/${filename_trimmed2} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
 		echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed1} 'and for the paired end reads in' ${path_trimm_out}/${filename_trimmed2}
 		echo ''
 
-	elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filename2} ]]
+	elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filepath2} ]]
 	then
 		echo 'Data trimming using bbduk paired end reads...'
-		${path_bbduk_software}bbduk.sh -Xmx1g interleaved=t in=${pathdata}/${filename1} out=${path_trimm_out}/${filename_trimmed1} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
+		${path_bbduk_software}bbduk.sh -Xmx2g interleaved=t in=${pathdata}/${filename1} out=${path_trimm_out}/${filename_trimmed1} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
 		echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed1}
 		echo ''
 	fi
@@ -263,7 +264,7 @@ then
 		java -jar ${path_trimm_software}trimmomatic-0.39.jar SE ${trimmomatic_initialization} ${pathdata}/${filename1} ${path_trimm_out}/${filename_trimmed1} ${trimming_settings_trimmomatic}
 		cd ${currentpath}
 
-	elif [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+	elif [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filepath2} ]]
 	then
 		echo 'Data trimming using trimmomatic ...'
 		currentpath=$(pwd)
@@ -271,7 +272,7 @@ then
 		java -jar ${path_trimm_software}trimmomatic-0.39.jar PE ${trimmomatic_initialization} ${pathdata}/${filename1} ${pathdata}/${filename2} ${path_trimm_out}/${filename_trimmed1} ${path_trimm_out}/${filename_trimmed1%_trimmed.fastq*}'_trimmedorphanedreads.fastq' ${path_trimm_out}/${filename_trimmed2} ${path_trimm_out}/${filename_trimmed1%_trimmed.fastq*}'_trimmedorphanedreads.fastq' ${trimming_settings_trimmomatic}
 		cd ${currentpath}
 
-	elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filename2} ]]
+	elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filepath2} ]]
 	then
 		echo 'Enter two input files for using paired end reads with Trimmomatic.'
 		exit 1
@@ -289,7 +290,7 @@ then
 	fastqc --outdir ${path_fastqc_out} ${path_trimm_out}/${filename_trimmed1}
 	echo 'Quality checking trimmed data completed. Results are stored at' ${path_fastqc_out}
 	echo ''
-	if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+	if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filepath2} ]]
 	then
 		echo 'Quality checking trimmed data paired end reads ...'
 		fastqc --outdir ${path_fastqc_out} ${path_trimm_out}/${filename_trimmed2}
@@ -301,10 +302,10 @@ fi
 
 # Sequence alignment
 echo 'Sequence alignment ...'
-if [[ ${paired} =~ ^[fF]$ ]] || [[ -z ${filename2} ]]
+if [[ ${paired} =~ ^[fF]$ ]] || [[ -z ${filepath2} ]]
 then
 	bwa mem ${alignment_settings} ${path_refgenome} ${path_trimm_out}/${filename_trimmed1} > ${path_align_out}/${filename_sam}
-elif [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+elif [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filepath2} ]]
 then 
 	bwa mem ${alignment_settings} ${path_refgenome} ${path_trimm_out}/${filename_trimmed1} ${path_trimm_out}/${filename_trimmed2} > ${path_align_out}/${filename_sam}
 fi
@@ -336,7 +337,7 @@ fi
 if [[ ${mapping} =~ ^[tT]$ ]]
 then
 	echo 'Transposon mapping ...'
-	cd ~/Documents/Software/python_codes
+	cd /home/laanlab/Documents/satay/software/python_codes
 	python3 ${path_python_codes}transposonmapping_satay.py ${path_align_out}/${filename_sort}
 	cd ~/
 	echo ''
@@ -362,11 +363,11 @@ fi
 echo ''
 echo 'Creating log file ...'
 echo ${filename1}	$(date +%F_%T) > ${pathdata}/${filename1%$extension*}'_log.txt'
-if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filename2} ]]
+if [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filepath2} ]]
 then
 	echo 'Paired end reads with paired file:' >> ${pathdata}/${filename1%$extension*}'_log.txt'
 	echo ${filename2} >> ${pathdata}/${filename1%$extension*}'_log.txt'
-elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filename2} ]]
+elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filepath2} ]]
 then
 	echo 'Paired end reads with paired reads in same file' >> ${pathdata}/${filename1%$extension*}'_log.txt'
 fi
