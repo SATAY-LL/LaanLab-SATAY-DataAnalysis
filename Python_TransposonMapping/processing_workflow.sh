@@ -30,7 +30,7 @@ paired=F
 
 
 # Define filename (can also be a zipped file ending with .gz). Use filename2 for paired end or leave empty for single end or interleaved paired end (i.e. paired end reads are in single file).
-filepath1=/home/gregoryvanbeek/Documents/data_processing/testfolder/SRR062634.filt.fastq.gz
+filepath1=/home/laanlab/Documents/satay/datasets/SRR062634.filt.fastq.gz
 filepath2=''
 
 
@@ -41,14 +41,14 @@ trimming_software='b'
 ###    bbduk    ###
 trimming_settings_bbduk='ktrim=r k=4 hdist=0 qtrim=r trimq=4'
 ## Set adapter sequences
-## Open file using xdg-open ~/Documents/Software/BBMap/bbmap/resources/adapters.fa
+## Open file using xdg-open /home/laanlab/Documents/satay/software/bbmap/resources/adapters.fa
 ###################
 
 ### trimmomatic ###
 trimmomatic_initialization='-phred33'
 trimming_settings_trimmomatic='ILLUMINACLIP:adapters.fa:0:30:10 SLIDINGWINDOW:10:4 MINLEN:30'
 ## Set adapter sequences
-## Open file using xdg-open ~/Documents/Software/BBMap/bbmap/resources/adapters.fa
+## Open file using xdg-open /home/laanlab/Documents/satay/software/bbmap/resources/adapters.fa
 ###################
 ###############################################
 
@@ -154,11 +154,8 @@ path_trimm_out=${pathdata}/trimm_out
 path_align_out=${pathdata}/align_out
 [ ! -d ${path_align_out} ] && echo 'Creating alignment output folder ...' && mkdir ${path_align_out} || echo 'Folder for alignment output exists with name:' $(basename ${path_align_out})
 
-# Define path shared folder
-path_sf=/media/sf_VMSharedFolder_Ubuntu64_1/
-
 # Define paths to reference genomes (both S288C and W303)
-path_refgenome=/home/gregoryvanbeek/Documents/Reference_Sequences/Reference_Sequence_S288C/S288C_reference_sequence_R64-2-1_20150113.fsa
+path_refgenome=/home/laanlab/Documents/satay/reference_sequences/Cerevisiae_S288C_RefR64-2-1/S288C_reference_sequence_R64-2-1_20150113.fsa
 name_refgenome='S288C'
 if [ ! -f ${path_refgenome} ] #if path to reference genome does not exist
 then
@@ -168,16 +165,16 @@ else
 fi
 
 # Define path bbduk software
-path_bbduk_software=~/Documents/Software/BBMap/bbmap/
+path_bbduk_software=/home/laanlab/Documents/satay/software/bbmap
 path_bbduk_adapters=${path_bbduk_software}/resources/adapters.fa
 [ ! -d ${path_ddbuk_software} ] && echo 'WARNING: Path to bbduk software does not exists.'
 
 # Define path trimmomatic software
-path_trimm_software=~/Documents/Software/Trimmomatic-0.39/
+path_trimm_software=/home/laanlab/Documents/satay/software/Trimmomatic-0.39
 [ ! -d ${path_trimm_software} ] && echo 'WARNING: Path to trimmomatic software does not exists.'
 
 # Define path to python script
-path_python_codes=~/Documents/Software/python_codes/
+path_python_codes=/home/laanlab/Documents/satay/software/python_codes
 [ ! -d ${path_python_codes} ] && echo 'WARNING: Path to python codes does not exists.'
 
 
