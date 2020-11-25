@@ -12,30 +12,21 @@ inputfile_list = [r"C:\Users\gregoryvanbeek\Documents\Data_Sets\20201104_Enzo\ra
                   r"C:\Users\gregoryvanbeek\Documents\Data_Sets\20201104_Enzo\raw_data_20201104\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_2.fq"]
 
 
-#barcode_forward_sample1 = "GCCACATA"
-#barcode_reverse_sample1 = "GCGAGTAA"
-#barcode_forward_sample2 = "GAGCTGAA"
-#barcode_reverse_sample2 = "GATAGACA"
-
-barcode_list = ["GCCACATA",
-                "GCGAGTAA",
-                "GAGCTGAA",
-                "GATAGACA"]
-
-barcode_dict = {barcode_list[0]: 'sample1_forward',
-                barcode_list[1]: 'sample1_reverse',
-                barcode_list[2]: 'sample2_forward',
-                barcode_list[3]: 'sample2_reverse'}
+#KEP THE SAME NAMING FORMAT FOR THE SAMPLES (I.E. sample#_...)
+barcode_dict = {"GCCACATA": 'sample1_forward',
+                "GCGAGTAA": 'sample1_reverse',
+                "GAGCTGAA": 'sample2_forward',
+                "GATAGACA": 'sample2_reverse'}
 
 
 
 print("Creating files for storing output data...")
 print('')
-outputfile_list = []
-for i in range(int(len(barcode_list)/2)):
-    outputfile_list.append(os.path.splitext(inputfile_list[0])[0] + '_' + "sample" + str(i+1) + "_forward" + ".fq")
-    outputfile_list.append(os.path.splitext(inputfile_list[0])[0] + '_' + "sample" + str(i+1) + "_reverse" + ".fq")
-print(outputfile_list)
+outputfile_dict = {}
+for barcode, samplename in barcode_dict.items():
+    outputfile_dict[samplename] = os.path.splitext(inputfile_list[0])[0] + '_' + samplename + ".fq"
+outputfile_dict['unmatched'] = os.path.splitext(inputfile_list[0])[0] + '_' + samplename + ".fq"
+print(outputfile_dict)
 print('')
 
 #CREATE FILES FOR EACH OF THE SAMPLES AND ADD THE 4 LINES CORRESPONDING TO A READ TO THE SAMPLE FILE OF THE READ.
@@ -61,14 +52,23 @@ for line1 in f1:
                 print(bc1[0], barcode_dict.get(bc1[0]))
             else:
                 print(bc1)
-    
+
             line2 = f2.readline()
             bc2 = [barcode for barcode in barcode_dict if barcode in line2]
             if not bc2 == []:
                 print(bc2[0], barcode_dict.get(bc2[0]))
             else:
                 print(bc2)
-    
+
+            
+            if not bc1 == [] and not bc2 == []:
+                if barcode_dict.get(bc1[0]).split('_')[0] == barcode_dict.get(bc2[0]).split('_')[0]:
+                    print(barcode_dict.get(bc1[0]).split('_')[0])
+                else:
+                    print("Read pair do not belong to same sample")
+            else:
+                print("Barcode not found in one of the reads")
+
             print('')
             print('')
             temp+=1
