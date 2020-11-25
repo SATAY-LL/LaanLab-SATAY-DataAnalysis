@@ -100,14 +100,11 @@ For a more detailed explanation of the Virtual Machine layout and how to use the
 This and the following steps are only necessary when creating a virtual machine yourself.
 When you want to use the existing virtual machine where all the software is already installed, only follow step 0.
 
-To run a program in the command line, you need to specify the entire path to the location where the program is installed.
+In some of the steps below, to run a program in the command line you need to specify the entire path to the location where the program is installed.
 An easier way is to add the program to the system path. This can be done with the command
 `setx PATH '/path/to/program'`.
 To check if the program is added to the path, use
 `echo $PATH$`.
-
-Some programs requires java to be installed. To check if java is installed, run the command 'java -version' in the command line.
-If it is not installed, download and install it from [https://www.java.com/nl/download/](url)
 
 ### 1. VirtualBox-6.1.4
 
@@ -304,3 +301,8 @@ Conda uses specific locations to search for packages called channels.
 If you want some specific bioinformatic tools, it might be necessary to add the channel 'Bioconda' to Miniconda.
 To do this run the command `conda config --add channels bioconda`.
 Now, more packages can be installed, for example [pysam](https://pysam.readthedocs.io/en/latest/api.html) to read bam files in python.
+
+### 12. Installing JAVA
+
+Some programs requires java to be installed. To check if java is installed, run the command 'java -version' in the command line.
+If it is not installed, download and install it from [https://www.java.com/nl/download/](url).

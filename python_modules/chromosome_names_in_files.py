@@ -145,5 +145,5 @@ def chromosome_name_wigfile(wig_file=None):
 
 #%%
 if __name__ == '__main__':
-#    chromosome_name_bedfile(bed_file=r"C:\Users\gregoryvanbeek\Desktop\Python_matlab_differences\E-MTAB-4885.WT2.bam_python.bed")
-    chromosome_name_wigfile(wig_file=r"C:\Users\gregoryvanbeek\Desktop\Python_matlab_differences\E-MTAB-4885_WT2\E-MTAB-4885.WT2.bam_python.wig")
+    chromosome_name_bedfile(bed_file=r"C:\Users\gregoryvanbeek\Documents\testing_site\wt1_testfolder_w303_LYZE01_1\align_out\ERR1533147_trimmed.sorted.bam.bed")
+#    chromosome_name_wigfile(wig_file=r"C:\Users\gregoryvanbeek\Desktop\Python_matlab_differences\E-MTAB-4885_WT2\E-MTAB-4885.WT2.bam_python.wig")
