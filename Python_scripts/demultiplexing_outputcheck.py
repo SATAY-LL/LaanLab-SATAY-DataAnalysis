@@ -22,8 +22,10 @@ barcode_counter_dict = {"GCCACATA": 0,
                         "GAGCTGAA": 0,
                         "GATAGACA": 0}
 
+line_counter = 0
 for line in f:
     if line.startswith('@'):
+        line_counter += 1
         line_seq = f.readline()
         for barcode in barcode_counter_dict:
             if barcode in line_seq:
@@ -31,6 +33,9 @@ for line in f:
                 break
             else:
                 pass
-
-
+                
 f.close()
+
+print("Total number of reads found: %i" % line_counter)
+print(barcode_counter_dict)
+
