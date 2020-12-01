@@ -9,8 +9,8 @@ import os
 
 
 #DEFINE INPUT FILES (UNZIPPED FASTQ FORMAT)
-inputfile_list = [r"C:\Users\gregoryvanbeek\Documents\Data_Sets\20201104_Enzo\raw_data_20201104\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_1.fq",
-                  r"C:\Users\gregoryvanbeek\Documents\Data_Sets\20201104_Enzo\raw_data_20201104\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_2.fq"]
+inputfile_list = [r"/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_1.fq",
+                  r"/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_2.fq"]
 
 
 #DEFINE BARCODES. KEEP THE SAME NAMING FORMAT FOR THE SAMPLES (I.E. sample#_...)
