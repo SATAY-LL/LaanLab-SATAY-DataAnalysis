@@ -80,18 +80,18 @@ def which_barcode_in_read(files_list=[], barcode_list=[], sample_list=[], saving
     file_counter = 1
     read_header_list = []
     read_seq_list = []
-    read_phred_list = []
+#    read_phred_list = []
     read_barcode_list = []
     read_sample_list = []
-#    read_barcode_dict = {}
-#    read_sample_dict = {}
     for file in files_list:
         with open(file, 'r') as f:
-            print("Analyzing file number %i" % file_counter)
+            print("Analyzing %s" % os.path.basename(file))
 
             for line in f:
                 if line.startswith('@'):
                     line_counter += 1
+#                    if line_counter % 100000:
+#                        print(line_counter)
 
                     line_header = line
                     read_header_list.append(line_header)
@@ -101,8 +101,8 @@ def which_barcode_in_read(files_list=[], barcode_list=[], sample_list=[], saving
                     if not line_dummy[0] == '+':
                         print('WARNING: dummy line in sequence is not +.')
                         print(line_header)
-                    line_phred = f.readline()
-                    read_phred_list.append(line_phred)
+#                    line_phred = f.readline()
+#                    read_phred_list.append(line_phred)
 
                     barcode_counter = 0
                     for barcode in barcode_counter_dict:
@@ -113,13 +113,10 @@ def which_barcode_in_read(files_list=[], barcode_list=[], sample_list=[], saving
 
                             read_barcode_list.append(barcode)
                             read_sample_list.append(barcode_sample_dict.get(barcode))
-#                            read_barcode_dict[line_header] = barcode
-#                            read_sample_dict[line_header] = barcode_sample_dict.get(barcode)
                             break
                         elif barcode_counter >= len(barcode_list):
                             read_barcode_list.append('N')
                             read_sample_list.append(0)
-#                            read_barcode_dict[line_header] = 'N'
 
 #                    if line_counter > 10:
 #                        break
@@ -130,17 +127,39 @@ def which_barcode_in_read(files_list=[], barcode_list=[], sample_list=[], saving
         file_counter += 1
 
     reads_dict = {"header": read_header_list,
-                    "sequence": read_seq_list,
-                    "phred": read_phred_list,
-                    "barcode": read_barcode_list,
-                    "sample": read_sample_list}
+                  "sample": read_sample_list}
 
     reads_df = pd.DataFrame(reads_dict, columns = [column_name for column_name in reads_dict])
 
-    return(reads_df)
+
+#    pair_sample = [0]*len(reads_df)
+#    for index, row in reads_df.iterrows():
+##        print('Current index: %i with sample number %i' % (index, row['sample']))
+#        header_split = row['header'].split(' ') #split header to find pair number (first number after space in header)
+#        if header_split[1].startswith('1'): #only analyze pair number 1. next line searches for same header for pair number 2.
+#            readpair_sample = reads_df.loc[reads_df['header'] == header_split[0] + ' ' + '2' + header_split[1][1:], 'sample'] #search for the same header, but with pair number 2
+#            if len(readpair_sample) > 0: #check whether pair is found
+##                print('sample read pair = %i ' % readpair_sample.iloc[0])
+#                if row['sample'] == readpair_sample.iloc[0]: #check whether sample numbers for pair number 1 and pair number 2 are the same.
+##                    print('samples are the same.')
+#                    pair_sample[index] = row['sample'] #put sample number for pair number 1
+#                    pair_sample[readpair_sample.index.values[0]] = readpair_sample.iloc[0] #put sample number for pair number 2
+#                else: #for cases where sample numbers are not the same.
+##                    print('samples are different.')
+#                    if row['sample'] < readpair_sample.iloc[0]: #if pair number 1 belongs to sample 1 and pair 2 to sample 2
+#                        pair_sample[index] = -1
+#                        pair_sample[readpair_sample.index.values[0]] = -1
+#                    elif row['sample'] > readpair_sample.iloc[0]: #if pair number 1 belongs to sample 2 and pair 2 to sample 1
+#                        pair_sample[index] = -2
+#                        pair_sample[readpair_sample.index.values[0]] = -2
+#
+#
+#    reads_df['pair_belong_to_sample'] = pair_sample
+
+
     if saving_dataframe == True:
         reads_df.to_csv(os.path.join(os.path.dirname(files_list[0]), 'reads_dataframe.csv'), index=False)
-    
+    return(reads_df)
 
 #    unmatched_reads = abs(sum([hits for key, hits in barcode_counter_dict.items()]) - line_counter)
 #    barcode_counter_dict['unmatched_reads'] = unmatched_reads
