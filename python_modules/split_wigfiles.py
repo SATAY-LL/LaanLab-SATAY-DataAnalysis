@@ -65,6 +65,8 @@ def split_wigfile(inputfile='', verbose=True):
                 f.write(lines[l])
 
 
+    return()
+
 
 if __name__ == '__main__':
     split_wigfile(r"C:\Users\gregoryvanbeek\Documents\Data_Sets\testing_site\wt1_testfolder_S288C\align_out\ERR1533147_trimmed.sorted.bam.wig")
