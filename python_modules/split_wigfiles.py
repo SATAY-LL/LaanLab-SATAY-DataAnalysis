@@ -26,7 +26,7 @@ def split_wigfile(inputfile='', verbose=True):
 
     if not os.path.isfile(inputfile) and not inputfile == '':
         print('WARNING: inputfile does not exists')
-        exit()
+        sys.exit()
 
 
 
