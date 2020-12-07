@@ -24,7 +24,7 @@ This is a code to test the output of demulitplexing.py
 #                "GCGAGTAA",
 #                "GAGCTGAA",
 #                "GATAGACA"]
-#
+
 #sample_list = [1,1,2,2]
 
 import os
@@ -130,6 +130,49 @@ def which_barcode_in_read(files_list=[], barcode_list=[], sample_list=[], saving
                   "sample": read_sample_list}
 
     reads_df = pd.DataFrame(reads_dict, columns = [column_name for column_name in reads_dict])
+    
+    reads_df.sort_values(by=['header'], ignore_index=True, inplace=True)
+
+
+    pairsample_list = [0]*len(reads_df)
+    unknown_reads_list = []
+    for index_df, row in reads_df.iterrows():
+        if row['header'].split(' ')[0] == reads_df.loc[index_df+1, 'header'].split(' ')[0]:
+            if row['sample'] == reads_df.loc[index_df+1, 'sample'] and not row['sample'] == 0:
+                pairsample_list[index_df] = row['sample']
+                pairsample_list[index_df+1] = row['sample']
+            elif not row['sample'] == reads_df.loc[index_df+1, 'sample'] or row['sample'] == 0 or reads_df.loc[index_df+1, 'sample'] == 0:
+                unknown_reads_list.append(row['header'])
+                unknown_reads_list.append(reads_df.loc[index_df+1, 'header'])
+                reads_df.drop(reads_df.index[index_df], inplace=True)
+                reads_df.drop(reads_df.index[index_df+1], inplace=True)
+                del pairsample_list[index_df]
+                del pairsample_list[index_df+1]
+
+    reads_df['pairsample'] = pairsample_list
+
+#    reads_to_sample1_list = []
+#    reads_to_sample2_list = []
+#    reads_sample12_list = []
+#    reads_sample21_list = []
+#    reads_unknown_list = []
+#    for index, row in reads_df.iterrows():
+#        if row['header'].split(' ')[0] == reads_df.loc[index+1, 'header'].split(' ')[0]:
+#            if row['sample'] == reads_df.loc[index+1, 'sample'] and row['sample'] == 1:
+#                reads_to_sample1_list.append(row['header'])
+#                reads_to_sample1_list.append(reads_df.loc[index+1, 'header'])
+#            elif row['sample'] == reads_df.loc[index+1, 'sample'] and row['sample'] == 2:
+#                reads_to_sample2_list.append(row['header'])
+#                reads_to_sample2_list.append(reads_df.loc[index+1, 'header'])
+#            elif not row['sample'] == reads_df.loc[index+1, 'sample'] and row['sample'] == 1 and reads_df.loc[index+1, 'header'] == 2:
+#                reads_sample12_list.append(row['header'])
+#                reads_sample12_list.append(reads_df.loc[index+1, 'header'])
+#            elif not row['sample'] == reads_df.loc[index+1, 'sample'] and row['sample'] == 2 and reads_df.loc[index+1, 'header'] == 1:
+#                reads_sample21_list.append(row['header'])
+#                reads_sample21_list.append(reads_df.loc[index+1, 'header'])
+#            elif row['sample'] == 0 or reads_df.loc[index+1, 'sample'] == 0:
+#                reads_unknown_list.append(row['header'])
+#                reads_unknown_list.append(reads_df.loc[index+1, 'header'])
 
 
 #    pair_sample = [0]*len(reads_df)
@@ -159,6 +202,7 @@ def which_barcode_in_read(files_list=[], barcode_list=[], sample_list=[], saving
 
     if saving_dataframe == True:
         reads_df.to_csv(os.path.join(os.path.dirname(files_list[0]), 'reads_dataframe.csv'), index=False)
+    
     return(reads_df)
 
 #    unmatched_reads = abs(sum([hits for key, hits in barcode_counter_dict.items()]) - line_counter)
