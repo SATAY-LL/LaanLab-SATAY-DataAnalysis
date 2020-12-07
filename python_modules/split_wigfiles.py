@@ -18,6 +18,8 @@ dirname = os.path.dirname(os.path.abspath('__file__'))
 sys.path.insert(1,os.path.join(dirname,'python_modules'))
 from chromosome_names_in_files import chromosome_name_wigfile
 
+
+
 def split_wigfile(inputfile='', verbose=True):
 
 
@@ -50,6 +52,8 @@ def split_wigfile(inputfile='', verbose=True):
         lines = f.readlines()
     header = lines[0]
 
+
+
     for chrom in chromosome_names:
 
         outputfile = os.path.join(directoryname, filename + '_' + str(chrom) + '.wig')
@@ -57,7 +61,7 @@ def split_wigfile(inputfile='', verbose=True):
 
         with open(outputfile, 'w+') as f:
             f.write(header)
-            for l in range(chrom_start_line_dict.get(chrom)-1, chrom_end_line_dict.get(chrom)+1):
+            for l in range(chrom_start_line_dict.get(chrom)-1, chrom_end_line_dict.get(chrom)):
                 f.write(lines[l])
 
 
