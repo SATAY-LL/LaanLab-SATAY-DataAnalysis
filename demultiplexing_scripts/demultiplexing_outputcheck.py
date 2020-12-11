@@ -37,7 +37,7 @@ def check_headers_pairedfastq(inputfile='', barcodes=[]):
 
             if not line.startswith('@') and not line.startswith('+') and not 'F' in line:
                 for barcode in barcodes:
-                    if barcode in line:
+                    if barcode.upper() in line:
                         barcode_in_line = True
                         break
                 if not barcode_in_line == True:
@@ -50,5 +50,7 @@ def check_headers_pairedfastq(inputfile='', barcodes=[]):
 
 
 if __name__ == '__main__':
-    check_headers_pairedfastq(inputfile=r"C:\Users\gregoryvanbeek\Documents\test_pairedinterleaved.fq",
-                              barcodes=["GCCACATA", "GCGAGTAA"])
+#    check_headers_pairedfastq(inputfile=r"/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_pairs.fq",
+#                              barcodes=["GCCACATA", "GCGAGTAA"])
+    check_headers_pairedfastq(inputfile=r"/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample2interleavedsorted_pairs.fq",
+                              barcodes=["GAGCTGAA", "GATAGACA"])
