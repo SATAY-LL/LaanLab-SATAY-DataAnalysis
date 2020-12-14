@@ -122,7 +122,7 @@ fi
 
 # Get extension of the file
 extension='.'$(echo $filename1 | rev | cut -d. -f1 | rev)
-if [[ extension='.gz' ]]
+if [[ '$extension' == '.gz' ]]
 then
 	extension='.'$(echo $filename1 | rev | cut -d. -f2 | rev)
 fi
