@@ -26,11 +26,13 @@
 
 ####################### USER SETTINGS ######################
 # Define whether data is paired-end ('t' for paired-end, 'f' for single end)
-paired=F
+paired=T
 
 
 # Define filename (can also be a zipped file ending with .gz). Use filename2 for paired end or leave empty for single end or interleaved paired end (i.e. paired end reads are in single file).
-filepath1=/home/laanlab/Documents/satay/datasets/testfolder/SRR062634.filt.fastq.gz
+#filepath1=/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/wt1_enzo_dataset_demultiplexed_interleaved_sample1/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_pairs.fq
+#filepath1=/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/wt1_enzo_dataset_demultiplexed_interleaved_sample2/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample2interleavedsorted_pairs.fq
+filepath1=/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/test_sample/testfile_sample2_head40000.fq
 filepath2=''
 
 
@@ -39,8 +41,7 @@ filepath2=''
 trimming_software='b'
 
 ###    bbduk    ###
-trimming_settings_bbduk='ktrim=r k=4 hdist=0 qtrim=r trimq=4'
-#trimming_settings_bbduk='ktrim=r k=4 hdist=0 qtrim=r trimq=4 tpe tbo'
+trimming_settings_bbduk='k=20 mink=8 ktrim=l restrictleft=50 hdist=3 hdist2=1 qtrim=r trimq=10 minlen=25 tpe=t tbo=t'
 ## Set adapter sequences
 ## Open file using xdg-open /home/laanlab/Documents/satay/software/bbmap/resources/adapters.fa
 ###################
@@ -55,10 +56,12 @@ trimming_settings_trimmomatic='ILLUMINACLIP:adapters.fa:0:30:10 SLIDINGWINDOW:10
 
 
 # Set options for alignment software (bwa mem)
-alignment_settings='-B 2 -O 3'
+alignment_settings='-B 3 -O 3,3 -S -v 2'
 
+# Trim the reads with the options set in trimming software section above ('T' for yes, 'F' for no)?
+trimming=T
 
-# Create sorted and indexed bam file ('y' for yes, 'n' for no)?
+# Create sorted and indexed bam file ('T' for yes, 'F' for no)?
 sort_and_index=T
 
 
@@ -66,7 +69,7 @@ sort_and_index=T
 mapping=T
 
 
-# Save sam file ('y' for yes, 'n' for no)? This file is always converted to its binary equivalent (.bam ) and the sam file is rarely used but takes up relatively a lot of memory.
+# Delete sam file ('T' for yes, 'F' for no)? This file is always converted to its binary equivalent (.bam ) and the sam file is rarely used but takes up relatively a lot of memory.
 delete_sam=F
 
 
@@ -75,15 +78,15 @@ delete_sam=F
 
 
 # Create quality report of raw data (before trimming)?
-quality_check_raw=T
+quality_check_raw=F
 
 
 # Create quality report of trimmed data (after trimming)?
-quality_check_trim=T
+quality_check_trim=F
 
 
-# Determine whether the script should automatically continue after creating the first quality report. Set to yes if you might want to make changes depending on the quality report of the raw data.
-qualitycheck_interrupt=F
+# Determine whether the script should automatically continue after creating the first quality report. Set to True if you might want to make changes depending on the quality report of the raw data.
+qualitycheck_interrupt=T
 
 ############################################################
 
@@ -130,14 +133,26 @@ fi
 
 
 # Define filename for trimming and alignment results
-filename_trimmed1=${filename1%$extension*}'_trimmed.fastq'
-if ! [[ -z ${filename2} ]] #if not filename2 is empty string
+if [[ ${trimming} =~ ^[tT]$ ]]
 then
-	filename_trimmed2=${filename2%$extension*}'_trimmed.fastq'
+	filename_trimmed1=${filename1%$extension*}'_trimmed.fastq'
+	if ! [[ -z ${filename2} ]] #if not filename2 is empty string
+	then
+		filename_trimmed2=${filename2%$extension*}'_trimmed.fastq'
+	fi
+	filename_sam=${filename1%$extension*}'_trimmed.sam'
+	filename_bam=${filename1%$extension*}'_trimmed.bam'
+	filename_sort=${filename1%$extension*}'_trimmed.sorted.bam'
+else
+	filename_trimmed1=${filename1}
+	if ! [[ -z ${filename2} ]] #if not filename2 is empty string
+	then
+		filename_trimmed2=${filename2}
+	fi
+	filename_sam=${filename1%$extension*}'_notrimmed.sam'
+	filename_bam=${filename1%$extension*}'_notrimmed.bam'
+	filename_sort=${filename1%$extension*}'_notrimmed.sorted.bam'
 fi
-filename_sam=${filename1%$extension*}'_trimmed.sam'
-filename_bam=${filename1%$extension*}'_trimmed.bam'
-filename_sort=${filename1%$extension*}'_trimmed.sorted.bam'
 
 
 # Define path output directory fastqc
@@ -148,8 +163,13 @@ then
 fi
 
 # Define path output directory trimming
-path_trimm_out=${pathdata}/trimm_out
-[ ! -d ${path_trimm_out} ] && echo 'Creating trimming output folder ...' && mkdir ${path_trimm_out} || echo 'Folder for trimming output exists with name:' $(basename ${path_trimm_out})
+if [[ ${trimming} =~ ^[tT]$ ]]
+then
+	path_trimm_out=${pathdata}/trimm_out
+	[ ! -d ${path_trimm_out} ] && echo 'Creating trimming output folder ...' && mkdir ${path_trimm_out} || echo 'Folder for trimming output exists with name:' $(basename ${path_trimm_out})
+else
+	path_trimm_out=${pathdata}
+fi
 
 # Define path output directory alignment
 path_align_out=${pathdata}/align_out
@@ -231,60 +251,62 @@ fi
 
 
 # Trimming
-if [[ ${trimming_software} =~ ^[bB]$ ]]
+if [[ ${trimming} =~ ^[tT]$ ]]
 then
-	if [[ ${paired} =~ ^[fF]$ ]]
+	if [[ ${trimming_software} =~ ^[bB]$ ]]
 	then
-		echo 'Data trimming using bbduk single end reads...'
-		${path_bbduk_software}bbduk.sh -Xmx2g in=${pathdata}/${filename1} out=${path_trimm_out}/${filename_trimmed1} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
-		echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed1}
-		echo ''
-	elif [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filepath2} ]]
-	then
-		echo 'Data trimming using bbduk paired end reads...'
-		${path_bbduk_software}bbduk.sh -Xmx2g in1=${pathdata}/${filename1} out1=${path_trimm_out}/${filename_trimmed1} in2=${pathdata}/${filename2} out2=${path_trimm_out}/${filename_trimmed2} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
-		echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed1} 'and for the paired end reads in' ${path_trimm_out}/${filename_trimmed2}
-		echo ''
+		if [[ ${paired} =~ ^[fF]$ ]]
+		then
+			echo 'Data trimming using bbduk single end reads...'
+			${path_bbduk_software}bbduk.sh -Xmx2g in=${pathdata}/${filename1} out=${path_trimm_out}/${filename_trimmed1} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
+			echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed1}
+			echo ''
+		elif [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filepath2} ]]
+		then
+			echo 'Data trimming using bbduk paired end reads...'
+			${path_bbduk_software}bbduk.sh -Xmx2g in1=${pathdata}/${filename1} out1=${path_trimm_out}/${filename_trimmed1} in2=${pathdata}/${filename2} out2=${path_trimm_out}/${filename_trimmed2} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
+			echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed1} 'and for the paired end reads in' ${path_trimm_out}/${filename_trimmed2}
+			echo ''
 
-	elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filepath2} ]]
+		elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filepath2} ]]
+		then
+			echo 'Data trimming using bbduk paired end reads...'
+			${path_bbduk_software}bbduk.sh -Xmx2g interleaved=t in=${pathdata}/${filename1} out=${path_trimm_out}/${filename_trimmed1} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
+			echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed1}
+			echo ''
+		fi
+
+	elif [[ ${trimming_software} =~ ^[tT]$ ]]
 	then
-		echo 'Data trimming using bbduk paired end reads...'
-		${path_bbduk_software}bbduk.sh -Xmx2g interleaved=t in=${pathdata}/${filename1} out=${path_trimm_out}/${filename_trimmed1} ref=${path_bbduk_adapters} ${trimming_settings_bbduk}
-		echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed1}
-		echo ''
+		if [[ ${paired} =~ ^[fF]$ ]]
+		then
+			echo 'Data trimming using trimmomatic ...'
+			currentpath=$(pwd)
+			cd ${path_bbduk_software}/resources/
+			java -jar ${path_trimm_software}trimmomatic-0.39.jar SE ${trimmomatic_initialization} ${pathdata}/${filename1} ${path_trimm_out}/${filename_trimmed1} ${trimming_settings_trimmomatic}
+			cd ${currentpath}
+
+		elif [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filepath2} ]]
+		then
+			echo 'Data trimming using trimmomatic ...'
+			currentpath=$(pwd)
+			cd ${path_bbduk_software}/resources/
+			java -jar ${path_trimm_software}trimmomatic-0.39.jar PE ${trimmomatic_initialization} ${pathdata}/${filename1} ${pathdata}/${filename2} ${path_trimm_out}/${filename_trimmed1} ${path_trimm_out}/${filename_trimmed1%_trimmed.fastq*}'_trimmedorphanedreads.fastq' ${path_trimm_out}/${filename_trimmed2} ${path_trimm_out}/${filename_trimmed1%_trimmed.fastq*}'_trimmedorphanedreads.fastq' ${trimming_settings_trimmomatic}
+			cd ${currentpath}
+
+		elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filepath2} ]]
+		then
+			echo 'Enter two input files for using paired end reads with Trimmomatic.'
+			exit 1
+		fi
+
+	else
+		echo 'Trimming software not recognized, please check settings' && exit 1
 	fi
-
-elif [[ ${trimming_software} =~ ^[tT]$ ]]
-then
-	if [[ ${paired} =~ ^[fF]$ ]]
-	then
-		echo 'Data trimming using trimmomatic ...'
-		currentpath=$(pwd)
-		cd ${path_bbduk_software}/resources/
-		java -jar ${path_trimm_software}trimmomatic-0.39.jar SE ${trimmomatic_initialization} ${pathdata}/${filename1} ${path_trimm_out}/${filename_trimmed1} ${trimming_settings_trimmomatic}
-		cd ${currentpath}
-
-	elif [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filepath2} ]]
-	then
-		echo 'Data trimming using trimmomatic ...'
-		currentpath=$(pwd)
-		cd ${path_bbduk_software}/resources/
-		java -jar ${path_trimm_software}trimmomatic-0.39.jar PE ${trimmomatic_initialization} ${pathdata}/${filename1} ${pathdata}/${filename2} ${path_trimm_out}/${filename_trimmed1} ${path_trimm_out}/${filename_trimmed1%_trimmed.fastq*}'_trimmedorphanedreads.fastq' ${path_trimm_out}/${filename_trimmed2} ${path_trimm_out}/${filename_trimmed1%_trimmed.fastq*}'_trimmedorphanedreads.fastq' ${trimming_settings_trimmomatic}
-		cd ${currentpath}
-
-	elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filepath2} ]]
-	then
-		echo 'Enter two input files for using paired end reads with Trimmomatic.'
-		exit 1
-	fi
-
-else
-	echo 'Trimming software not recognized, please check settings' && exit 1
 fi
 
-
 # Quality report trimmed data
-if [[ ${quality_check_trim} =~ ^[tT]$ ]]
+if [[ ${quality_check_trim} =~ ^[tT]$ ]] && [[ ${trimming}  =~ ^[tT]$ ]]
 then
 	echo 'Quality checking trimmed data ...'
 	fastqc --outdir ${path_fastqc_out} ${path_trimm_out}/${filename_trimmed1}
@@ -301,16 +323,22 @@ fi
 
 
 # Sequence alignment
-echo 'Sequence alignment ...'
-if [[ ${paired} =~ ^[fF]$ ]] || [[ -z ${filepath2} ]]
+if [[ ${paired} =~ ^[fF]$ ]]
 then
+	echo 'Sequence alignment ...'
 	bwa mem ${alignment_settings} ${path_refgenome} ${path_trimm_out}/${filename_trimmed1} > ${path_align_out}/${filename_sam}
+elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filepath2} ]]
+then
+	echo 'Sequence alignment paired end interleaved ...'
+	bwa mem -p ${alignment_settings} ${path_refgenome} ${path_trimm_out}/${filename_trimmed1} > ${path_align_out}/${filename_sam}
 elif [[ ${paired} =~ ^[tT]$ ]] && ! [[ -z ${filepath2} ]]
-then 
+then
+	echo 'Sequence alignment paired end ...'
 	bwa mem ${alignment_settings} ${path_refgenome} ${path_trimm_out}/${filename_trimmed1} ${path_trimm_out}/${filename_trimmed2} > ${path_align_out}/${filename_sam}
 fi
 echo 'Sequence alignment is completed. Results are stored in' ${path_align_out}/${filename_sam}
 echo ''
+
 
 # Converting sam file to its binary equivalent
 echo 'Converting sam to bam ...'
@@ -318,10 +346,12 @@ samtools view -b ${path_align_out}/${filename_sam} > ${path_align_out}/${filenam
 echo 'Converting sam to bam completed. Results are stored in' ${path_align_out}/${filename_bam}
 echo ''
 
+
 # Quickcheck bam file
 echo 'Checking bam file ...'
 samtools quickcheck ${path_align_out}/${filename_bam}
 echo ''
+
 
 # Indexing and sorting bam file
 if [[ ${sort_and_index} =~ ^[tT]$ ]]
@@ -369,20 +399,25 @@ then
 	echo ${filename2} >> ${pathdata}/${filename1%$extension*}'_log.txt'
 elif [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filepath2} ]]
 then
-	echo 'Paired end reads with paired reads in same file' >> ${pathdata}/${filename1%$extension*}'_log.txt'
+	echo 'Interleaved paired end reads:' >> ${pathdata}/${filename1%$extension*}'_log.txt'
 fi
 
-echo '' >> ${pathdata}/${filename1%$extension*}'_log.txt'
-echo 'Trimming options:' >> ${pathdata}/${filename1%$extension*}'_log.txt'
-
-if [[ ${trimming_software} =~ ^[bB]$ ]]
+if [[ ${trimming} =~ ^[tT]$ ]]
 then
-	echo 'BBDuk' >> ${pathdata}/${filename1%$extension*}'_log.txt'
-	echo ${trimming_settings_bbduk} >> ${pathdata}/${filename1%$extension*}'_log.txt'
-elif [[ ${trimming_software} =~ ^[tT]$ ]]
-then
-	echo 'Trimmomatic' >> ${pathdata}/${filename1%$extension*}'_log.txt'
-	echo ${trimmomatic_initialization} ${trimming_settings_trimmomatic} >> ${pathdata}/${filename1%$extension*}'_log.txt'
+	echo '' >> ${pathdata}/${filename1%$extension*}'_log.txt'
+	echo 'Trimming options:' >> ${pathdata}/${filename1%$extension*}'_log.txt'
+	if [[ ${trimming_software} =~ ^[bB]$ ]]
+	then
+		echo 'BBDuk' >> ${pathdata}/${filename1%$extension*}'_log.txt'
+		echo ${trimming_settings_bbduk} >> ${pathdata}/${filename1%$extension*}'_log.txt'
+	elif [[ ${trimming_software} =~ ^[tT]$ ]]
+	then
+		echo 'Trimmomatic' >> ${pathdata}/${filename1%$extension*}'_log.txt'
+		echo ${trimmomatic_initialization} ${trimming_settings_trimmomatic} >> ${pathdata}/${filename1%$extension*}'_log.txt'
+	fi
+else
+	echo '' >> ${pathdata}/${filename1%$extension*}'_log.txt'
+	echo 'No trimming performed on reads.' >> ${pathdata}/${filename1%$extension*}'_log.txt'
 fi
 
 echo '' >> ${pathdata}/${filename1%$extension*}'_log.txt'
