@@ -73,7 +73,7 @@ mapping=T
 delete_sam=F
 
 
-# Create a quality report of the alignment based on the sam file (this also works when the same is being deleted, i.e delete_sam=T)
+# Create a quality report of the alignment based on the sam file (this also works when the sam file is being deleted, i.e delete_sam=T)
 flagstat_report=T
 
 
@@ -345,7 +345,13 @@ echo ''
 
 
 # Creating alignment quality report
-samtools flagstat ${path_align_out}/${filename_sam} > ${path_align_out}/${filename1%$extension*}'_trimmed_flagstatreport.txt'
+if [[ ${flagstat_report} =~ ^[tT]$ ]]
+then
+	echo 'Creating flagstat report sam file ...'
+	samtools flagstat ${path_align_out}/${filename_sam} > ${path_align_out}/${filename1%$extension*}'_trimmed_flagstatreport.txt'
+	echo 'Flagstat report sam file completed. Results are stored in' ${path_align_out}/${filename1%$extension*}'_trimmed_flagstatreport.txt'
+	echo ''
+fi
 
 
 # Converting sam file to its binary equivalent
