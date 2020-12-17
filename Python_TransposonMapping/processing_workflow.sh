@@ -73,6 +73,10 @@ mapping=T
 delete_sam=F
 
 
+# Create a quality report of the alignment based on the sam file (this also works when the same is being deleted, i.e delete_sam=T)
+flagstat_report=T
+
+
 # Open adapters.fa file after the first quality check in order to change the adapters for trimming.
 #open_adapters=F
 
@@ -338,6 +342,10 @@ then
 fi
 echo 'Sequence alignment is completed. Results are stored in' ${path_align_out}/${filename_sam}
 echo ''
+
+
+# Creating alignment quality report
+samtools flagstat ${path_align_out}/${filename_sam} > ${path_align_out}/${filename1%$extension*}'_trimmed_flagstatreport.txt'
 
 
 # Converting sam file to its binary equivalent
