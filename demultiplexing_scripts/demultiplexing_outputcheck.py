@@ -76,8 +76,8 @@ def check_fastq_pairedinterleaved(inputfile='', barcodes=[]):
                 valid_char = "ATCGN"
                 if not all(c in valid_char for c in read_dict.get('sequence')):
                     print("WARNING: Sequence contains invalid characters at header %s " % read_dict.get('header'))
-                elif 'N' in read_dict.get('sequence'):
-                    print("WARNING: Sequence contains N at header %s " % read_dict.get('header'))
+#                elif 'N' in read_dict.get('sequence'):
+#                    print("WARNING: Sequence contains N at header %s " % read_dict.get('header'))
 
 
                 #Check if sequence and phred (quality score) have the same number of characters
@@ -100,9 +100,9 @@ def check_fastq_pairedinterleaved(inputfile='', barcodes=[]):
 
 
 if __name__ == '__main__':
-#    check_fastq_pairedinterleaved(inputfile=r"/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_pairs.fq",
-#                              barcodes=["GCCACATA", "GCGAGTAA"])
-#    check_fastq_pairedinterleaved(inputfile=r"/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample2interleavedsorted_pairs.fq",
+    check_fastq_pairedinterleaved(inputfile=r"/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/wt1_enzo_dataset_demultiplexed_interleaved_sample1/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_pairs.fq",
+                              barcodes=["GCCACATA", "GCGAGTAA"])
+#    check_fastq_pairedinterleaved(inputfile=r"/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/wt1_enzo_dataset_demultiplexed_interleaved_sample2/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample2interleavedsorted_pairs.fq",
 #                              barcodes=["GAGCTGAA", "GATAGACA"])
-    check_fastq_pairedinterleaved(inputfile=r"C:\Users\gregoryvanbeek\Documents\Data_Sets\wt1_dataset_enzo\raw_data_20201104\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample2interleavedsorted_pairs_400lines.fq",
-                                  barcodes=["GAGCTGAA", "GATAGACA"])
+#    check_fastq_pairedinterleaved(inputfile=r"C:\Users\gregoryvanbeek\Documents\Data_Sets\wt1_dataset_enzo\raw_data_20201104\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample2interleavedsorted_pairs_400lines.fq",
+#                                  barcodes=["GAGCTGAA", "GATAGACA"])
