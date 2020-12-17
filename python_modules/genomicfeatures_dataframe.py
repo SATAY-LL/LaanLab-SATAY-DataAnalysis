@@ -585,11 +585,11 @@ def feature_position(feature_dict, chrom, start_chr, dna_dict, feature_type=None
 
 #%%
 if __name__ == '__main__':
-    dna_df2 = dna_features(region = 'x',#['xiii', 0, 14790],
-                 wig_file = r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\Data_Files\test_data\Kornmannlab_dataset_WT1\ERR1533147_trimmed.sorted.bam.wig",
-                 pergene_insertions_file = r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\Data_Files\test_data\Kornmannlab_dataset_WT1\ERR1533147_trimmed.sorted.bam_pergene_insertions.txt",
+    dna_df2 = dna_features(region = 'iv',#['xiii', 0, 14790],
+                 wig_file = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\wt1_dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_processedsample1\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_pairs_trimmed.sorted.bam.wig",
+                 pergene_insertions_file = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\wt1_dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_processedsample1\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_pairs_trimmed.sorted.bam_pergene_insertions.txt",
                  variable="reads",
-                 plotting=True,
+                 plotting=False,
                  savefigure=False,
                  verbose=True)
 

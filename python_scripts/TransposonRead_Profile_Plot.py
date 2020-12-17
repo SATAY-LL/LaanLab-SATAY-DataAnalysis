@@ -308,5 +308,5 @@ def read_profile(chrom='I',bar_width=None,wig_file = None):
 if __name__ == '__main__':
 #    read_profile(chrom='XVI',wig_file=r"X:\tnw\BN\LL\Shared\Gregory\Sequence_Alignment_TestData\Michel2017_WT1_SeqData\Cerevisiae_WT1_Michel2017_Trimmed_Aligned\Cerevisiae_WT1_Michel2017_Trimmed_Aligned.sorted.bam.wig")
 #    transposon_profile(chrom='VI',bed_file=r"X:\tnw\BN\LL\Shared\Gregory\Sequence_Alignment_TestData\Michel2017_WT1_SeqData\Cerevisiae_WT1_Michel2017_Trimmed_Aligned\Cerevisiae_WT1_Michel2017_Trimmed_Aligned.sorted.bam.bed")
-    read_profile(chrom='VI',wig_file=r"X:\tnw\BN\LL\Shared\Gregory\Sequence_Alignment_TestData\Michel2017_WT1_SeqData\Cerevisiae_WT1_Michel2017_ProcessedByBenoit\E-MTAB-4885.WT1.bam.wig")
-#    transposon_profile(chrom='VI',bed_file=r"X:\tnw\BN\LL\Shared\Gregory\Sequence_Alignment_TestData\Michel2017_WT1_SeqData\Cerevisiae_WT1_Michel2017_ProcessedByBenoit\E-MTAB-4885.WT1.bam.bed")
+#    read_profile(chrom='I',wig_file=r"C:\Users\gregoryvanbeek\Documents\Data_Sets\wt1_dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_processedsample1\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_pairs_trimmed.sorted.bam.wig")
+    transposon_profile(chrom='III',bed_file=r"C:\Users\gregoryvanbeek\Documents\Data_Sets\wt1_dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_processedsample1\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_pairs_trimmed.sorted.bam.bed")
