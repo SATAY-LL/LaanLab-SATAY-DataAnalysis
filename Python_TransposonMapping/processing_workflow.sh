@@ -31,8 +31,7 @@ paired=T
 
 # Define filename (can also be a zipped file ending with .gz). Use filename2 for paired end or leave empty for single end or interleaved paired end (i.e. paired end reads are in single file).
 #filepath1=/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/wt1_enzo_dataset_demultiplexed_interleaved_sample1/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_pairs.fq
-#filepath1=/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/wt1_enzo_dataset_demultiplexed_interleaved_sample2/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample2interleavedsorted_pairs.fq
-filepath1=/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/test_sample/testfile_sample2_head40000.fq
+filepath1=/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/wt1_enzo_dataset_demultiplexed_interleaved_sample2/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample2interleavedsorted_pairs.fq
 filepath2=''
 
 
@@ -55,7 +54,7 @@ trimming_settings_trimmomatic='ILLUMINACLIP:adapters.fa:0:30:10 SLIDINGWINDOW:10
 ###############################################
 
 
-# Set options for alignment software (bwa mem)
+# Set options for alignment software (bwa mem) (note that for paired end data the parameter -p does not need to be set as long as paired=T)
 alignment_settings='-B 3 -O 3,3 -S -v 2'
 
 # Trim the reads with the options set in trimming software section above ('T' for yes, 'F' for no)?
@@ -66,7 +65,7 @@ sort_and_index=T
 
 
 # Apply transposon mapping (requires sort_and_index=T)
-mapping=T
+mapping=F
 
 
 # Delete sam file ('T' for yes, 'F' for no)? This file is always converted to its binary equivalent (.bam ) and the sam file is rarely used but takes up relatively a lot of memory.
@@ -82,15 +81,15 @@ flagstat_report=T
 
 
 # Create quality report of raw data (before trimming)?
-quality_check_raw=F
+quality_check_raw=T
 
 
 # Create quality report of trimmed data (after trimming)?
-quality_check_trim=F
+quality_check_trim=T
 
 
 # Determine whether the script should automatically continue after creating the first quality report. Set to True if you might want to make changes depending on the quality report of the raw data.
-qualitycheck_interrupt=T
+qualitycheck_interrupt=F
 
 ############################################################
 
@@ -436,7 +435,12 @@ fi
 
 echo '' >> ${pathdata}/${filename1%$extension*}'_log.txt'
 echo 'Alignment options:' >> ${pathdata}/${filename1%$extension*}'_log.txt'
-echo ${alignment_settings} >> ${pathdata}/${filename1%$extension*}'_log.txt'
+if [[ ${paired} =~ ^[tT]$ ]] && [[ -z ${filepath2} ]]
+then
+	echo -p ${alignment_settings} >> ${pathdata}/${filename1%$extension*}'_log.txt'
+else
+	echo ${alignment_settings} >> ${pathdata}/${filename1%$extension*}'_log.txt'
+fi
 echo '' >> ${pathdata}/${filename1%$extension*}'_log.txt'
 echo 'Reference genome used:' ${name_refgenome} >> ${pathdata}/${filename1%$extension*}'_log.txt'
 echo '' >> ${pathdata}/${filename1%$extension*}'_log.txt'
@@ -447,6 +451,6 @@ cat ${path_bbduk_adapters} >> ${pathdata}/${filename1%$extension*}'_log.txt'
 
 
 
-echo 'Processing completed.'
+echo 'Processing finished.'
 
 
