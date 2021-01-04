@@ -13,6 +13,7 @@ def samflag(flag=0):
     The input is a decimal number.
     '''
 
+
     flag_binary = format(flag, '012b') # '#012b' to start the string with '0b'. 12 indicated that the string has length 12.
 
     print('Entered decimal flag = %i' % flag)
@@ -20,26 +21,30 @@ def samflag(flag=0):
     print('')
 
 
-    prop_dict = {1: 'read paired',
-                 2: 'read mapped in proper pair',
-                 3: 'read unmapped',
-                 4: 'mate unmapped',
-                 5: 'read reverse strand',
-                 6: 'mate reverse strand',
-                 7: 'first in pair',
-                 8: 'second in pair',
-                 9: 'not primary alignment',
-                 10: 'read fails platform/vendor quality checks',
-                 11: 'read is PCR or optical duplicate',
-                 12: 'supplementary alignment'}
+    if flag == 0:
+        flagprop_list = ['read forward strand']
 
-
-    counter = 1
-    flagprop_list = []
-    for b in reversed(flag_binary):
-        if int(b) == 1:
-            flagprop_list.append(prop_dict.get(counter))
-        counter += 1
+    else:
+        prop_dict = {1: 'read paired',
+                     2: 'read mapped in proper pair',
+                     3: 'read unmapped',
+                     4: 'mate unmapped',
+                     5: 'read reverse strand',
+                     6: 'mate reverse strand',
+                     7: 'first in pair',
+                     8: 'second in pair',
+                     9: 'not primary alignment',
+                     10: 'read fails platform/vendor quality checks',
+                     11: 'read is PCR or optical duplicate',
+                     12: 'supplementary alignment'}
+    
+    
+        counter = 1
+        flagprop_list = []
+        for b in reversed(flag_binary):
+            if int(b) == 1:
+                flagprop_list.append(prop_dict.get(counter))
+            counter += 1
 
 
 
@@ -49,8 +54,12 @@ def samflag(flag=0):
 
 
 if __name__ == '__main__':
-    flag_binary, flagproperties = samflag(flag=1040)
+    flag_binary, flagproperties = samflag(flag=1024)
 
-#    print('PROPERTIES:')
-#    for prop in flagproperties:
-#        print(prop)
+    print('PROPERTIES:')
+    if not flagproperties == []:
+        for prop in flagproperties:
+            print(prop)
+        del prop
+    else:
+        print('no properties found')
