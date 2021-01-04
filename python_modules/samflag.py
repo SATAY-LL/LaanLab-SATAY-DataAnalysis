@@ -54,7 +54,7 @@ def samflag(flag=0):
 
 
 if __name__ == '__main__':
-    flag_binary, flagproperties = samflag(flag=1024)
+    flag_binary, flagproperties = samflag(flag=1040)
 
     print('PROPERTIES:')
     if not flagproperties == []:
