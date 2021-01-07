@@ -15,8 +15,8 @@ Files with detailed notes about analysis, datafiles, software and workflows (inc
 
 Currently the following data files and folder are present:
 
-1. [Cerevisiae_EssentialGenes_list_1.txt](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Data_Files/Cervisiae_EssentialGenes_List_1.txt): This is a list of known essential genes with systematic naming format.
-2. [Cerevisiae_EssentialGenes_List_2.txt](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Data_Files/Cervisiae_EssentialGenes_List_2.txt): This is a list of known essential genes with common naming format. Some genes may occur only in one file, so it is recommended to use both files simultaneously to have a complete list of the known essential genes.
+1. [Cerevisiae_EssentialGenes_list_1.txt](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Data_Files/Cerevisiae_EssentialGenes_List_1.txt): This is a list of known essential genes with systematic naming format.
+2. [Cerevisiae_EssentialGenes_List_2.txt](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Data_Files/Cerevisiae_EssentialGenes_List_2.txt): This is a list of known essential genes with common naming format. Some genes may occur only in one file, so it is recommended to use both files simultaneously to have a complete list of the known essential genes.
 3. [Cerevisiae_AllEssentialGenes_list.txt](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Data_Files/Cerevisiae_AllEssentialGenes_List.txt): This is a combination of the previous two files where all the duplicates have been removed and the standard yeast gene naming convention has been applied.
 4. [Yeast_Protein_Names.txt](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Data_Files/Yeast_Protein_Names.txt): This is a list that includes all genes with both naming convention and their ID's. It also include the length of the corresponding proteins in terms of amino acids.
 5. [S288C_reference_sequence_R64-2-1_20150113.fsa](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Data_Files/S288C_reference_sequence_R64-2-1_20150113.fsa): Reference sequence for wild type cells of *S.Cerevisiae* from the S288C strain.
@@ -66,4 +66,4 @@ Note: The python code only works in Linux operating systems. For running a simil
 ## License
 [LaanLab for Bionanoscience, Delft university of Technology](https://www.tudelft.nl/en/faculty-of-applied-sciences/about-faculty/departments/bionanoscience/research/research-labs/liedewij-laan-lab/research-projects/evolvability-and-modularity-of-essential-functions-in-budding-yeast/)
 
-*Last updated: October 12, 2020*
+*Last updated: January 7, 2021*
