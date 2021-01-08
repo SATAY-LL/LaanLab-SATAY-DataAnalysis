@@ -28,7 +28,7 @@ dirname = os.path.dirname(os.path.abspath('__file__'))
 sys.path.insert(1,os.path.join(dirname,'python_modules'))
 from chromosome_and_gene_positions import chromosomename_roman_to_arabic, gene_position
 from gene_names import gene_aliases
-
+from samflag import samflags
 
 bam_arg = sys.argv[1]
 
@@ -77,7 +77,7 @@ def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenam
 
 
 #%% LOADING ADDITIONAL FILES
-    files_path = os.path.join(dirname,'..','..','data_files')
+    files_path = os.path.join(dirname,'..','data_files')
 
     #LOADING GFF-FILE
     if gfffile is None:
@@ -177,7 +177,17 @@ def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenam
             read = str(reads).split('\t')
 
             start_array[read_counter] = int(read[3]) + 1
-            flag_array[read_counter] = int(read[1])
+
+            #GET FLAG FOR EACH READ. IF READ ON FORWARD STRAND, ASSIGN VALUE 1, IF READ ON REVERSE STRAND ASSIGN VALUE -1, IF READ UNMAPPED OR SECONDARY ALIGNMENT ASSIGN VALUE 0
+#            flag_array[read_counter] = int(read[1])
+            samprop = samflags(flag = int(read[1]), verbose=False)
+            if 'read reverse strand' in samprop:
+                flag_array[read_counter] = -1
+            else:
+                flag_array[read_counter] = 1
+            if 'not primary alignment' in samprop or 'read unmapped' in samprop:
+                flag_array[read_counter] = 0
+
             readlength_array[read_counter] = int(len(read[9]))
 
             read_counter += 1
@@ -185,8 +195,10 @@ def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenam
 
 
         #CORRECT STARTING POSITION FOR READS WITH REVERSED ORIENTATION
-        flag0coor_array = np.where(flag_array==0) #coordinates reads 5' -> 3'
-        flag16coor_array = np.where(flag_array==16) # coordinates reads 3' -> 5'
+#        flag0coor_array = np.where(flag_array==0) #coordinates reads 5' -> 3'
+#        flag16coor_array = np.where(flag_array==16) # coordinates reads 3' -> 5'
+        flag0coor_array = np.where(flag_array==1) #coordinates reads 5' -> 3'
+        flag16coor_array = np.where(flag_array==-1) # coordinates reads 3' -> 5'
 
         startdirect_array = start_array[flag0coor_array]
         flagdirect_array = flag_array[flag0coor_array]
