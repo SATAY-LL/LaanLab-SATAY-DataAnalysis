@@ -30,8 +30,8 @@ paired=T
 
 
 # Define filename (can also be a zipped file ending with .gz). Use filename2 for paired end or leave empty for single end or interleaved paired end (i.e. paired end reads are in single file).
-#filepath1=/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/wt1_enzo_dataset_demultiplexed_interleaved_sample1/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_pairs.fq
-filepath1=/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/wt1_enzo_dataset_demultiplexed_interleaved_sample2/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample2interleavedsorted_pairs.fq
+filepath1=/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/wt1_enzo_dataset_demultiplexed_interleaved_sample1/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_pairs.fq
+#filepath1=/home/laanlab/Documents/satay/datasets/wt1_enzo_dataset/wt1_enzo_dataset_demultiplexed_interleaved/wt1_enzo_dataset_demultiplexed_interleaved_sample2/D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample2interleavedsorted_pairs.fq
 filepath2=''
 
 
@@ -40,7 +40,8 @@ filepath2=''
 trimming_software='b'
 
 ###    bbduk    ###
-trimming_settings_bbduk='k=20 mink=8 ktrim=l restrictleft=50 hdist=3 hdist2=1 qtrim=r trimq=10 minlen=25 tpe=t tbo=t'
+trimming_settings_bbduk='ktrim=l k=15 mink=10 hdist=1 tpe tbo qtrim=r trimq=10 minlen=30'
+#trimming_settings_bbduk='k=20 mink=8 ktrim=l restrictleft=50 hdist=3 hdist2=1 qtrim=r trimq=10 minlen=25 tpe=t tbo=t'
 ## Set adapter sequences
 ## Open file using xdg-open /home/laanlab/Documents/satay/software/bbmap/resources/adapters.fa
 ###################
@@ -55,7 +56,7 @@ trimming_settings_trimmomatic='ILLUMINACLIP:adapters.fa:0:30:10 SLIDINGWINDOW:10
 
 
 # Set options for alignment software (bwa mem) (note that for paired end data the parameter -p does not need to be set as long as paired=T)
-alignment_settings='-B 3 -O 3,3 -S -v 2'
+alignment_settings='-M -B 3 -O 3,3 -S -v 2'
 
 # Trim the reads with the options set in trimming software section above ('T' for yes, 'F' for no)?
 trimming=T
@@ -81,11 +82,11 @@ flagstat_report=T
 
 
 # Create quality report of raw data (before trimming)?
-quality_check_raw=T
+quality_check_raw=F
 
 
 # Create quality report of trimmed data (after trimming)?
-quality_check_trim=T
+quality_check_trim=F
 
 
 # Determine whether the script should automatically continue after creating the first quality report. Set to True if you might want to make changes depending on the quality report of the raw data.
