@@ -8,14 +8,15 @@ For more information about this code and the project, see github.com/Gregory94/L
 This code is based on the Matlab code created by the Kornmann lab which is available at: sites.google.com/site/satayusers/
 
 __Author__ = Gregory van Beek. LaanLab, department of Bionanoscience, Delft University of Technology
-__version__ = 1.4
-__Date last update__ = 2020-08-09
+__version__ = 1.5
+__Date last update__ = 2021-01-11
 
 Version history:
     1.1; Added code for creating two text files for storing insertion locations per gene and per essential gene [2020-07-27]
     1.2; Improved searching algorithm for essential genes [2020-08-06]
     1.3; Load file containing all essential genes so that a search for essential genes in multiple file is not needed anymore. This file is created using Create_EssentialGenes_list.py located in the same directory as this code [2020-08-07]
     1.4; Fixed bug where the gene position and transposon insertion location did not start at zero for each chromosome, causing confusing values to be stored in the _pergene_insertions.txt and _peressential_insertions.txt files [2020-08-09]
+    1.5; Added functionality to handle all possible sam flags in the alignment file (bam-file) instead of only flag=0 or flag=16. This is needed for the function to handle paired-end sequencing data [2021-01-11]
 """
 
 import os, sys
@@ -170,7 +171,6 @@ def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenam
         flag_array = np.empty(shape=(N_reads_kk), dtype=int)
         readlength_array = np.empty(shape=(N_reads_kk), dtype=int)
 
-
         #RETREIVING ALL THE READS FROM THE CURRENT CHROMOSOME.
         print('Getting reads for chromosome %s ...' % kk)
         for reads in bam.fetch(kk, 0, chr_length_dict[kk], until_eof=True):
@@ -180,7 +180,7 @@ def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenam
 
             #GET FLAG FOR EACH READ. IF READ ON FORWARD STRAND, ASSIGN VALUE 1, IF READ ON REVERSE STRAND ASSIGN VALUE -1, IF READ UNMAPPED OR SECONDARY ALIGNMENT ASSIGN VALUE 0
 #            flag_array[read_counter] = int(read[1])
-            samprop = samflags(flag = int(read[1]), verbose=False)
+            samprop = samflags(flag = int(read[1]), verbose=False)[1]
             if 'read reverse strand' in samprop:
                 flag_array[read_counter] = -1
             else:
