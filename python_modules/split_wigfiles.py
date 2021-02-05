@@ -26,7 +26,7 @@ def split_wigfile(inputfile='', verbose=True):
 
     if not os.path.isfile(inputfile) and not inputfile == '':
         print('WARNING: inputfile does not exists')
-        exit()
+        sys.exit()
 
 
 
@@ -64,6 +64,8 @@ def split_wigfile(inputfile='', verbose=True):
             for l in range(chrom_start_line_dict.get(chrom)-1, chrom_end_line_dict.get(chrom)):
                 f.write(lines[l])
 
+
+    return()
 
 
 if __name__ == '__main__':

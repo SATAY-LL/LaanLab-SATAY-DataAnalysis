@@ -12,7 +12,7 @@ file_dirname = os.path.dirname(os.path.abspath('__file__'))
 
 sys.path.insert(1,os.path.join(file_dirname,'..','python_modules'))
 from chromosome_and_gene_positions import chromosome_position
-from genomicfeatures_dataframe_with_normalization import dna_features
+from genomicfeatures_dataframe import dna_features
 
 #%% 
 def genome_normalization_plot(wig_file=None, pergene_insertions_file=None, variable='reads', normalize=True, normalization_window_size=20000, plotting=False, verbose=False):
@@ -26,7 +26,7 @@ def genome_normalization_plot(wig_file=None, pergene_insertions_file=None, varia
     #%% OPEN DNA_DF2
     feature_position_list = []
     Nreadsperbp_list = []
-    Nreadsperbp_normalized_list = []
+#    Nreadsperbp_normalized_list = []
     
     
     chr_length_dict = chromosome_position()[0]
@@ -36,12 +36,12 @@ def genome_normalization_plot(wig_file=None, pergene_insertions_file=None, varia
     
     for region in chrom_list:
 #        print(region)
-        dna_df2 = dna_features(region, wig_file, pergene_insertions_file, variable, normalize, normalization_window_size, plotting, verbose=False)
+        dna_df2 = dna_features(region, wig_file, pergene_insertions_file, variable, normalize, normalization_window_size, plotting)
     
         feature_position_list = feature_position_list + [pos[0] + chr_length for pos in dna_df2['Position'].tolist()]
         Nreadsperbp = [dna.Nreads/dna.Nbasepairs for dna in dna_df2.itertuples()]
         Nreadsperbp_list = Nreadsperbp_list + Nreadsperbp
-        Nreadsperbp_normalized_list = Nreadsperbp_normalized_list + dna_df2['Nreads_normalized_byNCregions'].tolist()
+#        Nreadsperbp_normalized_list = Nreadsperbp_normalized_list + dna_df2['Nreads_normalized_byNCregions'].tolist()
     
         chr_length += chr_length_dict.get(region.upper())
     
@@ -51,13 +51,13 @@ def genome_normalization_plot(wig_file=None, pergene_insertions_file=None, varia
     
     b_start = bins[0]
     binned_reads_list = np.zeros(len(bins))
-    binned_norm_reads_list = np.zeros(len(bins))
+#    binned_norm_reads_list = np.zeros(len(bins))
     i = 0
     for b_end in bins[1:]:
         for ind, pos in enumerate(feature_position_list):
             if b_start <= pos < b_end:
                 binned_reads_list[i] = binned_reads_list[i] + Nreadsperbp_list[ind]
-                binned_norm_reads_list[i] = binned_norm_reads_list[i] + Nreadsperbp_normalized_list[ind]
+#                binned_norm_reads_list[i] = binned_norm_reads_list[i] + Nreadsperbp_normalized_list[ind]
             elif pos > b_end:
                 b_start = b_end
                 break
@@ -92,16 +92,16 @@ def genome_normalization_plot(wig_file=None, pergene_insertions_file=None, varia
     ax1.set_ylim(0,250)
     ax1.set_ylabel("Reads not normalized [Absolute counts]")
     
-    ax2 = plt.subplot(grid[1,0])
-    ax2.bar(bins, binned_norm_reads_list, width=N_bins, color="#333333")
-    ax2.grid(False)
-    ax2.set_xlim(0,l_genome)
-    ax2.set_ylim(0,250)
-    ax2.set_ylabel("Reads normalized [A.U.]")
+#    ax2 = plt.subplot(grid[1,0])
+#    ax2.bar(bins, binned_norm_reads_list, width=N_bins, color="#333333")
+#    ax2.grid(False)
+#    ax2.set_xlim(0,l_genome)
+#    ax2.set_ylim(0,250)
+#    ax2.set_ylabel("Reads normalized [A.U.]")
     
     for chrom in chr_summedlength_dict:
         ax1.axvline(x = chr_summedlength_dict.get(chrom), linestyle='-', color=(0.9,0.9,0.9,1.0))
-        ax2.axvline(x = chr_summedlength_dict.get(chrom), linestyle='-', color=(0.9,0.9,0.9,1.0))
+#        ax2.axvline(x = chr_summedlength_dict.get(chrom), linestyle='-', color=(0.9,0.9,0.9,1.0))
     
     
     
@@ -116,11 +116,17 @@ def genome_normalization_plot(wig_file=None, pergene_insertions_file=None, varia
     c2 = l_genome
     middle_chr_position.append(c1 + (c2 - c1)/2)
     
-    ax2.set_xticks(middle_chr_position)
-    ax2.set_xticklabels(chrom_list)
-    ax2.tick_params(axis='x', which='major', pad=10)
+#    ax2.set_xticks(middle_chr_position)
+#    ax2.set_xticklabels(chrom_list)
+#    ax2.tick_params(axis='x', which='major', pad=10)
 
 
 #%%
 if __name__ == '__main__':
-    genome_normalization_plot()
+    genome_normalization_plot(wig_file=r"C:\Users\gregoryvanbeek\Documents\Data_Sets\wt1_dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_processedsample1\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_pairs_trimmed.sorted.bam.wig",
+                              pergene_insertions_file=r"C:\Users\gregoryvanbeek\Documents\Data_Sets\wt1_dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_processedsample1\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_pairs_trimmed.sorted.bam_pergene_insertions.txt",
+                              variable='reads',
+                              normalize=False,
+                              normalization_window_size=20000,
+                              plotting=True,
+                              verbose=False)
