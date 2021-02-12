@@ -10,7 +10,7 @@ def list_gene_names(gene_information_file = None):
     if gene_information_file == None:
         import os
         file_dirname = os.path.dirname(os.path.abspath('__file__'))
-        gene_information_file = os.path.join(file_dirname,'..','..','..','data_files','Yeast_Protein_Names.txt')
+        gene_information_file = os.path.join(file_dirname,'..','..','resources','Yeast_Protein_Names.txt')
 
     gene_name_list = [] #INLCUDES ALL GENE NAMES AND POTENTIAL ALIASES
     gene_oln_list = [] #INCLUDE ONLY THE OLN NAMING CONVENTION
@@ -98,7 +98,7 @@ def gene_aliases(gene_information_file = None):
     if gene_information_file == None:
         import os
         file_dirname = os.path.dirname(os.path.abspath('__file__'))
-        gene_information_file = os.path.join(file_dirname,'..','Data_Files','Yeast_Protein_Names.txt')
+        gene_information_file = os.path.join(file_dirname,'..','..','resources','Yeast_Protein_Names.txt')
 
 
     aliases_designation_dict = {}
@@ -141,4 +141,5 @@ def gene_aliases(gene_information_file = None):
 
 #%%
 if __name__ == '__main__':
-    gene_aliases()
+#    gene_name_list = list_gene_names()
+    aliases_designation_dict, aliases_sgd_dict, aliases_swissprot_dict = gene_aliases()

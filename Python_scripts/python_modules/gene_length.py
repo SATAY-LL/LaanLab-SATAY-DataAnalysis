@@ -1,5 +1,7 @@
    #CREATE A DICTIONARY WITH ALL GENES (BOTH THE COMMON NAME AND THEIR SYSTEMATIC NAME) AND SAVE THEM WITH THEIR RESPECTIVE LENGHTS (IN TERMS OF BP WHICH IS DEFINED AS bp=aa*3)
 
+
+#%%
 def gene_length_bp(gene_information_file = None):
     '''Create a dictionary for the gene length of all genes, in terms of basepairs, as listed on SGD.
     Input is a standard file downloaded from https://www.uniprot.org/docs/yeast.
@@ -10,7 +12,7 @@ def gene_length_bp(gene_information_file = None):
     if gene_information_file == None:
         import os
         file_dirname = os.path.dirname(os.path.abspath('__file__'))
-        gene_information_file = os.path.join(file_dirname,'..','Data_Files','Yeast_Protein_Names.txt')
+        gene_information_file = os.path.join(file_dirname,'..','..','resources','Yeast_Protein_Names.txt')
 
     gene_length_dict = {}
     with open(gene_information_file) as f:
@@ -33,7 +35,7 @@ def gene_length_bp(gene_information_file = None):
 
     return(gene_length_dict)
 
-
+#%%
 def gene_length_aa(gene_information_file = None):
     '''Create a dictionary for the gene length of all genes, in terms of amino acids, as listed on SGD.
     Input is a standard file downloaded from https://www.uniprot.org/docs/yeast.
@@ -44,7 +46,7 @@ def gene_length_aa(gene_information_file = None):
     if gene_information_file == None:
         import os
         file_dirname = os.path.dirname(os.path.abspath('__file__'))
-        gene_information_file = os.path.join(file_dirname,'..','Data_Files','Yeast_Protein_Names.txt')
+        gene_information_file = os.path.join(file_dirname,'..','..','resources','Yeast_Protein_Names.txt')
 
     gene_length_dict = {}
     with open(gene_information_file) as f:
@@ -67,5 +69,9 @@ def gene_length_aa(gene_information_file = None):
 
     return(gene_length_dict)
 
+
+
+#%%
 if __name__ == '__main__':
-    gene_length_aa()
+    gene_length_dict = gene_length_bp()
+#    gene_length_dict = gene_length_aa()

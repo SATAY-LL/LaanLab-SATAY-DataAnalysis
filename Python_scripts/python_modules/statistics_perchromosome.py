@@ -31,7 +31,7 @@ def chromosome_insertion_periodicity(chromosome=None,bed_file=None,gff_file=None
         if os.path.isfile(os.path.join(file_dirname,'Data_Files','Saccharomyces_cerevisiae.R64-1-1.99.gff3')):
             gff_file = os.path.join(file_dirname,'Data_Files','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
         else:
-            gff_file = os.path.join(file_dirname,'..','Data_Files','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
+            gff_file = os.path.join(file_dirname,'..','..','resources','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
 #%% GET CHROMOSOME START AND END POSTIONS
     chr_length_dict, chr_start_pos_dict, chr_end_pos_dict = chromosome_position(gff_file)
 
@@ -186,4 +186,4 @@ def chromosome_insertion_periodicity(chromosome=None,bed_file=None,gff_file=None
 
 #%%
 if __name__ == '__main__':
-    chromosome_insertion_periodicity(chromosome='xvi',bed_file=r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\satay_analysis_testdata\Output_Processing\Cerevisiae_WT2_Michel2017_trimmed1.bam.bed",printing=True)
+    chromosome_insertion_periodicity(chromosome='xvi',bed_file=r"\\?\X:\tnw\BN\LL\Shared\Gregory\datasets\dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_sample1\wt1_enzo_dataset_demultiplexed_singleend_sample1_trim20210127\align_out\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_singleend_trimmed.sorted.bam.bed",printing=True)

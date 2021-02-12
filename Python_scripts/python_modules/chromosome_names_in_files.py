@@ -145,5 +145,5 @@ def chromosome_name_wigfile(wig_file=None):
 
 #%%
 if __name__ == '__main__':
-    chromosome_name_bedfile(bed_file=r"C:\Users\gregoryvanbeek\Documents\testing_site\wt1_testfolder_w303_LYZE01_1\align_out\ERR1533147_trimmed.sorted.bam.bed")
-#    chromosome_name_wigfile(wig_file=r"C:\Users\gregoryvanbeek\Desktop\Python_matlab_differences\E-MTAB-4885_WT2\E-MTAB-4885.WT2.bam_python.wig")
+#    chrom_names_dict, chrom_start_line_dict, chrom_end_line_dict = chromosome_name_bedfile(bed_file=r"\\?\X:\tnw\BN\LL\Shared\Gregory\datasets\dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_sample1\wt1_enzo_dataset_demultiplexed_singleend_sample1_trim20210127\align_out\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_singleend_trimmed.sorted.bam.bed")
+    chrom_names_dict, chrom_start_line_dict, chrom_end_line_dict = chromosome_name_wigfile(wig_file=r"\\?\X:\tnw\BN\LL\Shared\Gregory\datasets\dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_sample1\wt1_enzo_dataset_demultiplexed_singleend_sample1_trim20210127\align_out\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_singleend_trimmed.sorted.bam.wig")

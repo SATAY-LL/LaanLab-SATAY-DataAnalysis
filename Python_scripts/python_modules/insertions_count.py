@@ -61,5 +61,5 @@ def total_mapped_reads(file, verbose=False):
 
 #%%
 if __name__ == '__main__':
-    total_mapped_reads(file=r"C:\Users\gregoryvanbeek\Documents\testing_site\wt1_testfolder_S288C\align_out\ERR1533147_trimmed.sorted.bam.wig", verbose=True)
-#    total_mapped_reads(file=r"C:\Users\gregoryvanbeek\Documents\testing_site\wt1_testfolder_S288C\align_out\ERR1533147_trimmed.sorted.bam.bed", verbose=True)
+    total_mapped_reads(file=r"C:\Users\gregoryvanbeek\Documents\Data_Sets\testing_site\wt1_testfolder\analysis_matlab_kornmanncode\ERR1533147_trimmed.sorted.bam.wig", verbose=True)
+#    total_mapped_reads(file=r"C:\Users\gregoryvanbeek\Documents\Data_Sets\testing_site\wt1_testfolder\analysis_matlab_kornmanncode\ERR1533147_trimmed.sorted.bam.bed", verbose=True)

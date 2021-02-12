@@ -26,8 +26,8 @@ def hit_free_region(gene_name='None',region=None,bed_file=None):
 #%% USED FILES
     datafile_dirname = os.path.join(file_dirname,'..')
     
-    gff_file = os.path.join(datafile_dirname,'Data_Files','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
-    gene_information_file = os.path.join(datafile_dirname,'Data_Files','Yeast_Protein_Names.txt')
+    gff_file = os.path.join(datafile_dirname,'..','resources','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
+    gene_information_file = os.path.join(datafile_dirname,'..', 'resources','Yeast_Protein_Names.txt')
 
 #%% GET START AND END POSITION OF GENE
     if gene_name.upper() == 'HOLOCUS' or gene_name == 'HO-LOCUS':
@@ -164,4 +164,4 @@ def hit_free_region(gene_name='None',region=None,bed_file=None):
 #%%
 if __name__ == '__main__':
 #    hit_free_region(region=['XI',1000,2000],bed_file=r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\satay_analysis_testdata\Output_Processing\Cerevisiae_WT2_Michel2017_trimmed1.bam.bed")
-    hit_free_region(gene_name='bem1',bed_file=r"C:\Users\gregoryvanbeek\Documents\testing_site\wt1_testfolder\align_out\ERR1533148_trimmed.sorted.bam.bed")
+    hit_free_region(gene_name='bem1',bed_file=r"C:\Users\gregoryvanbeek\Documents\Data_Sets\testing_site\wt1_testfolder\analysis_matlab_kornmanncode\ERR1533147_trimmed.sorted.bam.bed")
