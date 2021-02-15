@@ -1,5 +1,10 @@
 # LaanLab-SATAY-DataAnalysis
 
+[![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
+[![Documentation](https://readthedocs.org/projects/genewalk/badge/?version=latest)](https://genewalk.readthedocs.io/en/latest/?badge=latest)
+[![PyPI version](https://badge.fury.io/py/genewalk.svg)](https://badge.fury.io/py/genewalk)
+[![Python 3.6+](https://img.shields.io/pypi/pyversions/genewalk.svg)](https://www.python.org/downloads/release)
+
 This repository contains codes, data and workflows for data analysis regarding SATAY experiments.
 
 ## [Projects tab](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/projects/1) and [Issues tab](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/issues)
