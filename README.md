@@ -42,7 +42,7 @@ Also a list of genes is generated where the number or distribution of insertions
 ## ToDo
 
 - [x] Create GUI
-- [] Test working environment in Linux
+- [ ] Test working environment in Linux
 
 ## Contributors
 [LaanLab. Department of BioNanoScience, Delft University of Technology](https://www.tudelft.nl/en/faculty-of-applied-sciences/about-faculty/departments/bionanoscience/research/research-labs/liedewij-laan-lab/research-projects/evolvability-and-modularity-of-essential-functions-in-budding-yeast)
