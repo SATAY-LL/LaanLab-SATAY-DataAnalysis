@@ -5,7 +5,8 @@
 ## Overview
 
 This workflow is created for processing sequencing data for SAturated Transposon Analysis in Yeast for Saccharomyces Cerevisiae.
-For more information see [the satay user website](https://sites.google.com/site/satayusers/) created by the Kornmann-lab.
+For more information about this project, see our [JupyterBook](https://leilaicruz.github.io/SATAY-jupyter-book/Introduction.html).
+For more information regarding SATAY, see [the satay user website](https://sites.google.com/site/satayusers/) created by the Kornmann-lab.
 
 ## Features
 
@@ -37,5 +38,16 @@ Also a list of genes is generated where the number or distribution of insertions
 - Python v3.7 or later
   - [pysam](https://anaconda.org/bioconda/pysam) v0.16.0.1 or later
   - [numpy](https://anaconda.org/anaconda/numpy) v1.19.2 or later
+
+## ToDo
+
+- [x] Create GUI
+- [] Test working environment in Linux
+
+## Contributors
+[LaanLab. Department of BioNanoScience, Delft University of Technology](https://www.tudelft.nl/en/faculty-of-applied-sciences/about-faculty/departments/bionanoscience/research/research-labs/liedewij-laan-lab/research-projects/evolvability-and-modularity-of-essential-functions-in-budding-yeast)
+- Leila Inigo de la Cruz
+- Enzo Kingma
+- Gregory van Beek
 
 *Last updated: February 15, 2021*
