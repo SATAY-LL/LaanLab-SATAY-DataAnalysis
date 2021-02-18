@@ -43,8 +43,6 @@ from chromosome_and_gene_positions import chromosome_position, chromosomename_ro
 from chromosome_names_in_files import chromosome_name_wigfile
 from gene_names import list_gene_names, gene_aliases
 from read_sgdfeatures import sgd_features
-#from normalize_reads import reads_normalization_fixed_window #reads_normalization_dynamic_window
-
 
 #%%
 def dna_features(region, wig_file, pergene_insertions_file, variable="reads", plotting=True, savefigure=False, verbose=True):
@@ -224,6 +222,8 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
     len_chr = chromosome_position(gff_file)[0].get(chrom)
     start_chr = chromosome_position(gff_file)[1].get(chrom)
     end_chr = chromosome_position(gff_file)[2].get(chrom)
+    if verbose == True:
+        print('Chromosome length = ', len_chr)
 
     dna_dict = {} #for each bp in chromosome, determine whether it belongs to a noncoding or coding region
     for bp in range(start_chr, end_chr + 1): #initialize dna_dict with all basepair positions as ['noncoding', None]
@@ -322,7 +322,7 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
             N_reads_list.append(sum(N_reads))
             N_insrt_list.append(len([ins for ins in N_reads if not ins == 0]))
             if not f_type == None and f_type.startswith('Gene'):
-                N10percent = 100#int(len(N_reads) * 0.1)
+                N10percent = int(len(N_reads) * 0.1) #TRUNCATED GENE DEFINITION
                 N_reads_truncatedgene_list.append(sum(N_reads[N10percent:-N10percent]))
                 N_insrt_truncatedgene_list.append(len([ins for ins in N_reads[N10percent:-N10percent] if not ins == 0]))
             else:
@@ -431,10 +431,6 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
 
     del (dna_dict, feature_NameAndType_list, feature_name_list, feature_type_list, feature_name, f_type, f_previous, f_start, f_end, f_pos_list, f_current, N_reads, N_reads_list, N_insrt_list, N_reads_truncatedgene_list, N_insrt_truncatedgene_list, N10percent, N_bp, N_bp_list, bp, i, start_chr, end_chr, all_features, essentiality_list, essentials_file, genomicregions_list)
 
-
-#%% NORMALIZE USING WINDOWS
-
-    #dna_df2, window_edge_list = reads_normalization_fixed_window(dna_df2, len_chr, normalization_window_size, wig_file)
 
 #%% CREATE BAR PLOT
     if plotting == True:
@@ -585,19 +581,19 @@ def feature_position(feature_dict, chrom, start_chr, dna_dict, feature_type=None
 
 #%%
 if __name__ == '__main__':
-    dna_df2 = dna_features(region = 'iv',#['xiii', 0, 14790],
-                 wig_file = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\wt1_dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_processedsample1\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_pairs_trimmed.sorted.bam.wig",
-                 pergene_insertions_file = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\wt1_dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_processedsample1\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_pairs_trimmed.sorted.bam_pergene_insertions.txt",
-                 variable="reads",
+    dna_df2 = dna_features(region = 3,#['xiii', 0, 14790],
+                 wig_file = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\dataset_enzo\wt1_enzo_dataset_demultiplexed_singleend_sample1_trim1\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_singleend_trimmed.sorted.bam.wig",
+                 pergene_insertions_file = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\dataset_enzo\wt1_enzo_dataset_demultiplexed_singleend_sample1_trim1\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_singleend_trimmed.sorted.bam_pergene_insertions.txt",
+                 variable="reads", #for plotting
                  plotting=False,
                  savefigure=False,
                  verbose=True)
 
-
+#
 #    for chrom in ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI']:
 #        dna_df2 = dna_features(region = chrom,
-#                     wig_file = r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\Data_Files\test_data\KornmannLab_dataset_dDpl1\E-MTAB-4885.Dpl1Kan.sorted.bam.wig",
-#                     pergene_insertions_file = r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\Data_Files\test_data\KornmannLab_dataset_dDpl1\E-MTAB-4885.Dpl1Kan.sorted.bam_pergene_insertions.txt",
+#                     wig_file = r"C:\Users\gregoryvanbeek\Documents\testing_site\dDpl1_testfolder\align_out\E-MTAB-4885.Dpl1Kan.sorted.bam.wig",
+#                     pergene_insertions_file = r"C:\Users\gregoryvanbeek\Documents\testing_site\dDpl1_testfolder\align_out\E-MTAB-4885.Dpl1Kan.sorted.bam_pergene_insertions.txt",
 #                     variable="reads",
 #                     plotting=False,
 #                     savefigure=False,
