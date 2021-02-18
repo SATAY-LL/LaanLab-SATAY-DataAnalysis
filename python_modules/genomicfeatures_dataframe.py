@@ -11,7 +11,6 @@ To run this script, the following files are required and should be placed in the
     - chromosome_names_in_files.py
     - gene_names.py
     - read_sgdfeatures.py
-    - normalize_reads.py
 
 For the ipython Notebook version of this script with more extensive explanation, see https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/dev_Gregory/Python_scripts/python_modules/genomicfeatures_dataframe_with_normalization.ipynb
 
