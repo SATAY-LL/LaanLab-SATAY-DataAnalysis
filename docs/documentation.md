@@ -37,8 +37,12 @@
     - [genome browser](#genome-browser)
 - [Outlook](#outlook)
 
-This file gives a complete overview for the processing of the data from SAturated Transposon Analysis in Yeast (SATAY).
+This documentation gives a complete overview for the processing of the data from SAturated Transposon Analysis in Yeast (SATAY).
+A short introduction to SATAY will be given and details how to perform the processing is discussed in more detail.
+
+For this a pipeline is created using Bash and Python.
 The workflow and the python codes can be found at [github.com/Gregory94/LaanLab-SATAY-DataAnalysis](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/tree/satay_processing).
+More information about satay analysis and experimental protocols can be found at the [satayusers website from the Kornmann lab](https://sites.google.com/site/satayusers/ "satayusers website") or, for more questions, visit the [satayusers forum](https://groups.google.com/g/satayusers "satayusers forum").
 
 ## Introduction
 
