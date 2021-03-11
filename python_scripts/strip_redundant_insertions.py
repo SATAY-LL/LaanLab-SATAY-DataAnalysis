@@ -17,7 +17,7 @@ from chromosome_names_in_files import chromosome_name_bedfile, chromosome_name_w
 
 
 
-def strip_redundant_ins(filepath=None):
+def strip_redundant_ins(filepath=None, custom_header=None):
     '''
     This code reads a .bed or .wig file and removed any insertions that were mapped outside a chromosome.
     For this, it creates a new file with the same name as the inputfile with the extension _clean.bed or _clean.wig, respectively.
@@ -46,14 +46,19 @@ def strip_redundant_ins(filepath=None):
     if exten == ".bed":
         print("Bed file loaded %s" % filepath)
 
-        chrom_start_line_dict, chrom_end_line_dict = chromosome_name_bedfile(filepath)[1:3]
+        chrom_names_dict, chrom_start_line_dict, chrom_end_line_dict = chromosome_name_bedfile(filepath)
 
         with open(filepath, "r") as f:
             lines = f.readlines()
 
 
         with open(filepath_splitext[0]+"_clean.bed", "w") as w:
-            w.write(lines[0])
+            #write header
+            if custom_header == None:
+                w.write(lines[0])
+            else:
+                w.write("track name=" + str(custom_header) + " useScore=1\n")
+
             for chrom in num_roman:
                 print("evaluating chromosome %s" % chrom)
 
@@ -62,10 +67,15 @@ def strip_redundant_ins(filepath=None):
                     if int(line_list[1]) > chr_length_dict.get(chrom) or int(line_list[1]) < 0:
                         print("Line removed: %s" % line)
                     else:
-                        w.write(line)
+                        for romanname, chromname in chrom_names_dict.items():
+                            if chromname == line_list[0].replace("chr",""):
+                                chrom_nameroman = romanname
+                        w.write("chr" + str(chrom_nameroman) + " " + str(line_list[1]) + " " + str(line_list[2]) + " " + str(line_list[3]) + " " + str(line_list[4]) + "\n")
 
+            
             for line in lines[chrom_end_line_dict.get("XVI")+1:]:
-                w.write(line)
+                line_list = " ".join(line.strip("\n").split()).split(" ")
+                w.write("chrM" + " " + str(line_list[1]) + " " + str(line_list[2]) + " " + str(line_list[3]) + " " + str(line_list[4]) + "\n")
 
 
 
@@ -74,18 +84,28 @@ def strip_redundant_ins(filepath=None):
     elif exten == ".wig":
         print("Wig file loaded %s" % filepath)
 
-        chrom_start_line_dict, chrom_end_line_dict = chromosome_name_wigfile(filepath)[1:3]
+        chrom_names_dict, chrom_start_line_dict, chrom_end_line_dict = chromosome_name_wigfile(filepath)
 
         with open(filepath, 'r') as f:
             lines = f.readlines()
 
         with open(filepath_splitext[0]+"_clean.wig", "w") as w:
-            w.write(lines[0])
+            #write header
+            if custom_header == None:
+                w.write(lines[0].replace(',',''))
+            else:
+                w.write("track type=wiggle_0 maxheightPixels=60 name=" + str(custom_header) + "\n")
 
             for chrom in num_roman:
                 print("evaluating chromosome %s" % chrom)
 
-                w.write(lines[chrom_start_line_dict.get(chrom) - 1])
+                #replace chromosome names from reference genome with roman numerals
+                chrom_headerline = lines[chrom_start_line_dict.get(chrom) - 1]
+                chrom_nameline = chrom_headerline.split("=")[1].strip("\n").replace("chr","")
+                for romanname, chromname in chrom_names_dict.items():
+                    if chromname == chrom_nameline:
+                        chrom_nameroman = romanname
+                w.write("variablestep chrom=chr" + str(chrom_nameroman) + "\n") #write header for each chromosome
                 for line in lines[chrom_start_line_dict.get(chrom): chrom_end_line_dict.get(chrom)]: #no '+1' in for loop, this is only for bed file
                     line_list = " ".join(line.strip("\n").split()).split(" ")
                     if int(line_list[0]) > chr_length_dict.get(chrom) or int(line_list[0]) < 0:
@@ -93,7 +113,9 @@ def strip_redundant_ins(filepath=None):
                     else:
                         w.write(line)
 
-            for line in lines[chrom_end_line_dict.get("XVI"):]:
+
+            w.write("variablestep chrom=chrM\n")
+            for line in lines[chrom_end_line_dict.get("XVI")+1:]:
                 w.write(line)
 
 
@@ -105,6 +127,7 @@ def strip_redundant_ins(filepath=None):
 
 #%%
 if __name__ == '__main__':
-    strip_redundant_ins(filepath = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\dataset_leila\dataset_leila_wt\leila_dataset_wt_processing\WT_merged-techrep-a_techrep-b_processing\WT_merged-techrep-a_techrep-b_trimmed.sorted.bam.wig")
-    # strip_redundant_ins(filepath = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\dataset_leila\dnrp1.bed")
+    custom_header = "leila_wt_techrep_ab"
+    strip_redundant_ins(filepath = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\dataset_leila\dataset_leila_wt\leila_dataset_wt_processing\WT_merged-techrep-a_techrep-b_processing\WT_merged-techrep-a_techrep-b_trimmed.sorted.bam.wig")#, custom_header=custom_header)
+    # strip_redundant_ins(filepath = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\dataset_leila\dataset_leila_wt\leila_dataset_wt_processing\WT_merged-techrep-a_techrep-b_processing\WT_merged-techrep-a_techrep-b_trimmed.sorted.bam.bed", custom_header=custom_header)
 
