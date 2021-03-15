@@ -11,7 +11,7 @@ from ast import literal_eval
 import matplotlib.pyplot as plt
 import scipy.stats as stats
 from collections import Counter
-from reliability.Fitters import Fit_Everything
+from scipy.stats import nbinom, poisson, geom
 
 # Import curve fitting package from scipy
 from scipy.optimize import curve_fit
@@ -30,7 +30,7 @@ df.loc[:,'reads'] = df.loc[:,'reads'].apply(lambda x: literal_eval(x))
 all_reads = [ ]
 gene_list = [ ]
 for index, row in df.iterrows():
-    if row['insertions'] != [] and row['gene'] != 'ADE2':
+    if row['insertions'] != [] and row['gene'] != 'ADE2': #remove ADE2
         for x in row['reads']:
             all_reads.append(x)
             gene_list.append(row['gene'])
@@ -43,33 +43,12 @@ totalins = len(all_reads)
 totalreads = sum(all_reads)
 print(max(all_reads))
 
-#define mu and sigma for the normal distribution
-i_min_mu_srd = []
-mu = totalreads/(totalins)
-
-for index in all_reads:
-    i_min_mu_srd.append((index - mu)**2)  
-    
-
-sigma_sqrd = sum(i_min_mu_srd)/totalins
-del (row, index)
-
 #make a dataframe with genes and reads sorted so we can see to which genes the outliers belong
 dictionary = {'gene':gene_list, 'reads':all_reads}
 df_gene_reads = pd.DataFrame(dictionary)
 
 
-# now we make a normal distribution from the expected value and sigma 
-#sigma_sqrd = 20
-# x = np.linspace(mu - 3*sigma_sqrd, mu + 3*sigma_sqrd, 100)
-# plt.plot(x, stats.norm.pdf(x, mu, sigma_sqrd))
-# plt.xlabel("#reads")
-# plt.ylabel("abundance of readcount")
-# plt.show()
-
-
-
-# Now we want to see if the real distribution of read counts matches the expected distribution
+# plot the distribution of read counts :
 abundance_reads_counter = Counter(all_reads)
 
 abundance_reads = pd.DataFrame.from_dict(abundance_reads_counter, orient='index').reset_index()
@@ -78,30 +57,69 @@ ab =  abundance_reads.sort_values(by ='number of reads' )
 ab.plot.scatter(x= 'number of reads', y='abundance', s=2 ,title='Abundance of different reads counts' )
 plt.xlim([0,400])
 plt.ylim([0,500])
-#plt.locator_params(axis='x', nbins=10) 
 plt.xticks(np.arange(0, 500, 100))
-#plt.xticks(np.arange(0, 10000, 200))
 
-Fit_Everything(ab)
+# Now we are trying to fit our data to an exponential distribution
 
-# labels, values = (abundance_reads.items())
-# indexes = np.arange(len(labels))
-# width = 1
-# plt.bar(indexes, values, width)
-# #plt.xticks(indexes + width * 0.5)
-# plt.xlabel("#reads")
-# plt.ylabel("abundance of readcount")
-# plt.show()
+# Function to calculate the exponential with constants a and b
+def exponential(x, a, b):
+    return a*np.exp(b*x)
+
+x_data = ab['number of reads'].reset_index(drop=True).truncate(0, 400, copy = False)
+y_data = ab['abundance'].reset_index(drop=True).truncate(0, 400, copy = False);
+
+pars, cov = curve_fit(f=exponential, xdata= x_data, ydata=y_data, p0=[0, 0], bounds=(-np.inf, np.inf))
+
+# Get the standard deviations of the parameters (square roots of the # diagonal of the covariance)
+stdevs = np.sqrt(np.diag(cov))
+
+# Calculate the residuals
+res = y_data - exponential(x_data, *pars)
+
+# Plot the fit data as an overlay on the scatter data
+ax = plt.axes()
+ax.plot(x_data, exponential(x_data, *pars), linestyle='--', linewidth=2, color='black')
+plt.xlim([0,400])
+plt.ylim([0,500])
+
+# plt.xscale('log')
+# plt.yscale('log')
+
+#plt.savefig('plots/fit data to exponential funtion- #reads_ 1to421-zoomed in.png', dpi=800)
+
+del(x)
 
 
-# for index in abundance_reads:
-#     xvalues = abundance_reads['Key']
-#     yvalues = abundance_reads['Value']
-# plt.bar(xvalues, yvalues, width=0.8, bottom=None, align='center')
+# # geometric distribution
+y_data = y_data/max(ab['abundance'])
 
+def geometric(x, p):
+    return (1-p)**(x)*p
 
+pars, cov = curve_fit(f=geometric, xdata= x_data, ydata=y_data, p0=[0], bounds=(-np.inf, np.inf))
 
+# Get the standard deviations of the parameters (square roots of the # diagonal of the covariance)
+stdevs = np.sqrt(np.diag(cov))
 
+# Calculate the residuals
+res = y_data - geometric(x_data, *pars)
+
+plt.figure()
+plt.scatter(x_data, y_data, s=2)
+plt.title('Distribution of #reads, scaled to max(abundance) ')
+plt.xlabel('number of reads')
+plt.ylabel('Percentage of transposons with 1 read')
+
+ax = plt.axes()
+ax.plot(x_data, geometric(x_data, *pars), linestyle='--', linewidth=2, color='black')
+plt.xlim([0,200])
+plt.ylim([0,0.2])
+# plt.xscale('log')
+#plt.yscale('log')
+
+#plt.savefig('plots/fit data to geometric distribution.png', dpi=800)
+
+ 
 
 
      
