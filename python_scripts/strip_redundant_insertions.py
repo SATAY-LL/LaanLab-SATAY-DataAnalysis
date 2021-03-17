@@ -4,7 +4,7 @@ Created on Fri Mar  5 15:39:53 2021
 
 @author: gregoryvanbeek
 
-This script if for removing transposon insertions in .bed and .wig files that were mapped outside the chromosomes.
+This script removes transposon insertions in .bed and .wig files that were mapped outside the chromosomes, creates consistent naming for chromosomes and change the header of files with custom headers.
 """
 
 import os, sys
@@ -16,15 +16,24 @@ from chromosome_names_in_files import chromosome_name_bedfile, chromosome_name_w
 
 
 
+#%% INPUT -> FILEPATH TAKES PATHS TO .BED OR .WIG FILES
+custom_header = ""
+filepath = r""
 
+
+
+
+#%%
 def strip_redundant_ins(filepath=None, custom_header=None):
     '''
-    This code reads a .bed or .wig file and removed any insertions that were mapped outside a chromosome.
-    For this, it creates a new file with the same name as the inputfile with the extension _clean.bed or _clean.wig, respectively.
+    This code reads a .bed or .wig file and remove any insertions that were mapped outside a chromosome.
+    Mapping of a read outside a chromosome can happen during the alignment and transposon mapping steps and means that the position of an insertions site of a read is larger than the length of the chromosome it is mapped to.
+    This function creates a new file with the same name as the inputfile with the extension _clean.bed or _clean.wig.
     This is saved at the same location as the input file.
     In this _clean file the redundant insertions that were mapped outside the chromosome are removed.
     The lengths of the chromosomes are determined the python function 'chromosome_position' which is part of the python module 'chromosome_and_gene_positions.py'.
     This module gets the lengths of the chromosomes from a .gff file downloaded from SGD (https://www.yeastgenome.org/).
+    Besides removing the reads outside the chromosomes, it also changes the names of the chromosomes to roman numerals and a custom header can be inputted (optional).
     '''
 
     if filepath == None:
@@ -54,7 +63,7 @@ def strip_redundant_ins(filepath=None, custom_header=None):
 
         with open(filepath_splitext[0]+"_clean.bed", "w") as w:
             #write header
-            if custom_header == None:
+            if custom_header == None or custom_header == "":
                 w.write(lines[0])
             else:
                 w.write("track name=" + str(custom_header) + " useScore=1\n")
@@ -64,7 +73,7 @@ def strip_redundant_ins(filepath=None, custom_header=None):
 
                 for line in lines[chrom_start_line_dict.get(chrom): chrom_end_line_dict.get(chrom)+1]:
                     line_list = " ".join(line.strip("\n").split()).split(" ")
-                    if int(line_list[1]) > chr_length_dict.get(chrom) or int(line_list[1]) < 0:
+                    if int(line_list[2]) > chr_length_dict.get(chrom) or int(line_list[1]) < 0:
                         print("Line removed: %s" % line)
                     else:
                         for romanname, chromname in chrom_names_dict.items():
@@ -127,7 +136,5 @@ def strip_redundant_ins(filepath=None, custom_header=None):
 
 #%%
 if __name__ == '__main__':
-    custom_header = "leila_wt_techrep_ab"
-    strip_redundant_ins(filepath = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\dataset_leila\dataset_leila_wt\leila_dataset_wt_processing\WT_merged-techrep-a_techrep-b_processing\WT_merged-techrep-a_techrep-b_trimmed.sorted.bam.wig")#, custom_header=custom_header)
-    # strip_redundant_ins(filepath = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\dataset_leila\dataset_leila_wt\leila_dataset_wt_processing\WT_merged-techrep-a_techrep-b_processing\WT_merged-techrep-a_techrep-b_trimmed.sorted.bam.bed", custom_header=custom_header)
+    strip_redundant_ins(filepath=filepath, custom_header=custom_header)
 

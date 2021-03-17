@@ -6,16 +6,11 @@ Created on Mon Sep  7 11:32:52 2020
 
 This file reads the SGD_features.txt file found at http://sgd-archive.yeastgenome.org/curation/chromosomal_feature/
 """
-import os, sys
-
+import os
 file_dirname = os.path.dirname(os.path.abspath('__file__'))
-sys.path.insert(1,os.path.join(file_dirname))
-
 #%%
 def sgd_features(filepath=None):
     '''
-    This function reads a SGD_features.tab file and output a number of dictionaries that each contain a specific genomic element (e.g. orf, ars, telemeres, centromeres, etc.)
-    For each element a indivdual dictionary is created that includes information of this element and each dictionary has the same layout.
     Output dictionaries contain the following information in this order:
         key:
             0. Feature name
@@ -30,9 +25,8 @@ def sgd_features(filepath=None):
             7. end coordinate (starting at 0 for each chromosome) (l[10])
     '''
 
-
     if filepath == None:
-        filepath = os.path.join(file_dirname,'..','..','resources',"SGD_features.tab")
+        filepath = os.path.join(file_dirname,"..","..","data_files","SGD_features.tab")
 
 
     arabic_to_roman_dict = {1:'I', 2:'II', 3:'III', 4:'IV', 5:'V', 6:'VI',
@@ -137,5 +131,6 @@ def sgd_features(filepath=None):
            feature_telrna_dict)
 
 #%%
-if __name__ == '_main__':
+if __name__ == '__main__':
+    # genomicregions_list, feature_orf_dict, feature_ars_dict, feature_telomere_dict, feature_ltr_dict, feature_centromere_dict, feature_Xelement_dict, feature_intron_dict, feature_ncrna_dict, feature_ncexon_dict, feature_trna_dict, feature_snorna_dict, feature_teg_dict, feature_5p_utrintron_dict, feature_mas_dict, feature_snrna_dict, feature_rrna_dict, feature_ets_dict, feature_its_dict, feature_oor_dict, feature_telrna_dict = sgd_features()
     sgd_features()

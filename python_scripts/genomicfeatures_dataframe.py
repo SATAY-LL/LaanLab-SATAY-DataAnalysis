@@ -31,18 +31,34 @@ __Author__: Gregory van Beek
 """
 
 #%%
-import os
+import os, sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
 
 file_dirname = os.path.dirname(os.path.abspath('__file__'))
-#sys.path.insert(1,os.path.join(file_dirname,'..','python_modules'))
+sys.path.insert(1,os.path.join(file_dirname,'python_modules'))
 from chromosome_and_gene_positions import chromosome_position, chromosomename_roman_to_arabic, gene_position
 from chromosome_names_in_files import chromosome_name_wigfile
 from gene_names import list_gene_names, gene_aliases
 from read_sgdfeatures import sgd_features
+
+
+
+#%% INPUT
+
+# for chrom in ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI']:
+#     region=chrom
+region = 3 #e.g. 1, "I", ["I", 0, 10000"], gene name (e.g. "CDC42")
+wig_file = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\dataset_leila\dataset_leila_wt\leila_dataset_wt_processing\WT_merged-techrep-a_techrep-b_processing\WT_merged-techrep-a_techrep-b_trimmed.sorted.bam_clean.wig"
+pergene_insertions_file = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\dataset_leila\dataset_leila_wt\leila_dataset_wt_processing\WT_merged-techrep-a_techrep-b_processing\WT_merged-techrep-a_techrep-b_trimmed.sorted.bam_pergene_insertions.txt"
+plotting=True
+variable="reads" #"reads" or "insertions"
+savefigure=False
+verbose=True
+
+
 
 #%%
 def dna_features(region, wig_file, pergene_insertions_file, variable="reads", plotting=True, savefigure=False, verbose=True):
@@ -65,7 +81,21 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
         - Verbose: Either True of False. Determines how much textual feedback is given. When set to False, only warnings will be shown.
 
     Output:
-        - dna_df2: Dataframe containing information about the selected chromosome.
+        - dna_df2: Dataframe containing information about the selected chromosome. This includes the following columns:
+            - Feature name
+            - Standard name of the feature
+            - Aliases of feature name (if any)
+            - Feature type (e.g. gene, telomere, centromere, etc. If None, this region is not defined)
+            - Chromosome
+            - Position of feature type in terms of bp relative to chromosome.
+            - Length of region in terms of basepairs
+            - Number of insertions in region
+            - Number of insertions in truncated region where truncated region is the region without the first and last 100bp.
+            - Number of reads in region
+            - Number of reads in truncated region.
+            - Number of reads per insertion (defined by Nreads/Ninsertions)
+            - Number of reads per insertion in truncated region (defined by Nreads_truncatedgene/Ninsertions_truncatedgene)
+            NOTE: truncated regions are only determined for genes. For the other regions the truncated region values are the same as the non-truncated region values.
     
     Required files (see next section):
         - essentials_file: https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Data_Files/Cerevisiae_AllEssentialGenes_List.txt
@@ -74,13 +104,13 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
         - sgd_features_file: https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Data_Files/SGD_features.tab
     '''
 #%% FILES
-    essentials_file = os.path.join(file_dirname,'..','resources',"Cerevisiae_AllEssentialGenes_List.txt")
+    essentials_file = os.path.join(file_dirname,'..','data_files',"Cerevisiae_AllEssentialGenes_List.txt")
 
-    gene_information_file = os.path.join(file_dirname,'..','resources','Yeast_Protein_Names.txt')
+    gene_information_file = os.path.join(file_dirname,'..','data_files','Yeast_Protein_Names.txt')
 
-    gff_file = os.path.join(file_dirname,'..','resources','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
+    gff_file = os.path.join(file_dirname,'..','data_files','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
 
-    sgd_features_file = os.path.join(file_dirname,'..','resources','SGD_features.tab')
+    sgd_features_file = os.path.join(file_dirname,'..','data_files','SGD_features.tab')
 
     variable = variable.lower()
     if plotting == True:
@@ -322,7 +352,7 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
             N_reads_list.append(sum(N_reads))
             N_insrt_list.append(len([ins for ins in N_reads if not ins == 0]))
             if not f_type == None and f_type.startswith('Gene'):
-                N10percent = int(len(N_reads) * 0.1) #TRUNCATED GENE DEFINITION
+                N10percent = 100#int(len(N_reads) * 0.1) #TRUNCATED GENE DEFINITION
                 N_reads_truncatedgene_list.append(sum(N_reads[N10percent:-N10percent]))
                 N_insrt_truncatedgene_list.append(len([ins for ins in N_reads[N10percent:-N10percent] if not ins == 0]))
             else:
@@ -408,6 +438,7 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
                     'Feature_alias':feature_alias_list,
                     'Feature_type': feature_type_list,
                     'Essentiality': essentiality_list,
+                    'Chromosome': [chrom]*len(feature_name_list),
                     'Position': f_pos_list,
                     'Nbasepairs':N_bp_list,
                     'Ninsertions':N_insrt_list,
@@ -439,7 +470,7 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
         nonessential_color = "#d9252e"
         codingdna_color = '#29a7e6'
         textcolor = "#000000"
-        textsize = 20
+        textsize = 14
 
 
         feature_middle_pos_list = []
@@ -581,20 +612,11 @@ def feature_position(feature_dict, chrom, start_chr, dna_dict, feature_type=None
 
 #%%
 if __name__ == '__main__':
-    dna_df2 = dna_features(region = 3,#['xiii', 0, 14790],
-                 wig_file = r"\\?\X:\tnw\BN\LL\Shared\Gregory\datasets\dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_sample1\wt1_enzo_dataset_demultiplexed_singleend_sample1_trim20210127\align_out\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_singleend_trimmed.sorted.bam.wig",
-                 pergene_insertions_file = r"\\?\X:\tnw\BN\LL\Shared\Gregory\datasets\dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_sample1\wt1_enzo_dataset_demultiplexed_singleend_sample1_trim20210127\align_out\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_singleend_trimmed.sorted.bam_pergene_insertions.txt",
-                 variable="reads", #for plotting
-                 plotting=False,
-                 savefigure=False,
-                 verbose=True)
+    dna_df2 = dna_features(region=region,
+                 wig_file=wig_file,
+                 pergene_insertions_file=pergene_insertions_file,
+                 variable=variable,
+                 plotting=plotting,
+                 savefigure=savefigure,
+                 verbose=verbose)
 
-#
-#    for chrom in ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI']:
-#        dna_df2 = dna_features(region = chrom,
-#                     wig_file = r"C:\Users\gregoryvanbeek\Documents\testing_site\dDpl1_testfolder\align_out\E-MTAB-4885.Dpl1Kan.sorted.bam.wig",
-#                     pergene_insertions_file = r"C:\Users\gregoryvanbeek\Documents\testing_site\dDpl1_testfolder\align_out\E-MTAB-4885.Dpl1Kan.sorted.bam_pergene_insertions.txt",
-#                     variable="reads",
-#                     plotting=False,
-#                     savefigure=False,
-#                     verbose=True)
