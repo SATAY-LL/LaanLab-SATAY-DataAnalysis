@@ -34,6 +34,7 @@ def strip_redundant_ins(filepath=None, custom_header=None, split_chromosomes=Fal
     The lengths of the chromosomes are determined the python function 'chromosome_position' which is part of the python module 'chromosome_and_gene_positions.py'.
     This module gets the lengths of the chromosomes from a .gff file downloaded from SGD (https://www.yeastgenome.org/).
     Besides removing the reads outside the chromosomes, it also changes the names of the chromosomes to roman numerals and a custom header can be inputted (optional).
+    Finally, the bed and wig files can be split up in separate files for each chromosome. These are placed in _chromosomesplit folder located at the location of the bed or wig file.
     '''
 
     if filepath == None:
@@ -86,6 +87,37 @@ def strip_redundant_ins(filepath=None, custom_header=None, split_chromosomes=Fal
                 line_list = " ".join(line.strip("\n").split()).split(" ")
                 w.write("chrM" + " " + str(line_list[1]) + " " + str(line_list[2]) + " " + str(line_list[3]) + " " + str(line_list[4]) + "\n")
 
+
+        if split_chromosomes == True:
+            path = os.path.dirname(filepath)
+            name = os.path.splitext(os.path.basename(filepath_splitext[0]+"_clean.bed"))[0]
+
+            directoryname = os.path.join(path, name + '_chromosomesplit')
+
+            if not os.path.exists(directoryname):
+                os.mkdir(directoryname)
+
+            chromosome_names = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI']
+
+            chrom_names_dict, chrom_start_line_dict, chrom_end_line_dict = chromosome_name_bedfile(os.path.join(path, name+".bed"))
+
+            with open(os.path.join(path,name+".bed"), 'r') as f:
+                lines = f.readlines()
+            header = lines[0]
+
+
+            for chrom in chromosome_names:
+                outputfile = os.path.join(directoryname, name + '_' + str(chrom) + '.bed')
+                with open(outputfile, 'w+') as f:
+                    f.write(header)
+                    for l in range(chrom_start_line_dict.get(chrom), chrom_end_line_dict.get(chrom)+1):
+                        f.write(lines[l])
+
+                outputfile = os.path.join(directoryname, name + '_M.bed')
+                with open(outputfile, 'w+') as f:
+                    f.write(header)
+                    for l in range(chrom_end_line_dict.get(chromosome_names[-1])+1, len(lines)):
+                        f.write(lines[l])
 
 
 
