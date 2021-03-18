@@ -85,6 +85,7 @@ main () {
 				;;
 			c )
 				xdg-open ${adapterfile}
+				exit 0
 				;;
 			f )
 				filepath1=$OPTARG
