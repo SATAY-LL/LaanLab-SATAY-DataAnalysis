@@ -799,7 +799,7 @@ matplotlib
 
 - **How and when to use**
 
-[This code]() consists of a single function `profile_genome` which takes the following arguments:
+[This code](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/transposonread_profileplot_genome.py) consists of a single function `profile_genome` which takes the following arguments:
 
 `bed_file=[path]` (required)  
 `variable="transposons"||"reads"`  
@@ -934,13 +934,35 @@ In the dataframe each row consists of a gene and the following columns are used:
 
 - **Main tasks**
 
+Combine mulitple files with essential genes into one.
+
 - **Dependencies**
+
+[gene_names.py](#gene_namespy)
 
 - **How and when to use**
 
+[This code](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/create_essentialgenes_list.py) was initially created because there were multiple text files with essential genes for Cerevisiae.
+However, none of the lists was complete and thus there were genes in one file that were not in the other and vice versa.
+Also the files used different naming conventions.
+This code takes a list of paths to multiple text files containing gene names.
+It assumed there are three header lines in each text file (which can be empty) and after that each line contains a single name of a gene.
+
+This code iterates over all files given in the input list and creates a new text file at the same location as the first occuring path in the input list and gives this new file the name `Cerevisiae_AllEssentialGenes_List.txt`.
+
+It takes the gene names from each file and converts the names in the oln naming convention.
+While iterating over all input files it searches if a gene already occurs in the newly created file.
+If a gene already exists, it will be skipped to prevent the same genes are being stored multiple times.
+
+The current [Cerevisiae_AllEssentialGenes_List.txt](#cerevisiae_allessentialgenes_listtxt) file is created with this code.
+
 - **Output**
 
+A text file is created that contains all known essential genes with the names `Cerevisiae_AllEssentialGenes_List.txt`.
+
 - **Notes**
+
+- [ ] This code is hardly used, but it was needed when the creating the list of essential genes from multiple sources. It might be useful when either of the lists are updated or other lists are added.
 
 #### split_wigfiles.py
 
