@@ -18,7 +18,7 @@
     - [Notes](#notes)
 - [Software analysis](#software-analysis)
   - [python scripts](#python-scripts)
-    - [strip_redundant_insertions.py](#strip_redundant_insertionspy)
+    - [clean_bedwigfiles.py](#clean_bedwigfilespy)
     - [genomicfeatures_dataframe.py](#genomicfeatures_dataframepy)
     - [transposonread_profileplot.py](#transposonread_profileplotpy)
     - [transposonread_profileplot_genome.py](#transposonread_profileplot_genomepy)
@@ -195,9 +195,9 @@ The bed file can be used for many downstream analysis tools, for example [genome
 Sometimes it might occur that insertions are stored outside the chromosome (i.e. the insertion position is bigger than the length of that chromosome).
 Also, reference genomes sometimes do not have the different chromosomes stored as roman numerals (for example `chrI`, `chrII`, etc.) but rather use different names (this originates from the chromosome names used in the reference genome).
 These things can confuse some analysis tools, for example the [genome_browser](http://genome-euro.ucsc.edu/index.html).
-To solve this, the python function [strip_redundant_insertions.py](#strip_redundant_insertionspy) is created.
+To solve this, the python function [clean_bedwigfiles.py](#clean_bedwigfilespy) is created.
 This creates a _clean.bed file where the insertions outside the chromosome are removed and all the chromosome names are stored with their roman numerals.
-See [strip_redundant_insertions.py](#strip_redundant_insertionspy) for more information.
+See [clean_bedwigfiles.py](#clean_bedwigfilespy) for more information.
 
 Example bed file:
 
@@ -225,7 +225,7 @@ In the bed file the insertions at the same position but with a different orienta
 In the wig file these insertions are represented as a single insertion and the corresponding read counts are added up.
 
 Similar to the bed file, also in the wig insertions might occur that have an insertion position that is bigger then the length of the chromosome.
-This can be solved with the [same python script](#strip_redundant_insertionspy) as the bed file.
+This can be solved with the [same python script](#clean_bedwigfilespy) as the bed file.
 The insertions that have a position outside the chromosome are removed and the chromosome names are represented as a roman numeral.
 
 Example wig file:
@@ -498,7 +498,7 @@ See also [How to use the Linux desktop](#how-to-use-the-linux-desktop).
   - [ ] The workflow should skip over the raw quality checking and continue with the processing.
 - [ ] When processing is finished, navigate to folder where your dataset is located and check if all expected files are present (depending on what options yout have set, but at least the `align_out` folder and a log file should be present, see the [Input, Output](#input-output) section).
 - [ ] Copy the results to the N-drive following the same procedure as described in step 2. (Be aware to prevent the sftp connection to automatically disconnect, see the note at the beginning of this section).
-- [ ] After the processing is finished, most information is stored in the [bed](#bed) and [wig](#wig) files. But there can be some artifacts present in these files which can be removed using [strip_redundant_insertions.py](#strip_redundant_insertionspy). This is only necessary for specific downstream analysis tools like the [genome browser](#genome-browser).
+- [ ] After the processing is finished, most information is stored in the [bed](#bed) and [wig](#wig) files. But there can be some artifacts present in these files which can be removed using [clean_bedwigfiles.py](#clean_bedwigfilespy). This is only necessary for specific downstream analysis tools like the [genome browser](#genome-browser).
 
 #### How does it work
 
@@ -595,7 +595,7 @@ The input for most scripts and modules are the output files of the processing, s
 
 This is a typical order which can be used of the scripts described below:
 
-1. strip_redundant_insertions.py (to clean the bed and wig files).
+1. clean_bedwigfiles.py (to clean the bed and wig files).
 2. transposonread_profileplot_genome.py (to check the insertion and read distribution throughout the genome).
 3. transposonread_profileplot.py (to check the insertions and read distribution per chromosome in more detail).
 4. scatterplot_genes.py (to check the distribution for the number of insertions per gene and per essential gene).
@@ -607,7 +607,7 @@ The user input for these functions are stated at the beginning of the script in 
 All packages where the scripts are depending on are called at the beginning of the script.
 The scripts also contain a help text about how to use the functions.
 
-#### strip_redundant_insertions.py
+#### clean_bedwigfiles.py
 
 - **Main tasks**
 
@@ -620,7 +620,7 @@ Remove reads mapped outside chromosomes in .bed and .wig files, clean up those f
 
 - **How and when to use**
 
-[This script](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/strip_redundant_insertions.py) consists of a single function called `strip_redundant_ins()` with the following arguments:
+[This script](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/clean_bedwigfiles.py) consists of a single function called `strip_redundant_ins()` with the following arguments:
 
 `filepath=[path]` (required)  
 `custom_header=[text]`  
