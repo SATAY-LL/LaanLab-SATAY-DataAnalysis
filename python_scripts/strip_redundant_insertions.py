@@ -17,14 +17,14 @@ from chromosome_names_in_files import chromosome_name_bedfile, chromosome_name_w
 
 
 #%% INPUT -> FILEPATH TAKES PATHS TO .BED OR .WIG FILES
-custom_header = ""
-filepath = r""
-
+filepath = r"C:\Users\gregoryvanbeek\Desktop\scripts for satay_processing\WT_merged-techrep-a_techrep-b_trimmed.sorted.bam.wig"
+custom_header = "test_split"
+split_chromosomes = True
 
 
 
 #%%
-def strip_redundant_ins(filepath=None, custom_header=None):
+def strip_redundant_ins(filepath=None, custom_header=None, split_chromosomes=False):
     '''
     This code reads a .bed or .wig file and remove any insertions that were mapped outside a chromosome.
     Mapping of a read outside a chromosome can happen during the alignment and transposon mapping steps and means that the position of an insertions site of a read is larger than the length of the chromosome it is mapped to.
@@ -37,7 +37,7 @@ def strip_redundant_ins(filepath=None, custom_header=None):
     '''
 
     if filepath == None:
-        sys.exit()
+        sys.exit(0)
     else:
         assert os.path.isfile(filepath), 'File not found: %s' % filepath
 
@@ -129,6 +129,31 @@ def strip_redundant_ins(filepath=None, custom_header=None):
 
 
 
+        if split_chromosomes == True:
+            path = os.path.dirname(filepath)
+            name = os.path.splitext(os.path.basename(filepath_splitext[0]+"_clean.wig"))[0]
+
+            directoryname = os.path.join(path, name + '_chromosomesplit')
+
+            if not os.path.exists(directoryname):
+                os.mkdir(directoryname)
+
+            chromosome_names = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','M']
+
+            chrom_names_dict, chrom_start_line_dict, chrom_end_line_dict = chromosome_name_wigfile(os.path.join(path, name+".wig"))
+
+            with open(os.path.join(path,name+".wig"), 'r') as f:
+                lines = f.readlines()
+            header = lines[0]
+
+
+            for chrom in chromosome_names:
+                outputfile = os.path.join(directoryname, name + '_' + str(chrom) + '.wig')
+                with open(outputfile, 'w+') as f:
+                    f.write(header)
+                    for l in range(chrom_start_line_dict.get(chrom)-1, chrom_end_line_dict.get(chrom)):
+                        f.write(lines[l])
+
     else:
         print("Extension not recognized")
 
@@ -136,5 +161,5 @@ def strip_redundant_ins(filepath=None, custom_header=None):
 
 #%%
 if __name__ == '__main__':
-    strip_redundant_ins(filepath=filepath, custom_header=custom_header)
+    strip_redundant_ins(filepath=filepath, custom_header=custom_header, split_chromosomes=split_chromosomes)
 

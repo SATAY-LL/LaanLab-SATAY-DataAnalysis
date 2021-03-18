@@ -19,19 +19,23 @@ sys.path.insert(1,os.path.join(dirname,'python_modules'))
 from chromosome_names_in_files import chromosome_name_wigfile
 
 
+#%%INPUT
 
-def split_wigfile(inputfile='', verbose=True):
+wigfile = r"C:\Users\gregoryvanbeek\Desktop\scripts for satay_processing\WT_merged-techrep-a_techrep-b_trimmed.sorted.bam_clean.wig"
+
+#%%
+def split_wigfile(wigfile='', verbose=True):
 
 
 
-    if not os.path.isfile(inputfile) and not inputfile == '':
+    if not os.path.isfile(wigfile) and not wigfile == '':
         print('WARNING: inputfile does not exists')
         sys.exit()
 
 
 
-    filepath = os.path.dirname(inputfile)
-    filename = os.path.splitext(os.path.basename(inputfile))[0]
+    filepath = os.path.dirname(wigfile)
+    filename = os.path.splitext(os.path.basename(wigfile))[0]
 
     directoryname = os.path.join(filepath, filename + '_chromosomesplit')
     
@@ -44,11 +48,11 @@ def split_wigfile(inputfile='', verbose=True):
 
 
 
-    chrom_names_dict, chrom_start_line_dict, chrom_end_line_dict = chromosome_name_wigfile(inputfile)
+    chrom_names_dict, chrom_start_line_dict, chrom_end_line_dict = chromosome_name_wigfile(wigfile)
 
 
 
-    with open(inputfile, 'r') as f:
+    with open(wigfile, 'r') as f:
         lines = f.readlines()
     header = lines[0]
 
@@ -68,5 +72,7 @@ def split_wigfile(inputfile='', verbose=True):
     return()
 
 
+
+#%%
 if __name__ == '__main__':
-    split_wigfile(r"\\?\X:\tnw\BN\LL\Shared\Gregory\datasets\dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_sample1\wt1_enzo_dataset_demultiplexed_singleend_sample1_trim20210127\align_out\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_singleend_trimmed.sorted.bam.wig")
+    split_wigfile(wigfile=wigfile)
