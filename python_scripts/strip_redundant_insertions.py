@@ -17,9 +17,9 @@ from chromosome_names_in_files import chromosome_name_bedfile, chromosome_name_w
 
 
 #%% INPUT -> FILEPATH TAKES PATHS TO .BED OR .WIG FILES
-filepath = r"C:\Users\gregoryvanbeek\Desktop\scripts for satay_processing\WT_merged-techrep-a_techrep-b_trimmed.sorted.bam.wig"
-custom_header = "test_split"
-split_chromosomes = True
+filepath = r""
+custom_header = ""
+split_chromosomes = False
 
 
 
