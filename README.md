@@ -5,7 +5,9 @@ This repository contains codes, data and workflows for data analysis regarding S
 
 ## License
 
-<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+This work is licensed under Apache 2.0 . 
+The 2.0 version of the Apache License, approved by the ASF in 2004, helps us achieve our goal of providing reliable and long-lived software products through collaborative open source software development.
 
 ## [Projects tab](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/projects/1) and [Issues tab](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/issues)
 
