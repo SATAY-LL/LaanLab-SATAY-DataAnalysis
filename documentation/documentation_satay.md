@@ -25,7 +25,6 @@
     - [scatterplot_genes.py](#scatterplot_genespy)
     - [volcanoplot.py](#volcanoplotpy)
     - [create_essentialgenes_list.py](#create_essentialgenes_listpy)
-    - [split_wigfiles.py](#split_wigfilespy)
   - [python modules](#python-modules)
     - [chromosome_and_gene_positions.py](#chromosome_and_gene_positionspy)
     - [chromosome_names_in_files.py](#chromosome_names_in_filespy)
@@ -612,7 +611,7 @@ The scripts also contain a help text about how to use the functions.
 
 - **Main tasks**
 
-Remove reads mapped outside chromosomes in .bed and .wig files, clean up those files and create custom header.
+Remove reads mapped outside chromosomes in .bed and .wig files, clean up those files and create custom header and optionally create separate files for each chromosome with the contents of the bed or wig file.
 
 - **Dependencies**
 
@@ -624,7 +623,8 @@ Remove reads mapped outside chromosomes in .bed and .wig files, clean up those f
 [This script](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/strip_redundant_insertions.py) consists of a single function called `strip_redundant_ins()` with the following arguments:
 
 `filepath=[path]` (required)  
-`custom_header=[text]`
+`custom_header=[text]`  
+`split_chromosomes=True||False`
 
 Input of the function is a path to a bed or wig file (required).
 Optionally a string for the custom header can be added to the input that changes the header line of each file.
@@ -633,17 +633,22 @@ Therefore, it can be useful to change this when the bed or wig files are used fo
 Also the names of the chromosomes are the names that are used in the reference genome (see [satay.sh notes](#notes) for more explanation).
 In this function these names are replaced by roman numerals what is more commonly used.
 
-Finally, sometimes insertions can be mapped outside chromosomes (i.e. the insertion position of a read is larger than the length of the chromosome it is mapped to).
-The reason for this result is not clear, but is likely to be the result of either the alignment or transposon mapping in the processing workflow.
+Sometimes insertions can be mapped outside chromosomes (i.e. the insertion position of a read is larger than the length of the chromosome it is mapped to).
+The reason for this result is unclear, but is likely to be the result of either the alignment or transposon mapping in the processing workflow.
 It can cause issues with downstream analysis tools and therefore this function remove those reads.
 The removed reads are shown in the terminal where the python script runs.
 Check that only few reads are removed.
+
+Finally, when the `split_chromosomes` argument is set to True, separate files are created with the contents of each individual chromosome.
+These files are stored in a dedicated folder with the same name as the bed or wig file with the extension `_chromosomesplit`.
+In this folder the files are stored, again with the same name as the input bed or wig file with roman numeral as extension indicating from which chromosome it stores the information.
 
 - **Output**
 
 A new file is created at the same location as the input file with `_clean` added to the name and with the same extension as the input name (e.g. input WT.bed results in WT_clean.bed being created).
 This contains the same information as the original bed or wig file, but with roman numerals for the chromosome names and the reads outside the chromosomes removed.
 Optionally the header is changed when this was provided by the user.
+A dedicated folder can be creates where multiple files are stored, each containing the information for a specific chromosome.
 
 - **Notes**
   
@@ -963,18 +968,6 @@ A text file is created that contains all known essential genes with the names `C
 - **Notes**
 
 - [ ] This code is hardly used, but it was needed when the creating the list of essential genes from multiple sources. It might be useful when either of the lists are updated or other lists are added.
-
-#### split_wigfiles.py
-
-- **Main tasks**
-
-- **Dependencies**
-
-- **How and when to use**
-
-- **Output**
-
-- **Notes**
 
 ### python modules
 
