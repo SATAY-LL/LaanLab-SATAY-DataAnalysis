@@ -22,6 +22,14 @@ sys.path.insert(1,os.path.join(file_dirname,'python_modules'))
 from gene_names import gene_aliases
 
 
+
+#%%INPUT
+
+file_list = [r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\data_files\Cerevisiae_EssentialGenes_List_1.txt",
+                 r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\data_files\Cerevisiae_EssentialGenes_List_2.txt"]
+
+
+
 #%%
 def create_essentialgenes_list(inputfiles_list = None):
     '''
@@ -70,7 +78,8 @@ def create_essentialgenes_list(inputfiles_list = None):
 
 
 #%%
-    gene_aliases_dict = gene_aliases(r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\Python_scripts\Data_Files\Yeast_Protein_Names.txt")[0]
+    gene_aliases_dict = gene_aliases(os.path.join(file_dirname,'..','data_files','Yeast_Protein_Names.txt'))[0]
+        # r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\Python_scripts\Data_Files\Yeast_Protein_Names.txt")[0]
 
 
 #%%
@@ -114,5 +123,4 @@ def create_essentialgenes_list(inputfiles_list = None):
 
 #%%
 if __name__ == '__main__':
-    create_essentialgenes_list([r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\Python_scripts\Data_Files\Cerevisiae_EssentialGenes_List_1.txt",
-                 r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\Python_scripts\Data_Files\Cerevisiae_EssentialGenes_List_2.txt"])
+    create_essentialgenes_list(file_list)
