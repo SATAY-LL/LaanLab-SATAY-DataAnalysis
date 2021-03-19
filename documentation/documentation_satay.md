@@ -33,7 +33,6 @@
     - [gene_names.py](#gene_namespy)
     - [mapped_reads.py](#mapped_readspy)
     - [read_sgdfeatures.py](#read_sgdfeaturespy)
-    - [statistics_perchromosome.py](#statistics_perchromosomepy)
     - [samflag.py](#samflagpy)
   - [Data files](#data-files)
     - [Cerevisiae_AllEssentialGenes_List.txt](#cerevisiae_allessentialgenes_listtxt)
@@ -1180,8 +1179,6 @@ In each dictionary the keys are the names of the features and the values consist
 
 The input of teh function is a path to the SGD_features.tab file and in case of no input, this file is taken from the data_files folder.
 
-#### statistics_perchromosome.py
-
 #### samflag.py
 
 [This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/samflag.py) determines the parameters based on the alignment flag found in sam files.
@@ -1197,7 +1194,9 @@ The location of the ones (read from right to left) in the binary number determin
 There are 2 outputs:
 
 `flag_binary` which returns the 12-bit binary sequence of the input integer  
-`flagprop_list` which is a list containing all the parameters corresponding to the input integer
+`flagprop_list` which is a list containing all the parameters corresponding to the input integer.
+
+This script is mainly used during the processing pipeline in the [transposonmapping_satay.py](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_transposonmapping/transposonmapping_satay.py).
 
 ### Data files
 
