@@ -1138,8 +1138,12 @@ This module has the following dependencies: numpy
 
 #### read_sgdfeatures.py
 
-[This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/read_sgdfeatures.py) reads the [SGD_features.tab](#sgd_featurestab) file and creates dictionaries for type of genomic feature with all general information about these features.
-The following features are considered:
+[This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/read_sgdfeatures.py) creates dictionaries for many types of genomic feature containing general information about these features.
+It consists of a single function:
+
+- `sgd_features`
+
+This function reads the [SGD_features.tab](#sgd_featurestab) file and extracts the following information:
 
 - ORF (genes)
 - ARS
@@ -1174,9 +1178,26 @@ In each dictionary the keys are the names of the features and the values consist
 - start coordinate (starting at 0 for each chromosome)
 - end coordinate (starting at 0 for each chromosome)
 
+The input of teh function is a path to the SGD_features.tab file and in case of no input, this file is taken from the data_files folder.
+
 #### statistics_perchromosome.py
 
 #### samflag.py
+
+[This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/samflag.py) determines the parameters based on the alignment flag found in sam files.
+It consists of single function:
+
+-`samflag`
+
+This takes an integer as input a outputs a list of parameters corresponding to that integer.
+This function executes the method described in the [sam, bam](#sam-bam) section.
+It converts the integer to a 12-bit binary number and each of the 12 bits correspond to an entry in a list of parameters.
+The location of the ones (read from right to left) in the binary number determine which parameters are true given the input integer.
+
+There are 2 outputs:
+
+`flag_binary` which returns the 12-bit binary sequence of the input integer  
+`flagprop_list` which is a list containing all the parameters corresponding to the input integer
 
 ### Data files
 
