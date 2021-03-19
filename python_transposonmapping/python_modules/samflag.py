@@ -11,7 +11,7 @@ verbose=True
 
 #%%
 
-def samflag(flag=0, verbose=True):
+def samflags(flag=0, verbose=True):
     '''
     This script converts a decimal flag to binary and get the corresponding properties according to the sam-flag standard.
     The code is based on the explanation given here https://davetang.org/muse/2014/03/06/understanding-bam-flags/
@@ -56,4 +56,4 @@ def samflag(flag=0, verbose=True):
 
 #%%
 if __name__ == '__main__':
-    flag_binary, flagproperties = samflag(flag=flag, verbose=verbose)
+    flag_binary, flagproperties = samflags(flag=flag, verbose=verbose)
