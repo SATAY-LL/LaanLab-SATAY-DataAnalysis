@@ -5,7 +5,13 @@ Created on Mon Jan  4 09:38:16 2021
 @author: gregoryvanbeek
 """
 
-def samflag(flag=0):
+#%%INPUT
+flag = 1040
+verbose=True
+
+#%%
+
+def samflag(flag=0, verbose=True):
     '''
     This script converts a decimal flag to binary and get the corresponding properties according to the sam-flag standard.
     The code is based on the explanation given here https://davetang.org/muse/2014/03/06/understanding-bam-flags/
@@ -14,10 +20,6 @@ def samflag(flag=0):
     '''
 
     flag_binary = format(flag, '012b') # '#012b' to start the string with '0b'. 12 indicated that the string has length 12.
-
-    print('Entered decimal flag = %i' % flag)
-    print('Corresponding binary flag = %s' % flag_binary)
-    print('')
 
 
     prop_dict = {1: 'read paired',
@@ -41,16 +43,17 @@ def samflag(flag=0):
             flagprop_list.append(prop_dict.get(counter))
         counter += 1
 
+    if verbose == True:
+        print('Entered decimal flag = %i' % flag)
+        print('Corresponding binary flag = %s' % flag_binary)
+        print(flagprop_list)
+        print('')
 
 
     return(flag_binary, flagprop_list)
 
 
 
-
+#%%
 if __name__ == '__main__':
-    flag_binary, flagproperties = samflag(flag=1040)
-
-#    print('PROPERTIES:')
-#    for prop in flagproperties:
-#        print(prop)
+    flag_binary, flagproperties = samflag(flag=flag, verbose=verbose)
