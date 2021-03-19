@@ -56,4 +56,4 @@ def samflags(flag=0, verbose=True):
 
 #%%
 if __name__ == '__main__':
-    flag_binary, flagproperties = samflag(flag=flag, verbose=verbose)
+    flag_binary, flagproperties = samflags(flag=flag, verbose=verbose)
