@@ -22,6 +22,7 @@
     - [genomicfeatures_dataframe.py](#genomicfeatures_dataframepy)
     - [transposonread_profileplot.py](#transposonread_profileplotpy)
     - [transposonread_profileplot_genome.py](#transposonread_profileplot_genomepy)
+    - [TransposonRead_Profile_Compare.py](#transposonread_profile_comparepy)
     - [scatterplot_genes.py](#scatterplot_genespy)
     - [volcanoplot.py](#volcanoplotpy)
     - [create_essentialgenes_list.py](#create_essentialgenes_listpy)
@@ -828,6 +829,66 @@ A barplot is created that shows the tranposon or read abundance for the genome t
 - **Notes**
 
 - [ ]
+
+#### TransposonRead_Profile_Compare.py
+
+- **Main tasks**
+
+Create a barplot for two datasets, either with transposon counts or reads counts, and visualize the differences between the two datasets.
+
+- **Dependencies**
+
+numpy  
+matplotlib  
+[chromosome_and_gene_positions.py](#chromosome_and_gene_positionspy)  
+[chromosome_names_in_files.py](#chromosome_names_in_filespy)  
+[essential_genes_names.py](#essential_genes_namespy)  
+[gene_names.py](#gene_namespy)
+
+[Saccharomyces_cerevisiae.R64-1-1.99.gff3](#saccharomyces_cerevisiaer64-1-199gff3)  
+[Yeast_Protein_Names.txt](#yeast_protein_namestxt)  
+[Cerevisiae_AllEssentialGenes_List.txt](#cerevisiae_allessentialgenes_listtxt)
+
+- **How and when to use**
+
+[This code](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/transposonread_profile_compare.py) consists of a single function called `compareplot`.
+This function takes the following inputs:
+
+`bed_files=list of 2 paths` (required)  
+`variable="insertions"||"reads"`  
+`chromosome=roman numeral||list of roman numerals`  
+`set_barwidth=integer`  
+`set_logscale=True||False`  
+`savefig=True||False`
+
+There are two bed files compared and therefore the `bed_files` arguments takes a list containing the paths of two bed files.
+This first one is called `set1` (shown in the top graph in the figure) and the second is called `set2` in the output figure (shown in the bottom graph in the figure) and the difference is determined by set1-set2.
+The plot can be created for both transposon counts (`variable="insertions"`) or for read counts (`variable="reads"`).
+The `chromosome` takes a roman numeral for the chromosome that needs to be analyzed.
+Optionally a list of roman numerals can be given that will be analyzed all at once.
+This creates a number of figures equal to the number of chromosomes entered in the list.
+The `bar_width` can be set to determine the width of the bars in basepairs (default is length of the chromosome divided by 500).
+The differences between datasets can be small relative to the number of counts, especially when comparing reads.
+To make the differences better visible, the y axis can be set in log scale using the `set_logscale` argument to `True`.
+This visually enhances the differences, but can give a distorded view where the differences look much bigger than they are.
+Finally, the `savefig` argument determines whether the figure needs to be saved.
+If a figure is saved, it won't be shown and it will be stored at the location of the bed file that occurs first in the `bed_files` list.
+The name that is given to the saved figures is the name of the first occuring bed file with the extension `_compareplot_chrom[romannumeral].png` where [romannumeral] is replaced by the chromosome number.
+
+The background of the figure is colorcoded at the location where the genes are located where red are the non-essential genes and green are the annotated essential genes in wild type.
+
+- **Output**
+
+Two barplots are created plotted on top of each other where black bars show the insertion or read count for either of two datasets.
+The overlapping blue bars indicate the absolute difference between the datasets where the bottom graph (set2) is substracted from the top graph (set1).
+The colorcoded background indicate the location of essential and non-essential genes.
+On top the graph the names of the essential genes are plotted.
+
+<img src="media\transposonread_compareplot_transposonprofile.png" alt="transposonread_compareplot_transposonprofile" width=700>
+
+- **Notes**
+
+- [ ] When automatically saving the figure the names of the compared files are not stored, so it is good to (manually) create a file stating what is compared.
 
 #### scatterplot_genes.py
 
