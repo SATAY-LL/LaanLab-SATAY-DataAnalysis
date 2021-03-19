@@ -30,7 +30,6 @@
     - [chromosome_names_in_files.py](#chromosome_names_in_filespy)
     - [dataframe_from_pergene.py](#dataframe_from_pergenepy)
     - [essential_genes_names.py](#essential_genes_namespy)
-    - [gene_length.py](#gene_lengthpy)
     - [gene_names.py](#gene_namespy)
     - [gene_tn_insertions.py](#gene_tn_insertionspy)
     - [insertions_count.py](#insertions_countpy)
@@ -1082,7 +1081,16 @@ re
 
 #### essential_genes_names.py
 
-#### gene_length.py
+[This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/essential_genes_names.py) creates a list with all known essential genes in different naming conventions.
+It contains a single function:
+
+- `list_known_essentials`
+
+This inputs a lists of files with essential gene names.
+If no input is given, the files are collected from the data_files folder.
+It simply takes all genes from all input files and put those in one list.
+This list is therefore likely to contain redundant genes with different naming conventions.
+This list is stored in the variable `known_essential_gene_list`.
 
 #### gene_names.py
 
