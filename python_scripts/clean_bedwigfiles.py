@@ -24,7 +24,7 @@ split_chromosomes = False
 
 
 #%%
-def strip_redundant_ins(filepath=None, custom_header=None, split_chromosomes=False):
+def cleanfiles(filepath=None, custom_header=None, split_chromosomes=False):
     '''
     This code reads a .bed or .wig file and remove any insertions that were mapped outside a chromosome.
     Mapping of a read outside a chromosome can happen during the alignment and transposon mapping steps and means that the position of an insertions site of a read is larger than the length of the chromosome it is mapped to.
@@ -144,7 +144,7 @@ def strip_redundant_ins(filepath=None, custom_header=None, split_chromosomes=Fal
                 chrom_headerline = lines[chrom_start_line_dict.get(chrom) - 1]
                 chrom_nameline = chrom_headerline.split("=")[1].strip("\n").replace("chr","")
                 for romanname, chromname in chrom_names_dict.items():
-                    if chromname == chrom_nameline:
+                    if chromname.strip("chr") == chrom_nameline:
                         chrom_nameroman = romanname
                 w.write("variablestep chrom=chr" + str(chrom_nameroman) + "\n") #write header for each chromosome
                 for line in lines[chrom_start_line_dict.get(chrom): chrom_end_line_dict.get(chrom)]: #no '+1' in for loop, this is only for bed file
@@ -193,5 +193,5 @@ def strip_redundant_ins(filepath=None, custom_header=None, split_chromosomes=Fal
 
 #%%
 if __name__ == '__main__':
-    strip_redundant_ins(filepath=filepath, custom_header=custom_header, split_chromosomes=split_chromosomes)
+    cleanfiles(filepath=filepath, custom_header=custom_header, split_chromosomes=split_chromosomes)
 
