@@ -582,7 +582,8 @@ or `-p` (for BWA) in the options window of the workflow.
 
 The software discussed in the [previous section](#software-processing) is solely for the processing of the data.
 The codes that are discussed here are for the postprocessing analysis.
-These are all python scripts that are not depended on Linux and only use rather standard python package like numpy, matplotlib, pandas, seaborn and scipy.
+These are all python scripts that are not depended on Linux (they run and are tested in Windows) and only use rather standard python package like numpy, matplotlib, pandas, seaborn and scipy.
+The python version used for creating and testing is Python v3.8.5.
 
 The order in which to run the programs shouldn't matter as these scripts are all independed of each other except for genomicfeatures_dataframe.py which is sometimes called by other scripts.
 However, most scripts are depending on one or more [python modules](#python-modules), which are all expected to be located in a python_modules folder inside the folder where the python scripts are located (see [github](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/tree/satay_processing/python_scripts) for an example how this is organized).
@@ -1027,6 +1028,8 @@ The keys in this dictionary are all gene names and the values is a list with the
 
 The input the path to a gff3 file which, if not provided, is taken from the data_files folder.
 
+This module is also present as a python module in the python_transposonmapping folder for the processing workflow, although in a slightly altered version.
+
 #### chromosome_names_in_files.py
 
 [This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/chromosome_names_in_files.py) extracts information about where the chromosomes start and end in a bed or wig file and gets the names of the chromosomes as used in these files.
@@ -1112,6 +1115,8 @@ This function the more extensive version of the first function and outputs 3 dic
 
 This function also inputs a Yeast_Protein_Names.txt file, which if not provided is taken from the data_files folder.
 
+This module is also present as a python module in the python_transposonmapping folder for the processing workflow.
+
 #### mapped_reads.py
 
 [This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/mapped_reads.py) can be used for counting the number of insertions and number of reads in a bed or wig file.
@@ -1196,7 +1201,7 @@ There are 2 outputs:
 `flag_binary` which returns the 12-bit binary sequence of the input integer  
 `flagprop_list` which is a list containing all the parameters corresponding to the input integer.
 
-This script is mainly used during the processing pipeline in the [transposonmapping_satay.py](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_transposonmapping/transposonmapping_satay.py).
+This script is mainly used during the processing pipeline in the [transposonmapping_satay.py](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_transposonmapping/transposonmapping_satay.py) and therefore this module is also present as a python module in the python_transposonmapping folder.
 
 ### Data files
 
