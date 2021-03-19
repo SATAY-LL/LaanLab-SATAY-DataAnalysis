@@ -611,7 +611,7 @@ The scripts also contain a help text about how to use the functions.
 
 - **Main tasks**
 
-Remove reads mapped outside chromosomes in .bed and .wig files, clean up those files and create custom header and optionally create separate files for each chromosome with the contents of the bed or wig file.
+Remove reads mapped outside chromosomes in .bed and .wig files, clean up those files and create custom header and optionally create additional bed and wig files containing information for a single chromosome.
 
 - **Dependencies**
 
@@ -620,7 +620,7 @@ Remove reads mapped outside chromosomes in .bed and .wig files, clean up those f
 
 - **How and when to use**
 
-[This script](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/clean_bedwigfiles.py) consists of a single function called `strip_redundant_ins()` with the following arguments:
+[This script](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/clean_bedwigfiles.py) consists of a single function called `strip_redundant_ins` with the following arguments:
 
 `filepath=[path]` (required)  
 `custom_header=[text]`  
@@ -630,16 +630,17 @@ Input of the function is a path to a bed or wig file (required).
 Optionally a string for the custom header can be added to the input that changes the header line of each file.
 By default the name in the header is the same name as the original datafile (fastq file), but this can be a long and unclear name.
 Therefore, it can be useful to change this when the bed or wig files are used for other analysis tools that use the name stated in the header, for example the [genome browser](#genome-browser).
+If no custom header is provided, the original header is used.
 Also the names of the chromosomes are the names that are used in the reference genome (see [satay.sh notes](#notes) for more explanation).
-In this function these names are replaced by roman numerals what is more commonly used.
+In this function these names are replaced by roman numerals which is more commonly used.
 
 Sometimes insertions can be mapped outside chromosomes (i.e. the insertion position of a read is larger than the length of the chromosome it is mapped to).
 The reason for this result is unclear, but is likely to be the result of either the alignment or transposon mapping in the processing workflow.
-It can cause issues with downstream analysis tools and therefore this function remove those reads.
+It can cause issues with downstream analysis tools and therefore this function removes those reads.
 The removed reads are shown in the terminal where the python script runs.
 Check that only few reads are removed.
 
-Finally, when the `split_chromosomes` argument is set to True, separate files are created with the contents of each individual chromosome.
+Finally, when the `split_chromosomes` argument is set to True, separate files are created with the contents of each individual chromosome in bed or wig format.
 These files are stored in a dedicated folder with the same name as the bed or wig file with the extension `_chromosomesplit`.
 In this folder the files are stored, again with the same name as the input bed or wig file with roman numeral as extension indicating from which chromosome it stores the information.
 
@@ -648,7 +649,7 @@ In this folder the files are stored, again with the same name as the input bed o
 A new file is created at the same location as the input file with `_clean` added to the name and with the same extension as the input name (e.g. input WT.bed results in WT_clean.bed being created).
 This contains the same information as the original bed or wig file, but with roman numerals for the chromosome names and the reads outside the chromosomes removed.
 Optionally the header is changed when this was provided by the user.
-A dedicated folder can be creates where multiple files are stored, each containing the information for a specific chromosome.
+A dedicated folder can be created where multiple files are stored, each containing the information for a specific chromosome.
 
 - **Notes**
   
@@ -658,7 +659,7 @@ A dedicated folder can be creates where multiple files are stored, each containi
 
 - **Main tasks**
 
-Create a pandas dataframe that stores information for a specific chromosome including all genomic features, positions of the genomic features and the number of insertions and reads within those features for an entire chromosome or specific genomic region.
+Create a pandas dataframe that stores information for a specific chromosome including all genomic features, positions of those features and the number of insertions and reads within those features for an entire chromosome or specific genomic region.
 Optionally it can create a barplot with the number of insertions or reads within each feature.
 
 - **Dependencies**
@@ -684,8 +685,8 @@ The function `dna_features` takes the following arguments:
 `region=[int]||[string]||[list]` (required)  
 `wig_file=[path]` (required)  
 `pergene_insertions_file=[path]` (required)  
-`plotting=True||False`  
 `variable="reads"||"insertions"`  
+`plotting=True||False`  
 `savefigure=True||False`  
 `verbose=True||False`
 
@@ -693,7 +694,7 @@ The script takes a wig file and a pergene_insertions_file and a genomic region.
 This genomic region can be:
 
 - chromosome number (either roman numeral or integer between 1 and 16)  
-- a list with three arguments: first a number defining the chromosome (again eiter roman numeral or integer between 1 and 16) second an integer defining start basepair and third an integer defining an end basepair (e.g. ["I", 10000, 20000] to get the region between basepair 10000 and 20000 on chromosome 1)  
+- a list with three arguments: first a number defining the chromosome (again either roman numeral or integer between 1 and 16) second an integer defining the start basepair and third an integer defining an end basepair (e.g. ["I", 10000, 20000] to get the region between basepair 10000 and 20000 on chromosome 1)  
 - a gene name (e.g. "CDC42") which will automatically get the corresponding chromosome and basepair position
 
 The `plotting` argument (True or False) defines whether to create a barplot.
@@ -726,10 +727,10 @@ The main output is the `dna_df2` dataframe in which each row represents a genomi
 - Sum of reads in feature
 - Sum of reads in truncated feature (only for genes, where the reads in the first and last 100bp are ignored)
 - Number of reads per insertion
-- Number of reads per insertions (only for genes, where the insertions and reads in the first and last 100bp are ignored)
+- Number of reads per insertion (only for genes, where the insertions and reads in the first and last 100bp are ignored)
 
 The truncated feature columns ignores basepairs at the beginning and end of a gene.
-This can be useful as sometimes it mentioned that insertions located at the beginning or end of a gene results in a protein that is still functional (although truncated) (e.g. see Michel et.al. 2017) (see Notes for a further discussion about how this is defined).
+This can be useful as it is mentioned that insertions located at the beginning or end of a gene results in a protein that is still functional (although truncated) (e.g. see Michel et.al. 2017) (see Notes for a further discussion about how this is defined).
 
 <img src="media\genomicfeatures_dataframe_dnadf2.png" alt="genomicfeature_dataframe_dnadf2" width=700>
 
@@ -744,6 +745,7 @@ The plot is created for an entire chromosome, or it can be created for a specifi
 - [ ] The definition for a truncated gene is currently that the first and last 100bp are ignored. This is not completely fair as this is much more stringent for short genes compared to long genes. Alternatively this can be changed to a percentage, for example ignoring the first and last 5 percent of a gene, but this can create large regions in long genes. There is no option to set this directly in the script, but if this needs to be changed, search the script for the following line: `#TRUNCATED GENE DEFINITION`. This should give the `N10percent` variable that controls the definition of a truncated gene.
 - [ ] The barplot currently only takes reads or insertions, but it might be useful to include  reads per insertions as well.
 - [ ] Sometimes it can happen that two genomic regions can overlap. When this happens, the dataframe shows a feature, in the next row another feature and then the next row from that it continues with the first feature (e.g. row1; geneA, row2; overlapping feature, row3; geneA). This issue is not automatically solved yet, but best is to, whenever you find a feature, to search if that feature also exists a couple of rows further on. If yes, sum all rows between the first and last occurance of your gene (e.g. in the example above for geneA, sum the values from row1, row2 and row3).
+- [ ] A stripped down version of this script exists as a python module called [dataframe_from_pergene.py](#dataframe_from_pergenepy).
 
 #### transposonread_profileplot.py
 
@@ -971,11 +973,112 @@ A text file is created that contains all known essential genes with the names `C
 
 ### python modules
 
+The python modules always contain function that perform a certain task that is often required in multiple python scripts.
+To use these python modules in a python script a path needs to be defined to the module.
+This can be done best using relative paths stated at the very beginning of a script with the following lines:
+
+>`import os, sys`  
+>`file_dirname = os.path.dirname(os.path.abspath('__file__'))`  
+>`sys.path.insert(1,os.path.join(file_dirname,'python_modules'))`  
+
+Then an import can be done as usual in the form
+
+>`from module_name import function`
+
+For example to import the `chromosome_position` from the `chromosome_and_gene_positions.py` module:
+
+> `from chromosome_and_gene_positions import chromosome_position`
+
+The output of these functions are given in the `return` statement.
+If there are multiple outputs in the return statement, the function also expects multiple variables to assigned when calling this function in a python scripts (e.g. if function `f` has two outputs, call this the function as `var1, var2 = f([inputs])` or `var1 = f([inputs])[0]` if only `var1` is needed, where `[inputs]` are to be replaced with the input variable (if any)).
+
 #### chromosome_and_gene_positions.py
+
+[This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/chromosome_and_gene_positions.py) can be used for obtaining information regarding gene and chromosome positions, lengths and converting roman to arabic numerals for chromosomes.
+It contains 3 functions:
+
+- `chromosome_position`
+
+This function outputs 3 dictionaries:
+
+`chr_start_pos_dict` which contains the start position of all chromosomes  
+`chr_end_pos_dict` which contains the end position of all chromosomes  
+`chr_length_dict` which contains the lenghts of all chromosomes
+
+The input is a .gff3 file which, in case no output is given, is obtained from the data_files folder.
+
+- `chromosomename_roman_to_arabic`
+
+This function outputs 2 dictionaries:
+
+`arabic_to_roman_dict` for which the keys are arabic numerals and the values are roman numerals  
+`roman_to_arabic_dict` for which the keys are roman numerals and the values are arabic numerals
+
+There is no input for this function.
+
+- `gene_position`
+
+This function outputs 1 dictionary:
+
+`gene_pos_dict`
+
+The keys in this dictionary are all gene names and the values is a list with the following information:
+
+1. Chromosome where the gene is positioned
+2. Start basepair for the gene
+3. End basepair for the gene
+4. `+` or `-` depending on whether it is on the forward or reverse strand.
+
+The input the path to a gff3 file which, if not provided, is taken from the data_files folder.
 
 #### chromosome_names_in_files.py
 
+[This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/chromosome_names_in_files.py) extracts information about where the chromosomes start and end in a bed or wig file and gets the names of the chromosomes as used in these files.
+It consists of 2 functions:
+
+- `chromosome_name_bedfile`
+
+This function outputs 3 dictionaries:
+
+`chrom_names_dict` which contains as keys roman numerals for the chromosome and the values are the chromosome names as are present in the bed file  
+`chrom_start_line_dict` containing the lines where the chromosomes start in the bed file as values and the keys are roman numerals representing the chromosomes  
+`chrom_end_line_dict` containing the lines where the chromosomes end in the bed file as values and the keys are roman numerals representing the chromosomes
+
+The input of this function is a required path to a bed file.
+
+- `chromosome_name_wigfile`
+
+This function is very similar as for the bed file, but altered to work specifically for the wig file and also outputs the same 3 dictionaries:
+
+`chrom_names_dict` which contains as keys roman numerals for the chromosome and the values are the chromosome names as are present in the wig file  
+`chrom_start_line_dict` containing the lines where the chromosomes start in the wig file as values and the keys are roman numerals representing the chromosomes  
+`chrom_end_line_dict` containing the lines where the chromosomes end in the wig file as values and the keys are roman numerals representing the chromosomes
+
+The input of this function is a required path to a wig file.
+
 #### dataframe_from_pergene.py
+
+[This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/dataframe_from_pergene.py) creates a dataframe with the number of insertions and reads per gene and can be seen as a stripped down version of the python script [genomicfeatures_dataframe.py](#genomicfeatures_dataframepy).
+It contains a single function:
+
+- `dataframe_from_pergenefile`
+
+This requires as input a path to a pergene.txt file and outputs a pandas dataframe where each row contains a gene and has the following columns:
+
+1. gene names
+2. gene essentiality
+3. transposons per gene
+4. read per gene
+5. number of reads per insertion
+
+This dataframe is stored in `read_gene_df`.
+The module has the following dependencies:
+
+numpy  
+pandas  
+re  
+[Cerevisiae_EssentialGenes_List_1.txt](#cerevisiae_allessentialgenes_listtxt)  
+[Cerevisiae_EssentialGenes_List_2.txt](#cerevisiae_allessentialgenes_listtxt)
 
 #### essential_genes_names.py
 
