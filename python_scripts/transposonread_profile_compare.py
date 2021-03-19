@@ -20,19 +20,19 @@ from chromosome_names_in_files import chromosome_name_bedfile
 bed_files=[r"",
            r""]
 variable = "insertions" # "insertions", "reads"
-chrom_user_set=['I']#, 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI']
-bar_width_user_set=None
+chromosome='i'#['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI']
+set_barwidth=None
 set_logscale = False
 savefig=False
 
 
 #%%
-def compareplot(bed_files=None, variable="insertions", chrom_user_set=None, bar_width_user_set=None, set_logscale=False, savefig=False):
+def compareplot(bed_files=None, variable="insertions", chromosome=None, set_barwidth=None, set_logscale=False, savefig=False):
     '''This function creates a bar plot along a specified chromosome for the number of transposons.
     The height of each bar represents the number of transposons at the genomic position indicated on the x-axis.
     The input is as follows:
         -The bed-files ('bed_files', a list containing two paths, each refering to a bed-file [mandatory]),
-        -Which chromosome ('chrom_user_set', indicated by roman numeral or list of roman numerals [optional]),
+        -Which chromosome ('chromosome', indicated by roman numeral or list of roman numerals [optional]),
         -The width of the bars ('bar_width-user_set', indicated by an integer [optional]),
         -Path to where to save the figures ('savefigure_path', string containing an existing path [optional]),
         -Name of the figures ('savefigure_name', string containing a single name, the name will be automatically extended with the chromosomal number [optional]).
@@ -61,10 +61,10 @@ def compareplot(bed_files=None, variable="insertions", chrom_user_set=None, bar_
     gene_alias_list = gene_aliases(gene_information_file)[0]
     
 #%% DETERMINE WHICH CHROMOSOME NEEDS TO BE ANALYZED AND LOOP OVER THE CHROMOSOMES
-    if type(chrom_user_set) is list:
-        chrom_list = chrom_user_set
-    elif type(chrom_user_set) is str:
-        chrom_list = [chrom_user_set.upper()]
+    if type(chromosome) is list:
+        chrom_list = chromosome
+    elif type(chromosome) is str:
+        chrom_list = [chromosome.upper()]
     else:
         chrom_list = []
         roman_to_arabic_numerals = chromosomename_roman_to_arabic()[1]
@@ -100,10 +100,10 @@ def compareplot(bed_files=None, variable="insertions", chrom_user_set=None, bar_
                         allcounts_list[int(line[1])] += int(line[4])
 
 #%% BINNING OF THE READS
-            if bar_width_user_set == None:
+            if set_barwidth == None:
                 bar_width = int(chr_length_dict.get(chrom)/500)
             else:
-                bar_width = bar_width_user_set
+                bar_width = set_barwidth
     
             allcounts_binnedlist = []
             val_counter = 0
@@ -167,7 +167,10 @@ def compareplot(bed_files=None, variable="insertions", chrom_user_set=None, bar_
             ax1.set_ylim(0,max_ylim)
         ax1.set_axisbelow(True)
         ax1.grid(True)
-        # ax1.set_ylabel('Aboslute insertion count WT2', fontsize=font_size)
+        if variable == "insertions":
+            ax1.set_ylabel('Aboslute insertion count', fontsize=font_size)
+        elif variable == "reads":
+            ax1.set_ylabel('Aboslute read count', fontsize=font_size)
         ax1.set_xlim(0,chr_length_dict.get(chrom))
     
     
@@ -179,8 +182,11 @@ def compareplot(bed_files=None, variable="insertions", chrom_user_set=None, bar_
                 ax2.axvspan(gene_start_pos,gene_end_pos,facecolor='g',alpha=0.3)
             else:
                 ax2.axvspan(gene_start_pos,gene_end_pos,facecolor='r',alpha=0.3)
-    
-        ax2.bar(allinsertionsites_allfiles_list[1],alltransposoncounts_allfiles_binnedlist[1],width=binsize,color=(0.2,0.2,0.2,0.8), label='Number of transposons')
+
+        if variable == "insertions":
+            ax2.bar(allinsertionsites_allfiles_list[1],alltransposoncounts_allfiles_binnedlist[1],width=binsize,color=(0.2,0.2,0.2,0.8), label='Number of transposons')
+        elif variable == "reads":
+            ax2.bar(allinsertionsites_allfiles_list[1],alltransposoncounts_allfiles_binnedlist[1],width=binsize,color=(0.2,0.2,0.2,0.8), label='Number of reads')
         ax2.bar(allinsertionsites_allfiles_list[1],transposoncounts_negativedifference_list,width=binsize,color=(0.52,0.71,0.90,0.8), label='Absolute difference datasets (set1-set2)')
 
         if set_logscale == True:
@@ -189,7 +195,10 @@ def compareplot(bed_files=None, variable="insertions", chrom_user_set=None, bar_
             ax2.set_ylim(0,max_ylim)
         ax2.set_axisbelow(True)
         ax2.grid(True)
-        # ax2.set_ylabel(r'Absolute insertion count $\Delta$Dpl1', fontsize=font_size)
+        if variable == "insertions":
+            ax2.set_ylabel('Aboslute insertion count', fontsize=font_size)
+        elif variable == "reads":
+            ax2.set_ylabel('Aboslute read count', fontsize=font_size)
         ax2.set_xlabel('Basepair position on chromosome '+chrom, fontsize=font_size)
         ax2.set_xlim(0,chr_length_dict.get(chrom))
         ax2.invert_yaxis()
@@ -199,7 +208,7 @@ def compareplot(bed_files=None, variable="insertions", chrom_user_set=None, bar_
         
         
         if savefig == True:
-            saving_name = os.path.dirname(bed_files[0]) + os.path.basename(bed_files[0]).strip(".bed")+"_compareplot_chrom" + chrom + ".png"
+            saving_name = os.path.join(os.path.dirname(bed_files[0]), os.path.basename(bed_files[0]).strip(".bed")+"_compareplot_chrom" + chrom + ".png")
             plt.savefig(saving_name)
             plt.close()
 
@@ -209,7 +218,7 @@ def compareplot(bed_files=None, variable="insertions", chrom_user_set=None, bar_
 if __name__ == '__main__':
     compareplot(bed_files=bed_files,
                 variable=variable,
-                chrom_user_set=chrom_user_set,
-                bar_width_user_set=bar_width_user_set,
+                chromosome=chromosome,
+                set_barwidth=set_barwidth,
                 set_logscale=set_logscale,
                 savefig=savefig)
