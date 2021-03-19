@@ -22,12 +22,12 @@ from essential_genes_names import list_known_essentials #import essential_genes_
 
 #%%INPUT
 
-datafile = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\dataset_enzo\wt1_enzo_dataset_demultiplexed_singleend_sample1_trim1\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_singleend_trimmed.sorted.bam_pergene.txt"
+pergenefile = r""
 
 
 
 #%%
-def scatterplot(datafile):
+def scatterplot(pergenefile):
     '''
     This code creates a scatterplot of the number of reads per insertion per gene combined with a histogram.
     The genes are sorted based on the number of reads per insertion and are color coded based on the annotated essentiality in wild type.
@@ -52,35 +52,37 @@ def scatterplot(datafile):
 #    sys.path.insert(1,os.path.join(file_dirname,'python_modules'))
 #    from dataframe_from_pergene import dataframe_from_pergenefile
 #    
-#    read_gene_df_a = dataframe_from_pergenefile(datafile_a)
+#    read_gene_df_a = dataframe_from_pergenefile(pergenefile_a)
 
 
 #%% read file
-    assert os.path.isfile(datafile), 'File not found at: %s' % datafile
+    assert os.path.isfile(pergenefile), 'File not found at: %s' % pergenefile
 
-    with open(datafile) as f:
+    with open(pergenefile) as f:
         lines = f.readlines()[1:] #skip header
 
-    genenames_list = [None]*len(lines)
-    tnpergene_list = [None]*len(lines)
-    readpergene_list = [None]*len(lines) 
+    genenames_list = [np.nan]*len(lines)
+    tnpergene_list = [np.nan]*len(lines)
+    readpergene_list = [np.nan]*len(lines) 
 
     line_counter = 0
     for line in lines:
 #        l = line.strip('\n').split(' ')
-        l = re.split(' |\t', line.strip('\n'))
+        line_split = re.split(' |\t', line.strip('\n'))
+        l = [x for x in line_split if x]
+        
+        if len(l) == 3:
+            genenames_list[line_counter] = l[0]
+            tnpergene_list[line_counter] = int(l[1])
+            readpergene_list[line_counter] = int(l[2])
 
-        genenames_list[line_counter] = l[0]
-        tnpergene_list[line_counter] = int(l[1])
-        readpergene_list[line_counter] = int(l[2])
+            line_counter += 1
 
-        line_counter += 1
-
-    del (line, l, line_counter, datafile)
+    del (line, l, line_counter, pergenefile)
 
 
 #%% determine number of reads per insertion per gene
-    readperinspergene_list = [None]*len(lines)
+    readperinspergene_list = [np.nan]*len(lines)
     for i in range(len(tnpergene_list)):
         if not tnpergene_list[i] == 0:
             readperinspergene_list[i] = readpergene_list[i] / tnpergene_list[i]
@@ -155,7 +157,7 @@ def scatterplot(datafile):
 
 #%%
 if __name__ == '__main__':
-    read_gene_df = scatterplot(datafile)
+    read_gene_df = scatterplot(pergenefile)
 
 
 
