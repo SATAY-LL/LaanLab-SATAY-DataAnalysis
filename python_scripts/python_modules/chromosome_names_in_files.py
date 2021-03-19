@@ -16,10 +16,8 @@ def chromosome_name_bedfile(bed_file=None):
     CHANGE LINE 60 AND 71 TO AUTOMATICALLY RECOGNIZE THE MITOCHONDRIAL DNA NAME
     '''
     
-    if bed_file == None:
-        import os
-        file_dirname = os.path.dirname(os.path.abspath('__file__'))
-        bed_file = os.path.join(file_dirname,'..','..','satay_analysis_testdata','Output_Processing','Cerevisiae_WT2_Michel2017_trimmed1.bam.bed')
+    import os
+    assert os.path.isfile(bed_file), "ERROR: bed file not found"
 
 
 
@@ -145,5 +143,5 @@ def chromosome_name_wigfile(wig_file=None):
 
 #%%
 if __name__ == '__main__':
-#    chrom_names_dict, chrom_start_line_dict, chrom_end_line_dict = chromosome_name_bedfile(bed_file=r"\\?\X:\tnw\BN\LL\Shared\Gregory\datasets\dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_sample1\wt1_enzo_dataset_demultiplexed_singleend_sample1_trim20210127\align_out\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_singleend_trimmed.sorted.bam.bed")
-    chrom_names_dict, chrom_start_line_dict, chrom_end_line_dict = chromosome_name_wigfile(wig_file=r"\\?\X:\tnw\BN\LL\Shared\Gregory\datasets\dataset_enzo\wt1_enzo_dataset_demultiplexed_interleaved_sample1\wt1_enzo_dataset_demultiplexed_singleend_sample1_trim20210127\align_out\D18524C717111_BDDP200001534-1A_HJVN5DSXY_L1_sample1interleavedsorted_singleend_trimmed.sorted.bam.wig")
+    chrom_names_dict, chrom_start_line_dict, chrom_end_line_dict = chromosome_name_bedfile(bed_file=r"")
+    # chrom_names_dict, chrom_start_line_dict, chrom_end_line_dict = chromosome_name_wigfile(wig_file=r"")
