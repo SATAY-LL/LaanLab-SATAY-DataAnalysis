@@ -31,8 +31,6 @@
     - [dataframe_from_pergene.py](#dataframe_from_pergenepy)
     - [essential_genes_names.py](#essential_genes_namespy)
     - [gene_names.py](#gene_namespy)
-    - [gene_tn_insertions.py](#gene_tn_insertionspy)
-    - [insertions_count.py](#insertions_countpy)
     - [mapped_reads.py](#mapped_readspy)
     - [read_sgdfeatures.py](#read_sgdfeaturespy)
     - [statistics_perchromosome.py](#statistics_perchromosomepy)
@@ -1115,17 +1113,32 @@ This function the more extensive version of the first function and outputs 3 dic
 
 This function also inputs a Yeast_Protein_Names.txt file, which if not provided is taken from the data_files folder.
 
-#### gene_tn_insertions.py
-
-
-
-#### insertions_count.py
-
 #### mapped_reads.py
+
+[This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/mapped_reads.py) can be used for counting the number of insertions and number of reads in a bed or wig file.
+It consists of a single function:
+
+- `total_mapped_reads`
+
+This function counts the number of lines in the bed or wig file (minus the header line and empty lines at the end) to get the number of insertions and sums the number of reads.
+The output is a dictionary containing 3 elements:
+
+`Ninsertions` which represents the number of insertions  
+`Nreads` representing the number of reads  
+`Median` representing the median read count per insertion
+
+The input is either a wig or a bed file and a verbose argument can be set to False to suppress any printing of the values.
+
+Note that using a bed file is more accurate than using a wig file.
+In the wig file the insertions that were mapped to the same location, but have a different orientation are summed.
+This means that the number of reads should be the same as the number of reads found in the bed file, but the number of insertions can deviate depending how often reads with a different orientation are mapped to the same location.
+See for more information see the section about the [wig](#wig) file.
+
+This module has the following dependencies: numpy
 
 #### read_sgdfeatures.py
 
-This [python module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/read_sgdfeatures.py) reads the [SGD_features.tab](#sgd_featurestab) file and creates dictionaries for type of genomic feature with all general information about these features.
+[This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/read_sgdfeatures.py) reads the [SGD_features.tab](#sgd_featurestab) file and creates dictionaries for type of genomic feature with all general information about these features.
 The following features are considered:
 
 - ORF (genes)
