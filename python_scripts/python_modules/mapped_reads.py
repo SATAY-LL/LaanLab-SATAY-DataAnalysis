@@ -5,12 +5,18 @@
 import os
 import numpy as np
 
+
+#%%INPUT
+
+file = r""
+verbose = True
+
 #%%
-def total_mapped_reads(file, verbose=False):
+def total_mapped_reads(file, verbose=True):
     '''
     This function gets the total number of reads that are present in the dataset.
     Input is either a .bed-file or a .wig-file.
-    Output is an integer representing the total mapped reads in the dataset.
+    Output is an dict containing the median read count per insertion, number of insertions and number of reads.
     '''
     if not os.path.isfile(file):
         print('WARNING: Following path not found: ', file)
@@ -42,7 +48,12 @@ def total_mapped_reads(file, verbose=False):
                 print('Number of mapped reads found = %i' % total_reads)
                 print('Number of insertions found = %i' % total_ins)
                 print('Median read per transposon = %i' % np.median(reads_list))
-            return(total_reads)
+
+            count_dict = {"Ninsertions": total_ins,
+                          "Nreads": total_reads,
+                          "Median": np.median(reads_list)}
+
+            return(count_dict)
 
 
 
@@ -64,7 +75,12 @@ def total_mapped_reads(file, verbose=False):
                 print('Number of mapped reads found = %i' % total_reads)
                 print('Number of insertions found = %i' % total_ins)
                 print('Median read per transposon = %i' % np.median(reads_list))
-            return(total_reads)
+
+            count_dict = {"Ninsertions": total_ins,
+                          "Nreads": total_reads,
+                          "Median": np.median(reads_list)}
+
+            return(count_dict)
 
 
         else:
@@ -74,6 +90,4 @@ def total_mapped_reads(file, verbose=False):
 
 #%%
 if __name__ == '__main__':
-    # total_mapped_reads(file=r"C:\Users\gregoryvanbeek\Desktop\test_matlab_benoit\test_matlab_benoit_wt1\E-MTAB-4885.WT1.bam.wig", verbose=True)
-    # total_mapped_reads(file=r"C:\Users\gregoryvanbeek\Desktop\test_matlab_benoit\test_matlab_benoit_wt1\E-MTAB-4885.WT1.bam.bed", verbose=True)
-    total_mapped_reads(file=r"C:\Users\gregoryvanbeek\Desktop\test_matlab_benoit\test_matlab_benoit_wt2\E-MTAB-4885.WT2.bam.bed", verbose=True)
+    count_dict = total_mapped_reads(file=file, verbose=verbose)
