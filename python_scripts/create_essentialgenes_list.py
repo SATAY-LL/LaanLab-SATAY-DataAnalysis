@@ -25,8 +25,8 @@ from gene_names import gene_aliases
 
 #%%INPUT
 
-file_list = [r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\data_files\Cerevisiae_EssentialGenes_List_1.txt",
-                 r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\data_files\Cerevisiae_EssentialGenes_List_2.txt"]
+file_list = [os.path.join(file_dirname, '..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
+                 os.path.join(file_dirname, '..','data_files','Cerevisiae_EssentialGenes_List_2.txt')]
 
 
 
