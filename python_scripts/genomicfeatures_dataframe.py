@@ -50,9 +50,9 @@ from read_sgdfeatures import sgd_features
 
 # for chrom in ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI']:
 #     region=chrom
-region = 3 #e.g. 1, "I", ["I", 0, 10000"], gene name (e.g. "CDC42")
-wig_file = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\dataset_leila\dataset_leila_wt\leila_dataset_wt_processing\WT_merged-techrep-a_techrep-b_processing\WT_merged-techrep-a_techrep-b_trimmed.sorted.bam_clean.wig"
-pergene_insertions_file = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\dataset_leila\dataset_leila_wt\leila_dataset_wt_processing\WT_merged-techrep-a_techrep-b_processing\WT_merged-techrep-a_techrep-b_trimmed.sorted.bam_pergene_insertions.txt"
+region = 1 #e.g. 1, "I", ["I", 0, 10000"], gene name (e.g. "CDC42")
+wig_file = r""
+pergene_insertions_file = r""
 plotting=True
 variable="reads" #"reads" or "insertions"
 savefigure=False
