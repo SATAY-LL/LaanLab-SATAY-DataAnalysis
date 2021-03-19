@@ -1094,7 +1094,30 @@ This list is stored in the variable `known_essential_gene_list`.
 
 #### gene_names.py
 
+[This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/gene_names.py) can be used for getting all gene names and their aliases.
+It consists of two functions:
+
+- `list_gene_names`
+
+This function outputs a list of all genes names including aliases.
+It is not indicated which gene names refer the same gene, but rather this is a complete overview of all gene names that are known for yeast.
+This can be used, for example, to check whether an inputted gene name exists or not by checking if the gene name occurs in this list.
+The input of this function a Yeast_Protein_Names.txt file, which if not provided is taken from the data_files folder.
+The output function is `gene_name_list`.
+
+- `gene_aliases`
+
+This function the more extensive version of the first function and outputs 3 dictionaries:
+
+`aliases_designation_dict` which contains as keys the gene names in systematic naming convention and the values are lists containing all aliases in the standard naming convention  
+`aliases_sgd_dict` which contains as keys the gene names in systematic naming convention and the values are the SGD ID (this can be used on [yeastgenome.org](https://www.yeastgenome.org/))  
+`aliases_swissprot_dict` which contains as keys the gene names in systematic naming convention and the values are the swissprot ID (this can be used on [uniprot.org](https://www.uniprot.org/))
+
+This function also inputs a Yeast_Protein_Names.txt file, which if not provided is taken from the data_files folder.
+
 #### gene_tn_insertions.py
+
+
 
 #### insertions_count.py
 
