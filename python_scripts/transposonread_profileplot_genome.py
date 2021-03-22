@@ -87,7 +87,7 @@ def profile_genome(bed_file=None, variable="transposons", bar_width=None, savefi
         lines = f.readlines()
     
 
-    chrom_names_dict, chrom_start_index_dict, chrom_end_index_dict= chromosome_name_bedfile(lines)
+    chrom_names_dict, chrom_start_index_dict, chrom_end_index_dict= chromosome_name_bedfile(bed_file)
 
     allcounts_list = np.zeros(l_genome)
     if variable == "transposons":

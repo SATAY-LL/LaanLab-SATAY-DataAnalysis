@@ -64,7 +64,7 @@ def profile_plot(bed_file, variable="transposons", chrom='I', bar_width=None, sa
         lines = f.readlines()
     
 #%% GET NAMES FOR THE CHROMOSOMES IN THE BED FILE
-    chrom_start_index_dict, chrom_end_index_dict= chromosome_name_bedfile(lines)[1:3]
+    chrom_start_index_dict, chrom_end_index_dict= chromosome_name_bedfile(bed_file)[1:3]
 
 #%% GET ALL TRANSPOSON COUNTS
     allcounts_list = np.zeros(chr_length_dict.get(chrom) + 1)

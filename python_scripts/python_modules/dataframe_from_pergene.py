@@ -74,9 +74,14 @@ def dataframe_from_pergenefile(pergenefile, verbose=True):
 
 
 # determine essential genes
-    known_essential_gene_list = list_known_essentials(input_files=[os.path.join(file_dirname,'..','..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
-                                                                   os.path.join(file_dirname,'..','..','data_files','Cerevisiae_EssentialGenes_List_2.txt')],
-                                                      verbose=verbose)
+    if os.path.isfile(os.path.join(file_dirname,'..','..','data_files','Cerevisiae_EssentialGenes_List_1.txt')):
+        known_essential_gene_list = list_known_essentials(input_files=[os.path.join(file_dirname,'..','..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
+                                                                       os.path.join(file_dirname,'..','..','data_files','Cerevisiae_EssentialGenes_List_2.txt')],
+                                                          verbose=verbose)
+    elif os.path.isfile(os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_1.txt')):
+        known_essential_gene_list = list_known_essentials(input_files=[os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
+                                                                       os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_2.txt')],
+                                                          verbose=verbose)
 
     geneessentiality_list = [None]*len(lines)
     for i in range(len(genenames_list)):
