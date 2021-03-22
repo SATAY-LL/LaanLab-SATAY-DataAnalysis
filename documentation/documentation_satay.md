@@ -1340,7 +1340,42 @@ From this file, the files [S_Cerevisiae_protein_designation_name_full_genome.txt
 
 #### IGV
 
+The [integrative Genomics Viewer](https://software.broadinstitute.org/software/igv/) is a tool to visualize the mapped reads and can be used for manually checking the output.
+When opening the tool for the first time, load a [reference genome](#s288c_reference_sequence_r64-2-1_20150113fsa) by going to `Genomes` in the task bar, click `Load genome from file` and select the reference fasta.
+Alternatively in the top bar, in the left most drop-down menu click `More...` and select the S. cerevisiae (sacCer3) genome.
+Next select `File` from the task bar and click `Load from file`.
+Select a bam file which should have an index (.bam.bai) file located at the same location.
+In the top of the window check if the right reference genome is loaded and select a chromosome to check (in the drop-down menu that says 'All' or a chromosome name).
+Zoom in to a region of interest which should then show all the reads present.
+Hovering the cursor over a read should give more information about that read.
+This can be used to check the mapping quality of reads (MAPQ) and to check if the location of the reads correspond to the insertion locations stored in the output files from the workflow.
+
 #### genome browser
+
+Another useful tool the [genome browser](http://genome-euro.ucsc.edu/index.html), which is an online tool for showing alignment data together with a reference genome.
+This also shows different features, for example where the genes are located.
+To use this tool, go to `My Data` in the top bar and select `My Sessions`.
+Here you should create an acocunt if you haven't done this before.
+After this, go to the `Session Management` (on the same page) and at `Save Settings`, enter a name for your dataset at `Save current settings as named session`.
+Optionally you can set the checkbox `allow this session to be loaded by others` to give other people the possibility to see your data, but this is not required.
+Press `Submit`.
+While still on the same page, you should now see your dataset name in the section `My Sessions`.
+Click the name to open the browser.
+Here you should see an interactive figure with some default tracks.
+It may happen that not the right organism is selected (e.g. by default the Human genome is loaded), this will be resolved in the next step.
+Right below the browser, there are some functions for the browser.
+Click here the `add custom tracks` option.
+This should load a new page where you can select the right genome and add you own data.
+For loading the genome, select the `Other` in the drop-down menu next to `clade`.
+Then, select `S. cerevisiae` next to `genome` and then select the assembly `Apr. 2011`.
+On the same page, upload a bed or wig file next to `Paste URLs or data`.
+Note that for this the bed or wig files need to be cleaned using [clean_bedwigfiles.py](#clean_bedwigfilespy).
+Press `Submit` and after loading, press `Go` or add another track.
+This should now show you again the browser, but now with the right genome and your track(s) loaded.
+Note that by default the browser is zoomed in quite far, so you may want to zoom out somewhat or select a region or gene in the search bar.
+
+This now allows you to see the insertions against all genomic features in the genome.
+Your tracks are saved automatically and when the `allow this session to be loaded by others` was selected, it can be shared with others.
 
 ## How to use the Linux desktop
 
@@ -1374,7 +1409,7 @@ To normally open a file with the default program for that filetype, use the comm
 
 To access the webdrives, open the Files program and go to `Other Locations` (in the left menu bar in Files).
 On the bottom of the window it should say `Connect to server`.
-Enter here the following adress: `sftp://sftp.tudelft.nl/ `
+Enter here the following adress: `sftp://sftp.tudelft.nl/`
 Press `Connect` and, if requested, log in with your TUDelft credentials.
 This should show a number of folders, among of which is `staff-bulk` which is the N-drive and `staff-groups` which is the M-drive.
 Here you can down-/upload any files to and from the desktop, but after about 10 minutes of inactivity, the connection to the drives is automatically broken.
