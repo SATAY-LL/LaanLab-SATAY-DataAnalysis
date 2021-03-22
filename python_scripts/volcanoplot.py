@@ -35,7 +35,7 @@ path_b = r"C:\Users\gregoryvanbeek\Documents\Data_Sets\dataset_leila\dataset_lei
 filelist_b = ["dnrp1-1-a_pergene.txt", "dnrp1-1-b_pergene.txt", "dnrp1-2-a_pergene.txt", "dnrp1-2-b_pergene.txt"]
 
 
-variable = 'tn_per_gene' #'read_per_gene' 'tn_per_gene', 'Nreadsperinsrt'
+variable = 'Nreadsperinsrt' #'read_per_gene' 'tn_per_gene', 'Nreadsperinsrt'
 significance_threshold = 0.01 #set threshold above which p-values are regarded significant
 normalize=True
 
@@ -113,7 +113,7 @@ def volcano(path_a, filelist_a, path_b, filelist_b, variable='read_per_gene', si
             elif variable == 'read_per_gene':
                 norm_a = sum(tnread_gene_a.read_per_gene)#*10**-7
             elif variable == 'Nreadsperinsrt':
-                norm_a = sum(tnread_gene_a.read_per_gene)
+                norm_a = sum(tnread_gene_a.Nreadsperinsrt)
 
         #ADD A CONSTANT TO ALL VALUES TO PREVENT A ZERO DIVISION WHEN DETERMINING THE FOLD CHANGE.
         tnread_gene_a.tn_per_gene = tnread_gene_a.tn_per_gene + tn_per_gene_zeroreplace
@@ -141,7 +141,7 @@ def volcano(path_a, filelist_a, path_b, filelist_b, variable='read_per_gene', si
             elif variable == 'read_per_gene':
                 norm_b = sum(tnread_gene_b.read_per_gene)#*10**-7
             elif variable == 'Nreadsperinsrt':
-                norm_b = sum(tnread_gene_b.read_per_gene)
+                norm_b = sum(tnread_gene_b.Nreadsperinsrt)
 
         #ADD A CONSTANT TO ALL VALUES TO PREVENT A ZERO DIVISION WHEN DETERMINING THE FOLD CHANGE.
         tnread_gene_b.tn_per_gene = tnread_gene_b.tn_per_gene + tn_per_gene_zeroreplace
