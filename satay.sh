@@ -703,6 +703,7 @@ help_text (){
 	echo "For using the program with the command line, the following arguments can be passed (see below for more explanation on the parameters):"
 	echo "- [-h] Show help text"
 	echo "- [-v] Show current version"
+	echo "- [-c] Open the adapters file. This does not run the program"
 	echo "- [-f] Select data file with primary reads (required)"
 	echo "- [-g] Select data file with secondary reads (only in case of paired-end noninterleaved data)"
 	echo "- [-p] Select data format. Either 'Paired-end' or 'Single-end' [default is 'Single-end']"
@@ -743,6 +744,7 @@ help_text (){
 	echo "- 'Open adapters file': Opens the text file where the adapter and primer sequences can be entered that will be trimmed. Enter the sequences in fasta format."
 	echo
 	echo "Questions, recommendations and issues can be noted at https://www.github.com/Gregory94/LaanLab-SATAY-DataAnalysis/issues/33"
+	echo "For more detailed information about this program and a tutorial, see github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/documentation/documentation_satay.md"
 	echo
 	echo
 	echo "Dependencies:"
