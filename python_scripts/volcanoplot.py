@@ -101,8 +101,8 @@ def volcano(path_a, filelist_a, path_b, filelist_b, variable='read_per_gene', si
 
 #%% Extract information from datasets
     print('Plotting: %s' % variable)
-    tn_per_gene_zeroreplace = 5
-    read_per_gene_zeroreplace = 25
+    tn_per_gene_zeroreplace = 5 #Add 5 insertions to every gene
+    read_per_gene_zeroreplace = 25 #Add 25 reads to every gene
     # norm_a = 0
     # norm_b = 0
     for count, datafile_a in enumerate(datafiles_list_a):
@@ -112,6 +112,8 @@ def volcano(path_a, filelist_a, path_b, filelist_b, variable='read_per_gene', si
                 norm_a = sum(tnread_gene_a.tn_per_gene)#*10**-4
             elif variable == 'read_per_gene':
                 norm_a = sum(tnread_gene_a.read_per_gene)#*10**-7
+            elif variable == 'Nreadsperinsrt':
+                norm_a = sum(tnread_gene_a.read_per_gene)
 
         #ADD A CONSTANT TO ALL VALUES TO PREVENT A ZERO DIVISION WHEN DETERMINING THE FOLD CHANGE.
         tnread_gene_a.tn_per_gene = tnread_gene_a.tn_per_gene + tn_per_gene_zeroreplace
@@ -138,6 +140,8 @@ def volcano(path_a, filelist_a, path_b, filelist_b, variable='read_per_gene', si
                 norm_b = sum(tnread_gene_b.tn_per_gene)#*10**-4
             elif variable == 'read_per_gene':
                 norm_b = sum(tnread_gene_b.read_per_gene)#*10**-7
+            elif variable == 'Nreadsperinsrt':
+                norm_b = sum(tnread_gene_b.read_per_gene)
 
         #ADD A CONSTANT TO ALL VALUES TO PREVENT A ZERO DIVISION WHEN DETERMINING THE FOLD CHANGE.
         tnread_gene_b.tn_per_gene = tnread_gene_b.tn_per_gene + tn_per_gene_zeroreplace
