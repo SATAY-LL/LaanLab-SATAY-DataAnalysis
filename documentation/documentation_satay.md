@@ -45,7 +45,7 @@
     - [IGV](#igv)
     - [genome browser](#genome-browser)
 - [How to use the Linux desktop](#how-to-use-the-linux-desktop)
-- [Outlook](#outlook)
+- [Summary and additional tips](#summary-and-additional-tips)
 - [Appendices](#appendices)
   - [PHRED table (base33)](#phred-table-base33)
   - [PHRED table (base64)](#phred-table-base64)
@@ -64,6 +64,27 @@ More information about satay analysis and experimental protocols can be found at
 > [Laanlab, Delft University of Technology](https://www.tudelft.nl/en/faculty-of-applied-sciences/about-faculty/departments/bionanoscience/research/research-labs/liedewij-laan-lab/research-projects/evolvability-and-modularity-of-essential-functions-in-budding-yeast "LaanLab TUDelft")
 
 ## Introduction
+
+SAturated Transposon Analysis in Yeast (SATAY) is method of transposon analysis optimised for usage in Saccharomyces Cerevisiae.
+This method uses transposons (short DNA sequences, also known as jumping genes) which can integrate in the native yeast DNA at random locations.
+A transposon insertion in a gene inhibits this gene to be translated into a functional protein, thereby inhibiting this gene function.
+The advantage of this method is that it can be applied in many cells at the same time.
+Because of the random nature of the transposons the insertion coverage will be more or less equal over the genome.
+When enough cells are used it is expected that, considering the entire pool of cells, all genes will be inhibited by at least a few transposons.
+After a transposon insertion, the cells are given the opportunity to grow and proliferate.
+Cells that have a transposon inserted in an essential genomic region (and thus blocking this essential function), will proliferate only very little or not at all (i.e. these cells have a low fitness) whilst cells that have an insertion in a non-essential genomic region will generate significantly more daughter cells (i.e. these cells have a relative high fitness).
+The inserted transposon DNA is then sequenced together with a part of the native yeast DNA right next to the transposon.
+This allows for finding the genomic locations where the transposon is inserted by mapping the sequenced native DNA to a reference genome.
+Non-essential genomic regions are expected to be sequenced more often compared to the essential regions as the cells with a non-essential insertion will have proliferated more.
+Therefore, counting how often certain insertion sites are sequenced is a method for probing the fitness of the cells and therefore the essentiality of genomic regions.
+For more details about the experimental approach, see the paper from Michel et.al. 2017 and this website from [the Kornmann-lab](https://sites.google.com/site/satayusers/).
+
+This method needs to be performed on many cells to ensure a high enough insertion coverage such that each gene is inhibited in at least a few different cells.
+After transposon insertion and proliferation, the DNA from each of these cells is extracted and this is sequenced to be able to count how often each genomic region occurs.
+This can yield tens of millions of sequencing reads per dataset that all need to be aligned to a reference genome.
+To do this efficiently, a processing workflow is generated which inputs the raw sequencing data and outputs lists of all insertion locations together with the corresponding number of reads.
+This workflow consists of quality checking, sequence trimming, alignment, indexing and transposon mapping.
+This documentation explains how each of these steps are performed, how to use the workflow and discusses some python scripts for checking the data and for postprocessing analysis.
 
 ## File types
 
@@ -294,7 +315,7 @@ The index file can be created using the command `sambamba-0.7.1.-linux-static so
 This creates a sorted.bam file and a sorted.bam.bai index file.
 Run the sorted.bam file in the python script using the command `python3 transposonmapping_satay.py [path]/[filename.sorted.bam]`.
 
-Example of pergene_insertions.txt file:
+Example of peressential_insertions.txt file:
 
 > `Essential gene name chromosome Start location End location Insertion locations Reads per insertion location`  
 > `EFB1 I 142174 143160 [142325, 142886] [1, 1]`  
@@ -389,7 +410,7 @@ Use the drop down window at the bottom right to select the right extension.
 
 <img src="media\satay_fileselectionwindow.png" alt="satay.sh_file_selection_window" width=700>
 
-After pressing `OK` a second window opens that shows all the settings that can be changed with some default values.
+After pressing `OK` a second window opens that shows all the settings with some default values that can be changed.
 The first two lines indicate the file(s) that were selected in the previous window (if only one file was selected, the secondary reads file is set to `none`).
 The third line is a drop-down menu to set whether to process the data as single-end (default) or paired-end reads.
 The fourth line sets which trimming tool to use.
@@ -398,6 +419,15 @@ If the trimming should be skipped (and therefore the alignment is performed with
 The fifth line sets the trimming arguments.
 When trimming is skipped, what is put in this line is ignored.
 Otherwise, use the arguments allowed by the selected trimming software.
+
+**Quality checking FASTQC**: A quality report of the fastq files can be created before and after the trimming.
+When the dataset is processed for the first time, it is good to make a quality report of the raw data and check if there are no weird artefacts, reads with (unexpectedly) low quality and to see the overrepresented sequences.
+Overrepresented sequences are normal to occur, but most of the time it is good to trim those sequences as these can influence the alignment (unless when you're sure that the sequences belong in the reads and should not be trimmed).
+For example sequences that typically occur are adapter and primer sequences.
+Note that not always all sequences that need to be trimmed occur in the list of overrepresented sequences.
+Therefore is also good to manually check the fastq files and try to recognize any of the adapter or primer sequences.
+After trimming, create a new quality report and compare this with the raw data quality report.
+For example, check if any trimmed sequences do not occur anymore in the overrepresented sequences and, when trimming was performed based on the sequencing quality, see if the overall quality of the data has improved.
 
 **Trimming settings BBDuk**: For BBDuk, a typical argument line looks like this: `ktrim=l k=15 mink=10 hdist=1 qtrim=r trimq=10 minlen=30`.
 The first four options are for trimming unwanted (adapter) sequences which in BBDuk is done using k-mers (e.g. when k=3, all 3-mers for ATTGCAAT are ATT, TTG, TGC, GCA, CAA, AAT).
@@ -459,10 +489,12 @@ The first two checkboxes turn on or off quality checking before and after trimmi
 When `Quality check interrupt` is set, the program pauses after the raw quality checking (before the trimming) and asking if the user want to continue the processing (press `n` to stop and `y` to continue).
 Stopping the program allows the user to check the quality report of the raw data.
 After checking the quality report, the program can be restarted by typing `bash satay.sh` after which the program remembers the settings that were previously set (it will skip the file selection window).
-Changes can be made for the trimming and alignment tools and press `OK` to continue.
+Changes can be made for the trimming (including the adapters file) and alignment tools and press `OK` to continue.
 This time the raw quality report will be skipped.
 
 The next options determine if the sam file needs to be deleted after processing, whether the bam file needs to be sorted and indexed, if the [transposon mapping](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_transposonmapping/transposonmapping_satay.py) needs to be performed and if a flagstat report needs to be created (the quality report of the alignment).
+Check if all the output files that are expected based on the settings are created (see the [Input, Output](#input-output) section).
+See the section [Summary and additional tips](#summary-and-additional-tips) about how to check if the output makes sense based on the input data and the applied settings.
 
 <img src="media\satay_settingswindow.png" alt="satay.sh_settings_window" width=700>
 
@@ -870,16 +902,18 @@ This creates a number of figures equal to the number of chromosomes entered in t
 The `bar_width` can be set to determine the width of the bars in basepairs (default is length of the chromosome divided by 500).
 The differences between datasets can be small relative to the number of counts, especially when comparing reads.
 To make the differences better visible, the y axis can be set in log scale using the `set_logscale` argument to `True`.
-This visually enhances the differences, but can give a distorded view where the differences look much bigger than they are.
+This visually enhances the differences, but can give a distorded view where the differences look much bigger than they actually are.
 Finally, the `savefig` argument determines whether the figure needs to be saved.
 If a figure is saved, it won't be shown and it will be stored at the location of the bed file that occurs first in the `bed_files` list.
 The name that is given to the saved figures is the name of the first occuring bed file with the extension `_compareplot_chrom[romannumeral].png` where [romannumeral] is replaced by the chromosome number.
-
 The background of the figure is colorcoded at the location where the genes are located where red are the non-essential genes and green are the annotated essential genes in wild type.
+
+This figure can be useful to create after processing the same dataset multiple times with different settings (e.g. for the trimming and alignment).
 
 - **Output**
 
 Two barplots are created plotted on top of each other where black bars show the insertion or read count for either of two datasets.
+Note that the y axis of the bottom graph is inverted.
 The overlapping blue bars indicate the absolute difference between the datasets where the bottom graph (set2) is substracted from the top graph (set1).
 The colorcoded background indicate the location of essential and non-essential genes.
 On top the graph the names of the essential genes are plotted.
@@ -1374,7 +1408,21 @@ For a more thorough tutorial of the linux commandline and many other useful comm
 To have commandline like tool on windows (e.g. to access large datafiles on windows as well using the `less` and `head` commands), try [git bash](https://gitforwindows.org/).
 For Mac users, the terminal that is by default installed in MacOS works very similar as the one in Linux, so there is no real need for downloading any special tools.
 
-## Outlook
+## Summary and additional tips
+
+The workflow discussed in this documentation processes the data from raw sequencing data to a list of insertions sites and read counts.
+Here a summary is given of the most important steps to take starting after retrieving the sequencing data.
+
+1. Manually check the fastq files to see if the reads appear to be ok and if you can recognise adapter, primer or transposon sequences (if any) that need to be trimmed.
+2. If needed, preprocess the data. For example demultiplexing when multiple samples were sequenced simultaneously. Store the data for each sample in individual fastq files, preferably as single-end reads.
+3. Input the (preprocessed) fastq files in the workflow. For this, store the fastq files on the Linux desktop and run the workflow using the command `bash satay.sh` (located in the software folder).
+4. When it is the first time processing the data, it is advised to set the `Quality checking raw data` and `Quality check interrupt` to `True`. This allows you to check the raw fastq files before the processing starts for any artefacts or unwanted (overrepresented) sequences.
+5. Run the processing workflow with trimming settings and alignment settings that suits the data. Determining the right settings is not always straightforward and often require some trial and error. It is advised to always trim away the unwanted sequences (e.g. adapter, primer and transposon sequences) by copying those sequences to the adapters file. It is good to do some quality trimming for the last basepairs of each read as well (see quality report how many basepairs would be required, if any). For the alignment it is advised to set the settings a little more stringent compared with the default values (see [the BWA MEM manual](http://bio-bwa.sourceforge.net/bwa.shtml)), but not too stringent as this can have a negative impact on the alignment.
+6. After processing, check the output of each function to see how many reads were trimmed and aligned. If many cells were removed after trimming or when many reads were not aligned, you may have set some options too stringent. Also check the quality report of the trimmed reads and compare this with the quality report for the raw reads. Any overrepresented sequences that were entered in the adapters file are expected to be gone and the overall quality should have improved when trimming low quality basepairs was set.
+7. When the processing is finished and the quality report and outputs all seem reasonable, check the resulting output files (i.e. bed, wig and multiple text files, see the [Input, Output](#input-output) section). Preferably, run the bed and wig files in the [clean_bedwigfiles.py](#clean_bedwigfilespy) to remove any unwanted insertions. Run the [transposonread_profileplot_genome.py](#transposonread_profileplot_genomepy) script to check if the overall coverage of the insertions in the genome is good. There should be no large empty regions or large peaks, except for those around the centromeres of each chromosome, one large peak near the middle of chromosome 12 and a peak at the Ade2 gene in chromosome 15.
+8. Next check the individual chromosomes using [transposonread_profileplot.py](#transposonread_profileplotpy). This generates similar figures as transposonread_profileplot.py, but this is on chromosome level and allows to check if the annotated essential gene have significant less insertions compared to the other regions. To check the distribution of reads per gene and compare this between essential and non-essential genes, the [scatterplot_genes.py](#scatterplot_genespy) script can be used.
+9. When processing a mutant strain, also check if the deleted gene(s) are devoid of insertions as well. For this the pergene.txt file can be used or the gene can be checked in [IGV](#igv) of the [genome browser](#genome-browser).
+10. For further analysis, the [genomicfeatures_dataframe.py](#genomicfeatures_dataframepy) function can be used that contains the most important information from the processing files. This function can be integrated in other python scripts.
 
 ## Appendices
 
