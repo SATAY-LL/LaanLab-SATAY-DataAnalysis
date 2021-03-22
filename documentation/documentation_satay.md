@@ -45,7 +45,8 @@
     - [IGV](#igv)
     - [genome browser](#genome-browser)
 - [How to use the Linux desktop](#how-to-use-the-linux-desktop)
-- [Summary and additional tips](#summary-and-additional-tips)
+- [Summary](#summary)
+- [Links](#links)
 - [Appendices](#appendices)
   - [PHRED table (base33)](#phred-table-base33)
   - [PHRED table (base64)](#phred-table-base64)
@@ -497,6 +498,8 @@ Check if all the output files that are expected based on the settings are create
 See the section [Summary and additional tips](#summary-and-additional-tips) about how to check if the output makes sense based on the input data and the applied settings.
 
 <img src="media\satay_settingswindow.png" alt="satay.sh_settings_window" width=700>
+
+The whole pipeline might take several hours to run, depending on the size of the dataset.
 
 #### Tutorial
 
@@ -1443,7 +1446,7 @@ For a more thorough tutorial of the linux commandline and many other useful comm
 To have commandline like tool on windows (e.g. to access large datafiles on windows as well using the `less` and `head` commands), try [git bash](https://gitforwindows.org/).
 For Mac users, the terminal that is by default installed in MacOS works very similar as the one in Linux, so there is no real need for downloading any special tools.
 
-## Summary and additional tips
+## Summary
 
 The workflow discussed in this documentation processes the data from raw sequencing data to a list of insertions sites and read counts.
 Here a summary is given of the most important steps to take starting after retrieving the sequencing data.
@@ -1458,6 +1461,22 @@ Here a summary is given of the most important steps to take starting after retri
 8. Next check the individual chromosomes using [transposonread_profileplot.py](#transposonread_profileplotpy). This generates similar figures as transposonread_profileplot.py, but this is on chromosome level and allows to check if the annotated essential gene have significant less insertions compared to the other regions. To check the distribution of reads per gene and compare this between essential and non-essential genes, the [scatterplot_genes.py](#scatterplot_genespy) script can be used.
 9. When processing a mutant strain, also check if the deleted gene(s) are devoid of insertions as well. For this the pergene.txt file can be used or the gene can be checked in [IGV](#igv) of the [genome browser](#genome-browser).
 10. For further analysis, the [genomicfeatures_dataframe.py](#genomicfeatures_dataframepy) function can be used that contains the most important information from the processing files. This function can be integrated in other python scripts.
+
+## Links
+
+Github page: [github.com/Gregory94/LaanLab-SATAY-DataAnalysis/tree/satay_processing](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/tree/satay_processing)
+
+Satay website: [sites.google.com/site/satayusers/](https://sites.google.com/site/satayusers/)
+
+Satay forum: [groups.google.com/g/satayusers](https://groups.google.com/g/satayusers)
+
+eLife paper satay: [elifesciences.org/articles/23570#content](https://elifesciences.org/articles/23570#content)
+
+Yeast genome: [yeastgenome.org/](https://www.yeastgenome.org/)
+
+Yeast mine: [yeastmine.yeastgenome.org/yeastmine/begin.do](https://yeastmine.yeastgenome.org/yeastmine/begin.do)
+
+datacarpentry course about genomics (also contains a course in using the Linux bash and command line tools): [datacarpentry.org/lessons/#genomics-workshop](https://datacarpentry.org/lessons/#genomics-workshop)
 
 ## Appendices
 
