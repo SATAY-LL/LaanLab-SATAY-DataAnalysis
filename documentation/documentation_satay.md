@@ -1466,6 +1466,8 @@ Here a summary is given of the most important steps to take starting after retri
 
 Github page: [github.com/Gregory94/LaanLab-SATAY-DataAnalysis/tree/satay_processing](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/tree/satay_processing)
 
+Laanlab: [tudelft.nl/laanlab](https://www.tudelft.nl/en/faculty-of-applied-sciences/about-faculty/departments/bionanoscience/research/research-labs/liedewij-laan-lab/research-projects/evolvability-and-modularity-of-essential-functions-in-budding-yeast)
+
 Satay website: [sites.google.com/site/satayusers/](https://sites.google.com/site/satayusers/)
 
 Satay forum: [groups.google.com/g/satayusers](https://groups.google.com/g/satayusers)
@@ -1476,7 +1478,7 @@ Yeast genome: [yeastgenome.org/](https://www.yeastgenome.org/)
 
 Yeast mine: [yeastmine.yeastgenome.org/yeastmine/begin.do](https://yeastmine.yeastgenome.org/yeastmine/begin.do)
 
-datacarpentry course about genomics (also contains a course in using the Linux bash and command line tools): [datacarpentry.org/lessons/#genomics-workshop](https://datacarpentry.org/lessons/#genomics-workshop)
+Datacarpentry course about genomics (also contains a course in using the Linux bash and command line tools): [datacarpentry.org/lessons/#genomics-workshop](https://datacarpentry.org/lessons/#genomics-workshop)
 
 ## Appendices
 
