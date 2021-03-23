@@ -623,7 +623,7 @@ The python version used for creating and testing is Python v3.8.5.
 
 The order in which to run the programs shouldn't matter as these scripts are all independed of each other except for genomicfeatures_dataframe.py which is sometimes called by other scripts.
 However, most scripts are depending on one or more [python modules](#python-modules), which are all expected to be located in a python_modules folder inside the folder where the python scripts are located (see [github](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/tree/satay_processing/python_scripts) for an example how this is organized).
-Also many python scripts and modules are depending on [data files](#data-files) stored in a folder called data_files located in the same folder of the python_scripts folder.
+Also, many python scripts and modules are depending on [data files](#data-files) stored in a folder called data_files located in the same folder of the python_scripts folder.
 The input for most scripts and modules are the output files of the processing, see the [Input, Output](#input-output) section.
 
 This is a typical order which can be used of the scripts described below:
@@ -631,7 +631,7 @@ This is a typical order which can be used of the scripts described below:
 1. clean_bedwigfiles.py (to clean the bed and wig files).
 2. transposonread_profileplot_genome.py (to check the insertion and read distribution throughout the genome).
 3. transposonread_profileplot.py (to check the insertions and read distribution per chromosome in more detail).
-4. scatterplot_genes.py (to check the distribution for the number of insertions per gene and per essential gene).
+4. scatterplot_genes.py (to compare the distribution for the number of insertions per gene and per essential gene).
 5. volcanoplot.py (only when comparing multiple datasets with different genetic backgrounds to see which genes have a significant change in insertion and read counts).
 
 Most of the python scripts consists of one or more functions.
@@ -692,7 +692,7 @@ A dedicated folder can be created where multiple files are stored, each containi
 
 - **Main tasks**
 
-Create a pandas dataframe that stores information for a specific chromosome including all genomic features, positions of those features and the number of insertions and reads within those features for an entire chromosome or specific genomic region.
+Create a pandas dataframe that stores information for a specific chromosome including all genomic features, positions and the number of insertions and reads within those features for an entire chromosome or specific genomic region.
 Optionally it can create a barplot with the number of insertions or reads within each feature.
 
 - **Dependencies**
@@ -734,14 +734,14 @@ The `plotting` argument (True or False) defines whether to create a barplot.
 The `variable` argument determines what to plot, either reads or insertions and the `savefigure` whether to automatically save the figure at the same location as where this script is stored.
 Finally the `verbose` determines if any printing output should be given (this is mostly useful for when calling this script from other python scripts).
 
-This scripts does not only look at genes, but also at other genomic regions like telomere, centromeres, rna genes etc.
+This scripts does not only look at genes, but also at other genomic regions like telomeres, centromeres, rna genes etc.
 All these features are stored in one dataframe called `dna_df2` that includes naming and positional information about the features and the insertion and read counts (see output).
 The dataframe will always be created for one entire chromosome (regardless if a basepair region or gene name was entered in the `region` argument).
 When the plotting is set to the True, it will also create a barplot for the same chromosome within the region that is defined in the `region` variable.
 The plot distinguishes between nonessential genes, essential genes, other genomic features (e.g. telomeres, centromeres etc.) and noncoding dna.
 The width of the bars is determined by the length of the genomic feature and the height represents either the number of reads or insertions (depending what is defined in `variable`).
 
-This function can be useful for other python functions as well when information is required about the positions, insertions and read counts of various genomic features.
+This function can be useful for other python functions when information is required about the positions, insertions and read counts of various genomic features.
 The full list of genomic features that is regarded in the dataframe is mentioned in [read_sgdfeatures.py](#read_sgdfeaturespy).
 
 - **Output**
@@ -763,7 +763,7 @@ The main output is the `dna_df2` dataframe in which each row represents a genomi
 - Number of reads per insertion (only for genes, where the insertions and reads in the first and last 100bp are ignored)
 
 The truncated feature columns ignores basepairs at the beginning and end of a gene.
-This can be useful as it is mentioned that insertions located at the beginning or end of a gene results in a protein that is still functional (although truncated) (e.g. see Michel et.al. 2017) (see Notes for a further discussion about how this is defined).
+This can be useful as it is mentioned that insertions located at the beginning or end of a gene can result in a protein that is still functional (although truncated) (e.g. see Michel et.al. 2017) (see Notes for a further discussion about how this is defined).
 
 <img src="media\genomicfeatures_dataframe_dnadf2.png" alt="genomicfeature_dataframe_dnadf2" width=700>
 
@@ -807,7 +807,7 @@ matplotlib
 The `variable` arguments determines whether to plot the number of transposons or the number of reads for a chromosome defined in `chrom`.
 The `bar_width` argument defines the width of the bars (in basepairs).
 All insertions or reads within a bar are added up.
-Wider bars makes the script significantly faster, but this might regions with low abundance less visible where the smaller bars provide more detailed information.
+Wider bars makes the script significantly faster, but this might cause regions with low abundance less visible where the smaller bars provide more detailed information.
 By default the width of the bars are chosen as the length of the chromosome divided by 800.
 
 Optionally, the figure can be automatically saved at the same location where the bed file is stored with the `savefig` argument.
@@ -863,7 +863,7 @@ A barplot is created that shows the tranposon or read abundance for the genome t
 
 - **Notes**
 
-- [ ]
+- [ ] Sometimes the colorcoding of the strip below the figure changes when the figure is saved. This is not due to the code (which always loads the same gene positions from the same files), but this likely due to how the figure was saved by the used editor (tested with Spyder4). Probably the resolution is not high enough to show the fine details in the strip.
 
 #### TransposonRead_Profile_Compare.py
 
@@ -905,7 +905,7 @@ This creates a number of figures equal to the number of chromosomes entered in t
 The `bar_width` can be set to determine the width of the bars in basepairs (default is length of the chromosome divided by 500).
 The differences between datasets can be small relative to the number of counts, especially when comparing reads.
 To make the differences better visible, the y axis can be set in log scale using the `set_logscale` argument to `True`.
-This visually enhances the differences, but can give a distorded view where the differences look much bigger than they actually are.
+This visually enhances the differences, but can give a distorded view as the differences appear much bigger than they actually are.
 Finally, the `savefig` argument determines whether the figure needs to be saved.
 If a figure is saved, it won't be shown and it will be stored at the location of the bed file that occurs first in the `bed_files` list.
 The name that is given to the saved figures is the name of the first occuring bed file with the extension `_compareplot_chrom[romannumeral].png` where [romannumeral] is replaced by the chromosome number.
@@ -993,10 +993,10 @@ This script consists of a single function called `volcano` which takes the follo
 `trackgene_list=[list of gene names]`  
 `figure_title=[str]`
 
-A volcanoplot is useful to create to compare to strains with each other that each has multiple datasets (e.g. 2 wt strains and 4 mutant strains).
-Therefore, the paths of the two datasets (`path_a` and `path_b`) are separated from the pergene.txt  filenames, which should be given in a list (`filelist_a` and `filelist_b`).
+A volcanoplot is useful to create to compare two strains with each other that each has multiple datasets (e.g. 2 wt strains and 4 mutant strains).
+Therefore, the paths of the two datasets (`path_a` and `path_b`) are separated from the pergene.txt filenames, which should be given in a list (`filelist_a` and `filelist_b`).
 
-It plots the fold change per gene vs the significance as determined by a independent t-test.
+It plots the fold change per gene vs the significance as determined by an independent t-test.
 The fold change can be determined for the reads per gene (`variable=reads_per_gene`), insertions per gene (`variable=tn_per_gene`) or reads per inserions per gene (`variable=Nreadsperinsrt`).
 The fold change is calculated by the log base 2 of the mean per gene for the experimental strain divided by the mean per gene for the reference strain (e.g. mean reads per gene mutant strain / mean reads per gene wt strain).
 
@@ -1010,14 +1010,14 @@ When the significance of a gene is higher then the threshold set by `threshold`,
 
 Optionally, a list of genes can be given which are shown with a fixed label in the graph.
 For this enter the gene names as a list in the `trackgene_list` variable and use the same names as they occur in the files.
-The other genes can be found in the graph by hovering the cursor over each datapoint and then a label will appear that show the name of the gene that datapoint is representing.
+The other genes can be found in the graph by hovering the cursor over each datapoint and then a label will appear that show the name of the gene that the datapoint is representing.
 The title of the graph can be changed using the `figure_title` by entering a string that will be printed with the figure.
 Next to the custom title, the title indicates what variable is plotted in the graph (i.e. reads per gene, insertions per gene or reads per insertion).
 
 - **Output**
 
 The main output of the script is the interactive volcano plot of fold change vs significance.
-Also it return the variable `volcano_df` that includes the information used for plotting.
+Also it returns the variable `volcano_df` that includes the information used for plotting.
 In the dataframe each row consists of a gene and the following columns are used:
 
 - gene names
@@ -1030,7 +1030,7 @@ In the dataframe each row consists of a gene and the following columns are used:
 
 - **Notes**
 
-- [ ] The fold change is calculated as the ratio between the means of the datasets. But this is an issue when either of the dataset is 0. To prevent this issue, for each gene in each dataset, 5 insertions and 25 reads are added. This ensures that there is never a 0 in the division. This chosen because the processing of the Kornmann-lab also does this and by integrating the same method in this script allows for direct comparison of the figures. However, this is not completely fair as it changes the data. For example, if the initial number of insertions were 1 and 2 it yields a fold change of 0.5. By adding 5 insertions to it it becomes 6 and 7, respectively, yielding a fold change of 0.85.
+- [ ] The fold change is calculated as the ratio between the means of the datasets. But this is an issue when either of the dataset is 0. To prevent this issue, for each gene in each dataset, 5 insertions and 25 reads are added. This ensures there is never a 0 in the division. This chosen because the processing of the Kornmann-lab also does this and by integrating the same method in this script allows for direct comparison of the figures. However, this is not completely fair as it changes the data. For example, if the initial number of insertions were 1 and 2 it yields a fold change of 0.5. By adding 5 insertions to it it becomes 6 and 7, respectively, yielding a fold change of 0.85.
 
 #### create_essentialgenes_list.py
 
@@ -1048,7 +1048,7 @@ Combine mulitple files with essential genes into one.
 However, none of the lists was complete and thus there were genes in one file that were not in the other and vice versa.
 Also the files used different naming conventions.
 This code takes a list of paths to multiple text files containing gene names.
-It assumed there are three header lines in each text file (which can be empty) and after that each line contains a single name of a gene.
+It assumes there are three header lines in each text file (which can be empty) and after that each line contains a single name of a gene.
 
 This code iterates over all files given in the input list and creates a new text file at the same location as the first occuring path in the input list and gives this new file the name `Cerevisiae_AllEssentialGenes_List.txt`.
 
@@ -1068,7 +1068,7 @@ A text file is created that contains all known essential genes with the names `C
 
 ### python modules
 
-The python modules always contain function that perform a certain task that is often required in multiple python scripts.
+The python modules always contain functions that perform a certain task that is often required in multiple python scripts.
 To use these python modules in a python script a path needs to be defined to the module.
 This can be done best using relative paths stated at the very beginning of a script with the following lines:
 
@@ -1080,16 +1080,16 @@ Then an import can be done as usual in the form
 
 >`from module_name import function`
 
-For example to import the `chromosome_position` from the `chromosome_and_gene_positions.py` module:
+For example to import the `chromosome_position` function from the `chromosome_and_gene_positions.py` module:
 
 > `from chromosome_and_gene_positions import chromosome_position`
 
 The output of these functions are given in the `return` statement.
-If there are multiple outputs in the return statement, the function also expects multiple variables to assigned when calling this function in a python scripts (e.g. if function `f` has two outputs, call this the function as `var1, var2 = f([inputs])` or `var1 = f([inputs])[0]` if only `var1` is needed, where `[inputs]` are to be replaced with the input variable (if any)).
+If there are multiple outputs in the return statement, the function also expects multiple variables to assigned when calling this function in a python scripts (e.g. if function `f` has two outputs, call this the function as `var1, var2 = f([inputs])` or `var1 = f([inputs])[0]` if only `var1` is needed, where `[inputs]` are to be replaced with the input variable(s) (if any)).
 
 #### chromosome_and_gene_positions.py
 
-[This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/chromosome_and_gene_positions.py) can be used for obtaining information regarding gene and chromosome positions, lengths and converting roman to arabic numerals for chromosomes.
+[This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/chromosome_and_gene_positions.py) can be used for obtaining information regarding gene and chromosome positions and lengths and converting roman to arabic numerals for chromosomes.
 It contains 3 functions:
 
 - `chromosome_position`
@@ -1117,7 +1117,7 @@ This function outputs 1 dictionary:
 
 `gene_pos_dict`
 
-The keys in this dictionary are all gene names and the values is a list with the following information:
+The keys in this dictionary are all gene names and each value is a list with the following information:
 
 1. Chromosome where the gene is positioned
 2. Start basepair for the gene
@@ -1140,6 +1140,8 @@ This function outputs 3 dictionaries:
 `chrom_names_dict` which contains as keys roman numerals for the chromosome and the values are the chromosome names as are present in the bed file  
 `chrom_start_line_dict` containing the lines where the chromosomes start in the bed file as values and the keys are roman numerals representing the chromosomes  
 `chrom_end_line_dict` containing the lines where the chromosomes end in the bed file as values and the keys are roman numerals representing the chromosomes
+
+This can be useful when only a specific chromosome is required, that not the entire file needs to be searched, but rather a range of lines in the bed and wig files can be read where the specified chromosome occurs.
 
 The input of this function is a required path to a bed file.
 
@@ -1188,7 +1190,7 @@ This inputs a lists of files with essential gene names.
 If no input is given, the files are collected from the data_files folder.
 It simply takes all genes from all input files and put those in one list.
 This list is therefore likely to contain redundant genes with different naming conventions.
-This list is stored in the variable `known_essential_gene_list`.
+This list is stored in the variable `known_essential_gene_list` and is useful to check whether a gene is annotated as essential without having to worry about naming conventions.
 
 #### gene_names.py
 
@@ -1240,7 +1242,7 @@ This module has the following dependencies: numpy
 
 #### read_sgdfeatures.py
 
-[This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/read_sgdfeatures.py) creates dictionaries for many types of genomic feature containing general information about these features.
+[This module](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/python_scripts/python_modules/read_sgdfeatures.py) creates dictionaries for many types of genomic features containing general information about these features.
 It consists of a single function:
 
 - `sgd_features`
@@ -1274,13 +1276,13 @@ In each dictionary the keys are the names of the features and the values consist
 - feature type
 - feature qualifier (`Verified` or `Dubious`)
 - standard name
-- aliases (separated by `|`)
+- aliases (when more than one, separated by `|`)
 - parent feature name (typically 'chromosome ...')
 - chromosome
 - start coordinate (starting at 0 for each chromosome)
 - end coordinate (starting at 0 for each chromosome)
 
-The input of teh function is a path to the SGD_features.tab file and in case of no input, this file is taken from the data_files folder.
+The input of the function is a path to the SGD_features.tab file and in case of no input, this file is taken from the data_files folder.
 
 #### samflag.py
 
@@ -1289,7 +1291,7 @@ It consists of single function:
 
 -`samflag`
 
-This takes an integer as input a outputs a list of parameters corresponding to that integer.
+This takes an integer as input and outputs a list of parameters corresponding to that integer.
 This function executes the method described in the [sam, bam](#sam-bam) section.
 It converts the integer to a 12-bit binary number and each of the 12 bits correspond to an entry in a list of parameters.
 The location of the ones (read from right to left) in the binary number determine which parameters are true given the input integer.
@@ -1308,13 +1310,12 @@ This script is mainly used during the processing pipeline in the [transposonmapp
 [This text file](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/data_files/Cerevisiae_AllEssentialGenes_List.txt) contains all known annotated essential genes in wild type according to SGD.
 It is created using [create_essentialgenes_list.py](#create_essentialgenes_listpy) where the genes are taken from both [Cerevisiae_EssentialGenes_List_1.txt](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/data_files/Cerevisiae_EssentialGenes_List_1.txt) and [Cerevisiae_EssentialGenes_List_2.txt](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/data_files/Cerevisiae_EssentialGenes_List_2.txt).
 Both latter two files contain essential genes, but in different naming format and both contain genes not found in the other file.
-The Cerevisiae_AllEssentialGenes_List.txt file is a combination of the two files with all genes from both files.
+The Cerevisiae_AllEssentialGenes_List.txt file is a combination of the two files with all genes from both files and is therefore the most complete version.
 Each file contains a header with the source where the information is downloaded from.
 
 #### S288C_reference_sequence_R64-2-1_20150113.fsa
 
-[This fasta file](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/data_files/S288C_reference_sequence_R64-2-1_20150113.fsa) is the reference genome from yeast used for alignment and downloaded from [yeastgenome.org](http://sgd-archive.yeastgenome.org/sequence/S288C_reference/genome_releases/).
-It is used during alignment.
+[This fasta file](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/satay_processing/data_files/S288C_reference_sequence_R64-2-1_20150113.fsa) is the reference genome for yeast used for alignment and downloaded from [yeastgenome.org](http://sgd-archive.yeastgenome.org/sequence/S288C_reference/genome_releases/).
 Note that before using a fasta file for alignment, the file has to be indexed.
 This can be done in Linux using the command `bwa index [path]/S288C_reference_sequence_R64-2-1_20150113.fsa` where `[path]` is replaced with the path to the reference fasta file.
 
@@ -1345,20 +1346,20 @@ From this file, the files [S_Cerevisiae_protein_designation_name_full_genome.txt
 
 The [integrative Genomics Viewer](https://software.broadinstitute.org/software/igv/) is a tool to visualize the mapped reads and can be used for manually checking the output.
 When opening the tool for the first time, load a [reference genome](#s288c_reference_sequence_r64-2-1_20150113fsa) by going to `Genomes` in the task bar, click `Load genome from file` and select the reference fasta.
-Alternatively in the top bar, in the left most drop-down menu click `More...` and select the S. cerevisiae (sacCer3) genome.
-Next select `File` from the task bar and click `Load from file`.
-Select a bam file which should have an index (.bam.bai) file located at the same location.
-In the top of the window check if the right reference genome is loaded and select a chromosome to check (in the drop-down menu that says 'All' or a chromosome name).
+Alternatively in the top bar, in the left most drop-down menu click `More...` and select the S. cerevisiae (sacCer3) genome (which comes standard with IGV).
+Next, select `File` from the task bar and click `Load from file`.
+Select a bam file which should have an index (.bam.bai) file stored at the same location.
+In the top of the window check if the right reference genome is loaded and select a chromosome to view (in the drop-down menu that says 'All' or a chromosome name).
 Zoom in to a region of interest which should then show all the reads present.
 Hovering the cursor over a read should give more information about that read.
-This can be used to check the mapping quality of reads (MAPQ) and to check if the location of the reads correspond to the insertion locations stored in the output files from the workflow.
+For example, this can be used to check the mapping quality of reads (MAPQ) and to check if the location of the reads correspond to the insertion locations stored in the output files from the workflow.
 
 #### genome browser
 
 Another useful tool the [genome browser](http://genome-euro.ucsc.edu/index.html), which is an online tool for showing alignment data together with a reference genome.
 This also shows different features, for example where the genes are located.
 To use this tool, go to `My Data` in the top bar and select `My Sessions`.
-Here you should create an acocunt if you haven't done this before.
+Here you should create an account if you haven't done this before.
 After this, go to the `Session Management` (on the same page) and at `Save Settings`, enter a name for your dataset at `Save current settings as named session`.
 Optionally you can set the checkbox `allow this session to be loaded by others` to give other people the possibility to see your data, but this is not required.
 Press `Submit`.
@@ -1369,7 +1370,7 @@ It may happen that not the right organism is selected (e.g. by default the Human
 Right below the browser, there are some functions for the browser.
 Click here the `add custom tracks` option.
 This should load a new page where you can select the right genome and add you own data.
-For loading the genome, select the `Other` in the drop-down menu next to `clade`.
+For loading the genome, select the `Other` in the drop-down menu next to `clade` on the top of the page.
 Then, select `S. cerevisiae` next to `genome` and then select the assembly `Apr. 2011`.
 On the same page, upload a bed or wig file next to `Paste URLs or data`.
 Note that for this the bed or wig files need to be cleaned using [clean_bedwigfiles.py](#clean_bedwigfilespy).
@@ -1454,17 +1455,19 @@ Here a summary is given of the most important steps to take starting after retri
 1. Manually check the fastq files to see if the reads appear to be ok and if you can recognise adapter, primer or transposon sequences (if any) that need to be trimmed.
 2. If needed, preprocess the data. For example demultiplexing when multiple samples were sequenced simultaneously. Store the data for each sample in individual fastq files, preferably as single-end reads.
 3. Input the (preprocessed) fastq files in the workflow. For this, store the fastq files on the Linux desktop and run the workflow using the command `bash satay.sh` (located in the software folder).
-4. When it is the first time processing the data, it is advised to set the `Quality checking raw data` and `Quality check interrupt` to `True`. This allows you to check the raw fastq files before the processing starts for any artefacts or unwanted (overrepresented) sequences.
-5. Run the processing workflow with trimming settings and alignment settings that suits the data. Determining the right settings is not always straightforward and often require some trial and error. It is advised to always trim away the unwanted sequences (e.g. adapter, primer and transposon sequences) by copying those sequences to the adapters file. It is good to do some quality trimming for the last basepairs of each read as well (see quality report how many basepairs would be required, if any). For the alignment it is advised to set the settings a little more stringent compared with the default values (see [the BWA MEM manual](http://bio-bwa.sourceforge.net/bwa.shtml)), but not too stringent as this can have a negative impact on the alignment.
+4. When it is the first time processing the data, it is advised to set the `Quality checking raw data` and `Quality check interrupt` to `True`. This allows you to check the quality of the raw fastq files before the actual processing starts and to spot any artefacts or unwanted (overrepresented) sequences.
+5. Run the processing workflow with trimming settings and alignment settings that suits the data. Determining the right settings is not always straightforward and often require some trial and error. It is advised to always trim away the unwanted sequences (e.g. adapter, primer and transposon sequences or overrepresented sequences found by the raw quality check) by copying those sequences to the adapters file. It is good to do some quality trimming for the last basepairs of each read as well (see quality report of the raw data how many basepairs would be needed, if any). For the alignment it is advised to set the settings a little more stringent compared with the default values (see [the BWA MEM manual](http://bio-bwa.sourceforge.net/bwa.shtml)), but not too stringent as this can have a negative impact on the alignment.
 6. After processing, check the output of each function to see how many reads were trimmed and aligned. If many cells were removed after trimming or when many reads were not aligned, you may have set some options too stringent. Also check the quality report of the trimmed reads and compare this with the quality report for the raw reads. Any overrepresented sequences that were entered in the adapters file are expected to be gone and the overall quality should have improved when trimming low quality basepairs was set.
-7. When the processing is finished and the quality report and outputs all seem reasonable, check the resulting output files (i.e. bed, wig and multiple text files, see the [Input, Output](#input-output) section). Preferably, run the bed and wig files in the [clean_bedwigfiles.py](#clean_bedwigfilespy) to remove any unwanted insertions. Run the [transposonread_profileplot_genome.py](#transposonread_profileplot_genomepy) script to check if the overall coverage of the insertions in the genome is good. There should be no large empty regions or large peaks, except for those around the centromeres of each chromosome, one large peak near the middle of chromosome 12 and a peak at the Ade2 gene in chromosome 15.
+7. When the processing is finished and the quality report and outputs all seem reasonable, check the resulting output files (i.e. bed, wig and multiple text files, see the [Input, Output](#input-output) section). Preferably, run the bed and wig files in the [clean_bedwigfiles.py](#clean_bedwigfilespy) to remove any insertions mapped outside the chromosomes. Run the [transposonread_profileplot_genome.py](#transposonread_profileplot_genomepy) script to check if the overall coverage of the insertions in the genome is good. There should be no large empty regions or large peaks, except for those around the centromeres of each chromosome, one large peak near the middle of chromosome 12 and a peak at the Ade2 gene in chromosome 15.
 8. Next check the individual chromosomes using [transposonread_profileplot.py](#transposonread_profileplotpy). This generates similar figures as transposonread_profileplot.py, but this is on chromosome level and allows to check if the annotated essential gene have significant less insertions compared to the other regions. To check the distribution of reads per gene and compare this between essential and non-essential genes, the [scatterplot_genes.py](#scatterplot_genespy) script can be used.
-9. When processing a mutant strain, also check if the deleted gene(s) are devoid of insertions as well. For this the pergene.txt file can be used or the gene can be checked in [IGV](#igv) of the [genome browser](#genome-browser).
+9. When processing a mutant strain, also check if the deleted gene(s) are devoid of insertions as well. For this the pergene.txt file can be used or the gene can be checked in [IGV](#igv) or the [genome browser](#genome-browser).
 10. For further analysis, the [genomicfeatures_dataframe.py](#genomicfeatures_dataframepy) function can be used that contains the most important information from the processing files. This function can be integrated in other python scripts.
 
 ## Links
 
 Github page: [github.com/Gregory94/LaanLab-SATAY-DataAnalysis/tree/satay_processing](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/tree/satay_processing)
+
+Jupyter notebook about this project: [leilaicruz.github.io/SATAY-jupyter-book/Introduction.html](https://leilaicruz.github.io/SATAY-jupyter-book/Introduction.html)
 
 Laanlab: [tudelft.nl/laanlab](https://www.tudelft.nl/en/faculty-of-applied-sciences/about-faculty/departments/bionanoscience/research/research-labs/liedewij-laan-lab/research-projects/evolvability-and-modularity-of-essential-functions-in-budding-yeast)
 
