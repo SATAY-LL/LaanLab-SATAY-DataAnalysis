@@ -140,6 +140,6 @@ def gene_position(gff_file = None):
 
 #%%
 if __name__ == '__main__':
-    # chr_length_dict, chr_start_pos_dict, chr_end_pos_dict = chromosome_position()
+    chr_length_dict, chr_start_pos_dict, chr_end_pos_dict = chromosome_position()
     # arabic_to_roman_dict,roman_to_arabic_dict = chromosomename_roman_to_arabic()
-    gene_pos_dict = gene_position()
+    # gene_pos_dict = gene_position()

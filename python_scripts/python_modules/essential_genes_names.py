@@ -20,8 +20,12 @@ def list_known_essentials(input_files = None, headerlines=3, verbose=True):
     if input_files == None:
         import os
         file_dirname = os.path.dirname(os.path.abspath('__file__'))
-        essential_genes_files = [os.path.join(file_dirname,'..','..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
-                                os.path.join(file_dirname,'..','..','data_files','Cerevisiae_EssentialGenes_List_2.txt')]
+        if os.path.isfile(os.path.join(file_dirname,'..','..','data_files','Cerevisiae_EssentialGenes_List_1.txt')) and os.path.isfile(os.path.join(file_dirname,'..','..','data_files','Cerevisiae_EssentialGenes_List_2.txt')):
+            essential_genes_files = [os.path.join(file_dirname,'..','..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
+                                     os.path.join(file_dirname,'..','..','data_files','Cerevisiae_EssentialGenes_List_2.txt')]
+        else:
+            essential_genes_files = [os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
+                                     os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_2.txt')]
     else:
         essential_genes_files = input_files
 

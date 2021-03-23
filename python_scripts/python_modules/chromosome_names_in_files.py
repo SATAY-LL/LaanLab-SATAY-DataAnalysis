@@ -16,13 +16,10 @@ def chromosome_name_bedfile(bed_file=None):
     CHANGE LINE 60 AND 71 TO AUTOMATICALLY RECOGNIZE THE MITOCHONDRIAL DNA NAME
     '''
     
-    import os
-    assert os.path.isfile(bed_file), "ERROR: bed file not found"
-
-
-
     
     if type(bed_file) is str:
+        import os
+        assert os.path.isfile(bed_file), "ERROR: bed file not found"
         with open(bed_file) as f:
             lines = f.readlines()
     elif type(bed_file) is list:
@@ -79,17 +76,10 @@ def chromosome_name_bedfile(bed_file=None):
 
 #%%
 def chromosome_name_wigfile(wig_file=None):
-    if wig_file == None:
-        import os
-        file_dirname = os.path.dirname(os.path.abspath('__file__'))
-        wig_file = os.path.join(file_dirname,'..','..','satay_analysis_testdata','Output_Processing','Cerevisiae_WT2_Michel2017_trimmed1.bam.wig')
-
-
-
-
-
 
     if type(wig_file) is str:
+        import os
+        assert os.path.isfile(wig_file), "ERROR: wig file not found"
         with open(wig_file) as f:
             lines = f.readlines()
     elif type(wig_file) is list:

@@ -12,7 +12,7 @@ import re
 
 
 #%%INPUT
-pergenefile = r"C:\Users\gregoryvanbeek\Desktop\matlab_python_compare\Python\WT.bam_pergene.txt"
+pergenefile = r""
 
 #%%
 def dataframe_from_pergenefile(pergenefile, verbose=True):
