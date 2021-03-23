@@ -1384,6 +1384,7 @@ Your tracks are saved automatically and when the `allow this session to be loade
 ## How to use the Linux desktop
 
 For those who are not familiar with Linux, here is a brief summary of how to work with the Linux desktop and the basic tools that are necessary for using the workflow.
+For a more thorough tutorial of the linux commandline and many other useful commands, see for example this course from [datacarpentry.org/shell-genomics](https://datacarpentry.org/shell-genomics/).
 
 When using the Linux desktop, log in with the credentials found at `N:\tnw\BN\LL\Shared\LinuxMachines\LinuxDesktop_LoginCredentials.txt`.
 For remote access, download [Teamviewer](https://www.teamviewer.com/nl/) on your computer and connect with the Linux desktop using the credentials found in the file mentioned above.
@@ -1405,7 +1406,7 @@ While navigating through the folders, see what is inside a folder using `ls` (e.
 There are several extensions of this command, like `ls -a` which shows also all hidden folders (starting with `.`) and `ls -l` shows some basic information about each file and folder.
 
 To show the contents of a file use `less` or `head`.
-The `head` command shows the first 10 lines of the file (e.g. `head ~/Documents/satay/datasets/satay.sh` shows the first 10 lines of the satay.sh script) and `less` also shows the contents of a file, but allows you to scroll through the file using the arrow keys.
+The `head` command shows the first 10 lines of the file (e.g. `head ~/Documents/satay/datasets/singleendtestfolder/singleendtest.fastq` shows the first 10 lines of the fastq file singleendtest fastq file) and `less` also shows the contents of a file, but allows you to scroll through the file using the arrow keys.
 The advantage of these commands are that they only load the lines that are being shown, so this is a nice tool for checking large files without using a lot of memory (what would normally happen when opening a file completely).
 Also, the `less` command in Linux allows for seeing the contents of gzipped files without fully unzipping them (the `head` command only works with unzipped files).
 
@@ -1443,7 +1444,6 @@ To update manually enter the following commands in the commandline:
 
 - `sudo apt-get upgrade`; This does the actual downloading and installation of the updates that are found by the previous command. It may ask for a confirmation before it starts the installation and may restart the desktop.
 
-For a more thorough tutorial of the linux commandline and many other useful commands, see for example this course from [datacarpentry.org/shell-genomics](https://datacarpentry.org/shell-genomics/).
 To have commandline like tool on windows (e.g. to access large datafiles on windows as well using the `less` and `head` commands), try [git bash](https://gitforwindows.org/).
 For Mac users, the terminal that is by default installed in MacOS works very similar as the one in Linux, so there is no real need for downloading any special tools.
 
