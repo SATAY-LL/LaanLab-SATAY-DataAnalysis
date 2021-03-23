@@ -1,6 +1,13 @@
+
 # LaanLab-SATAY-DataAnalysis
 
 This repository contains codes, data and workflows for data analysis regarding SATAY experiments.
+
+## License
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+This work is licensed under Apache 2.0 . 
+The 2.0 version of the Apache License, approved by the ASF in 2004, helps us achieve our goal of providing reliable and long-lived software products through collaborative open source software development.
 
 ## [Projects tab](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/projects/1) and [Issues tab](https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/issues)
 
