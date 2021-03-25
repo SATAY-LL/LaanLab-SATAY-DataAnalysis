@@ -1,5 +1,8 @@
 # SATAY analysis workflow
 
+Our first release of the pipeline has now a DOI :) to be citable, and findable!!! 
+[![DOI](https://zenodo.org/badge/248577762.svg)](https://zenodo.org/badge/latestdoi/248577762)
+
 ## Overview
 
 This workflow is created for processing sequencing data for SAturated Transposon Analysis in Yeast (SATAY) for Saccharomyces Cerevisiae.
