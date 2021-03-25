@@ -41,12 +41,10 @@ for index, row in df.iterrows():
                                 
 totalins = len(all_reads)                  
 totalreads = sum(all_reads)
-print(max(all_reads))
 
 #make a dataframe with genes and reads sorted so we can see to which genes the outliers belong
 dictionary = {'gene':gene_list, 'reads':all_reads}
 df_gene_reads = pd.DataFrame(dictionary)
-
 
 # plot the distribution of read counts :
 abundance_reads_counter = Counter(all_reads)
@@ -54,10 +52,11 @@ abundance_reads_counter = Counter(all_reads)
 abundance_reads = pd.DataFrame.from_dict(abundance_reads_counter, orient='index').reset_index()
 abundance_reads.columns = ["number of reads","abundance"]
 ab =  abundance_reads.sort_values(by ='number of reads' )
+
 ab.plot.scatter(x= 'number of reads', y='abundance', s=2 ,title='Abundance of different reads counts' )
 plt.xlim([0,400])
-plt.ylim([0,500])
-plt.xticks(np.arange(0, 500, 100))
+plt.ylim([0,2000])
+#plt.xticks(np.arange(0, 8500, 500))
 
 # Now we are trying to fit our data to an exponential distribution
 
@@ -66,7 +65,7 @@ def exponential(x, a, b):
     return a*np.exp(b*x)
 
 x_data = ab['number of reads'].reset_index(drop=True).truncate(0, 400, copy = False)
-y_data = ab['abundance'].reset_index(drop=True).truncate(0, 400, copy = False);
+y_data = ab['abundance'].reset_index(drop=True).truncate(0, 2000, copy = False);
 
 pars, cov = curve_fit(f=exponential, xdata= x_data, ydata=y_data, p0=[0, 0], bounds=(-np.inf, np.inf))
 
@@ -80,7 +79,7 @@ res = y_data - exponential(x_data, *pars)
 ax = plt.axes()
 ax.plot(x_data, exponential(x_data, *pars), linestyle='--', linewidth=2, color='black')
 plt.xlim([0,400])
-plt.ylim([0,500])
+plt.ylim([0,2000])
 
 # plt.xscale('log')
 # plt.yscale('log')
@@ -89,17 +88,16 @@ plt.ylim([0,500])
 
 del(x)
 
-
 # # geometric distribution
 y_data = y_data/max(ab['abundance'])
 
 def geometric(x, p):
     return (1-p)**(x)*p
 
-pars, cov = curve_fit(f=geometric, xdata= x_data, ydata=y_data, p0=[0], bounds=(-np.inf, np.inf))
+pars, cov1 = curve_fit(f=geometric, xdata= x_data, ydata=y_data, p0=[0], bounds=(-np.inf, np.inf))
 
 # Get the standard deviations of the parameters (square roots of the # diagonal of the covariance)
-stdevs = np.sqrt(np.diag(cov))
+stdevs1 = np.sqrt(np.diag(cov1))
 
 # Calculate the residuals
 res = y_data - geometric(x_data, *pars)
@@ -112,8 +110,9 @@ plt.ylabel('Percentage of transposons with 1 read')
 
 ax = plt.axes()
 ax.plot(x_data, geometric(x_data, *pars), linestyle='--', linewidth=2, color='black')
-plt.xlim([0,200])
-plt.ylim([0,0.2])
+plt.xlim([0,400])
+plt.ylim([0,0.1])
+#plt.legend((line1, line2), ('label1', 'label2'))
 # plt.xscale('log')
 #plt.yscale('log')
 
