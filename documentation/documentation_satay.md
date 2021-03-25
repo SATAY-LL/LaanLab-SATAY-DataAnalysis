@@ -44,7 +44,6 @@
   - [Other tools](#other-tools)
     - [IGV](#igv)
     - [genome browser](#genome-browser)
-- [How to use the Linux desktop](#how-to-use-the-linux-desktop)
 - [Summary](#summary)
 - [Links](#links)
 - [Appendices](#appendices)
@@ -58,9 +57,11 @@ For the processing a pipeline is created using Bash and Python.
 The workflow and the python codes can be found at [github.com/leilaicruz/LaanLab-SATAY-DataAnalysis](https://github.com/leilaicruz/LaanLab-SATAY-DataAnalysis).
 More information about satay analysis and experimental protocols can be found at the [satayusers website from the Kornmann lab](https://sites.google.com/site/satayusers/ "satayusers website") or, for more questions, visit the [satayusers forum](https://groups.google.com/g/satayusers "satayusers forum").
 
-> Date last update: 10-03-2021
+> Date last update: 25-03-2021
 >
-> Contact: Gregory van Beek (G.M.vanBeek@tudelft.nl)
+> Author: Gregory van Beek
+>
+> Contact: Leila Inigo De la Cruz (email to: L.M.InigoDeLaCruz@tudelft.nl)
 >  
 > [Laanlab, Delft University of Technology](https://www.tudelft.nl/en/faculty-of-applied-sciences/about-faculty/departments/bionanoscience/research/research-labs/liedewij-laan-lab/research-projects/evolvability-and-modularity-of-essential-functions-in-budding-yeast "LaanLab TUDelft")
 
@@ -308,8 +309,7 @@ This file can be useful when not only the number of insertions is important, but
 Similarily as the [pergene.txt and peresential.txt file](#pergenetxt-peressentialtxt), to suppress noise the insertion with the highest read count in a gene is removed from that gene.
 
 This file is uniquely created in the processing workflow described below.
-To create this file from a dataset processed in another workflow, store the bam file and the corresponding .bam.bai index file on the Linux desktop (see [How to use the Linux desktop](#how-to-use-the-linux-desktop)).
-Go to the python folder in the Terminal with the following command: `cd /home/laanlab/satay/Documents/software/python_codes/`.
+To create this file from a dataset processed in another workflow, store the bam file and the corresponding .bam.bai index file at the same location.
 Run the transposonmapping_satay.py script with the bam file using the command `python3 transposonmapping_satay.py [path]/[filename.bam]` (see [How does it work](#how-does-it-work) for more explanation about the python script).
 If the index file .bam.bai is not present, create this before running the python script.
 The index file can be created using the command `sambamba-0.7.1.-linux-static sort -m 1GB [path]/[filename.bam]`.
@@ -394,10 +394,10 @@ The output may include the following folders and files:
 
 #### How to use
 
-The workflow satay.sh only runs in Linux and is designed to be used as a commandline tool (see [How to use the Linux desktop](#how-to-use-the-linux-desktop)).
+The workflow satay.sh only runs in Linux and is designed to be used as a commandline tool.
 For a step-by-step guide, see the [Tutorial](#tutorial).
 
-In the commandline, navigate to the software folder (`cd /home/laanlab/Documents/satay/software/`).
+In the commandline, navigate to the software folder.
 The workflow can be started either using commandline arguments or by using a graphical user interface (GUI).
 Using the GUI is the most userfriendly approach.
 Access the help text using `bash satay.sh --help` or `bash satay.sh -h` and check the current version with `bash satay.sh -v`.
@@ -503,34 +503,19 @@ The whole pipeline might take several hours to run, depending on the size of the
 
 #### Tutorial
 
-**Note before use**: When down-/uploading files to the N-drive or M-drive on the Linux Desktop, the drives will disconnect automatically after 10 minutes of inactivity.
-Since the files are typically large the down-/uploading can therefore take more then 10 minutes to complete.
-To prevent disconnection while down-/uploading you should click back and forth to some folders once every few minutes in the drives to reset the timer.
-See also [How to use the Linux desktop](#how-to-use-the-linux-desktop).
-
-- [ ] Log in to the Linux desktop (log in credentials can be found at `N:\tnw\BN\LL\Shared\LinuxMachines\LinuxDesktop_LoginCredentials.txt`).
-  - [ ] When using remote access, install the free version of [Teamviewer](https://www.teamviewer.com/nl/) on your computer and connect with the computer using the credentials found in the file mentioned above.
-- [ ] If your data file is on the N-drive, it should be copied to the Linux desktop for the processing to work smoothly (if you have no data set, there is a test fastq file already on the Linux desktop, so you can skip the following steps):
-  - [ ] For this, go to `Files` (located in the left bar) and click `Other Locations` on the left menu in Files.
-  - [ ] On the bottom at `Connect to Server` enter: `sftp://sftp.tudelft.nl/` and click `Connect`.
-  - [ ] If requested, log in with your personal tudelft credentials.
-  - [ ] Navigate to your data file (staff-bulk is the N-drive and staff-groups is the M-drive).
-  - [ ] Copy the data set to the desktop, for example to `Documents/satay/datasets/`.
-  - [ ] Close `Files`.
-- [ ] Open the `Terminal` (located in the left bar) and enter `cd ~/Documents/satay/software/`.
+- [ ] Open the `Terminal` and navigate to the location of the satay.sh script.
 - [ ] To start the workflow, enter `bash satay.sh`. This should open a window to select a fastq file.
-- [ ] At the bottom right, select the right extension to be able to find your file, navigate to the location of your data set and select the fastq file and press `OK`. (For the test fastq, navigate to `Documents/satay/datasets/singleendtestfolder/SRR062634.fastq.gz`).
+- [ ] At the bottom right, select the right extension to be able to find your file, navigate to the location of your data set and select the fastq file and press `OK`.
 - [ ] In the next window (options window) enter the parameters and options. Click `Open adapters file` to change the sequences that need to be trimmed (if any) (this file should always be in fasta format, see [How to use](#how-to-use) section) and save and close the adapters file. Press `OK` to start processing.
 - [ ] If the option `quality check interrupt` was selected:
   - [ ] Wait for the processing to finish the quality checking of the raw data.
   - [ ] The workflow will ask if you want to continue. Enter `y` to continue with the parameters you have set and enter `n` to stop the workflow to check the quality report of the raw data.
   - [ ] Navigate to the folder where your data file is stored and open the .html file (in the `fastqc_out` folder) and the check the quality report.
-  - [ ] When finished, restart the workflow by typing `bash satay.sh` at `~/Documents/satay/software/`.
+  - [ ] When finished, restart the workflow by typing `bash satay.sh`.
   - [ ] The workflow should skip the file selection window and immediately start with the processing options window where the parameters you have previously entered are set by default. Change the parameters if needed and press `OK` to continue processing.
   - [ ] The workflow should skip over the raw quality checking and continue with the processing.
 - [ ] When processing is finished, navigate to folder where your dataset is located and check if all expected files are present (depending on what options yout have set, but at least the `align_out` folder and a log file should be present, see the [Input, Output](#input-output) section).
-- [ ] Copy the results to the N-drive following the same procedure as described in step 2. (Be aware to prevent the sftp connection to automatically disconnect, see the note at the beginning of this section).
-- [ ] After the processing is finished, most information is stored in the [bed](#bed) and [wig](#wig) files. But there can be some artifacts present in these files which can be removed using [clean_bedwigfiles.py](#clean_bedwigfilespy). This is only necessary for specific downstream analysis tools like the [genome browser](#genome-browser).
+- [ ] Most information is stored in the [bed](#bed) and [wig](#wig) files. But there can be some artifacts present in these files which can be removed using [clean_bedwigfiles.py](#clean_bedwigfilespy). This is only necessary for specific downstream analysis tools like the [genome browser](#genome-browser).
 
 #### How does it work
 
@@ -1380,72 +1365,6 @@ Note that by default the browser is zoomed in quite far, so you may want to zoom
 
 This now allows you to see the insertions against all genomic features in the genome.
 Your tracks are saved automatically and when the `allow this session to be loaded by others` was selected, it can be shared with others.
-
-## How to use the Linux desktop
-
-For those who are not familiar with Linux, here is a brief summary of how to work with the Linux desktop and the basic tools that are necessary for using the workflow.
-For a more thorough tutorial of the linux commandline and many other useful commands, see for example this course from [datacarpentry.org/shell-genomics](https://datacarpentry.org/shell-genomics/).
-
-When using the Linux desktop, log in with the credentials found at `N:\tnw\BN\LL\Shared\LinuxMachines\LinuxDesktop_LoginCredentials.txt`.
-For remote access, download [Teamviewer](https://www.teamviewer.com/nl/) on your computer and connect with the Linux desktop using the credentials found in the file mentioned above.
-Enter the ID number in the 'partner ID', click connect and enter the password.
-
-The workflow can be used via the commandline.
-For this, open the Terminal located in the left bar in Linux.
-This allows you to navigate through the different files and folders that are located on the desktop.
-These files and folders can also be accessed using Files (also located on the left bar) which gives a more Windows like experience with clicking on pictograms, but this is missing some useful features from the commandline including starting the workflow.
-The Terminal by default opens in the home directory (indicated either as `~/` or `/home/laanlab/`).
-For navigating through different directories (folders) use the change directory command `cd` (e.g. `cd ~/Documents/satay/` would bring you to the folder called satay which is located within the Documents folder).
-Everything needed for the satay analysis is located in `~/Documents/satay`, which contains the following folders (among others):
-
-- `software`; containing all the software packages and the workflow script `satay.sh`.
-- `datasets`; here the datasets are stored, including some test datasets.
-- `reference_sequences`; containing the reference genome sequences.
-
-While navigating through the folders, see what is inside a folder using `ls` (e.g. just typing `ls` shows the contents of the current directory and `ls ~/Documents/satay` would show the contents of the satay folder regardless in which folder you currently are).
-There are several extensions of this command, like `ls -a` which shows also all hidden folders (starting with `.`) and `ls -l` shows some basic information about each file and folder.
-
-To show the contents of a file use `less` or `head`.
-The `head` command shows the first 10 lines of the file (e.g. `head ~/Documents/satay/datasets/singleendtestfolder/singleendtest.fastq` shows the first 10 lines of the fastq file singleendtest fastq file) and `less` also shows the contents of a file, but allows you to scroll through the file using the arrow keys.
-The advantage of these commands are that they only load the lines that are being shown, so this is a nice tool for checking large files without using a lot of memory (what would normally happen when opening a file completely).
-Also, the `less` command in Linux allows for seeing the contents of gzipped files without fully unzipping them (the `head` command only works with unzipped files).
-
-To normally open a file with the default program for that filetype, use the command `xdg-open` (e.g. `xdg-open ~/Documents/satay/software/satay.sh` opens a text editor with satay.sh).
-
-To access the webdrives, open the Files program and go to `Other Locations` (in the left menu bar in Files).
-On the bottom of the window it should say `Connect to server`.
-Enter here the following adress: `sftp://sftp.tudelft.nl/`
-Press `Connect` and, if requested, log in with your TUDelft credentials.
-This should show a number of folders, among of which is `staff-bulk` which is the N-drive and `staff-groups` which is the M-drive.
-Here you can down-/upload any files to and from the desktop, but after about 10 minutes of inactivity, the connection to the drives is automatically broken.
-This means that all the down-/uploads will be aborted.
-To prevent this, switch back and forth to some folders within the drives every few minutes to reset the timer.
-
-The workflow can be accessed by going to the following path: `~/Documents/satay/software/`
-Start the workflow by stating the tool to which to run the script with (i.e. bash) and then the name of the script (satay.sh), thus entering `bash satay.sh`.
-Any commands you want to put in come right after this statement, e.g. `bash satay.sh -h` to open the help text.
-Datafiles can be stored at the following location: `~/Documents/satay/datasets/`.
-To keep things organized, create a new folder for each dataset using the command `mkdir ~/Documents/satay/datasets/[foldername]` (where `[foldername]` is to be replaced with any name you want).
-Prevent spaces in namegiving, but rather use underscores.
-(Alternatively, when using the Files program, right mouse click and select `New Folder` at the location where the new folder has to be located).
-
-Note that this desktop has no backup system, thus make sure to always put any files directly on the drives and remove the files you do not need from the desktop to prevent filling up the memory.
-Removing files can be done using the command `rm` (e.g. `rm [pathtofile]/[filename]`).
-Note that this command does not have an undo and also the removed files are not moved to a trash folder.
-This command works immediately and is permanent, so use with caution and double check before you enter it.
-To remove folders including the contents, use `rm -r`.
-Alternatively, you can use the Files program to delete files, which does first move the files to a trash folder where you then can remove them permanently.
-
-Once in a while, the desktop may require an update.
-Sometimes the desktop will ask for this and you can follow the instructions of the pop up window.
-To update manually enter the following commands in the commandline:
-
-- `sudo apt-get update`; This checks for the latest versions of different system software tools and files. This command only updates the list of things to update, but doesn't do any downloading or installing itself. This requires a user password (required by the `sudo` command) which is the same password as for logging in. (Note that when typing a password in the commandline, it doesn't show any signs that you're typing, but just type the password and press enter).
-
-- `sudo apt-get upgrade`; This does the actual downloading and installation of the updates that are found by the previous command. It may ask for a confirmation before it starts the installation and may restart the desktop.
-
-To have commandline like tool on windows (e.g. to access large datafiles on windows as well using the `less` and `head` commands), try [git bash](https://gitforwindows.org/).
-For Mac users, the terminal that is by default installed in MacOS works very similar as the one in Linux, so there is no real need for downloading any special tools.
 
 ## Summary
 
