@@ -58,9 +58,11 @@ For the processing a pipeline is created using Bash and Python.
 The workflow and the python codes can be found at [github.com/leilaicruz/LaanLab-SATAY-DataAnalysis](https://github.com/leilaicruz/LaanLab-SATAY-DataAnalysis).
 More information about satay analysis and experimental protocols can be found at the [satayusers website from the Kornmann lab](https://sites.google.com/site/satayusers/ "satayusers website") or, for more questions, visit the [satayusers forum](https://groups.google.com/g/satayusers "satayusers forum").
 
-> Date last update: 10-03-2021
+> Date last update: 26-03-2021
 >
-> Contact: Gregory van Beek (G.M.vanBeek@tudelft.nl)
+> Author: Gregory van Beek
+>
+> Contact: Leila Inigo De La Cruz (L.M.InigoDeLaCruz@tudelft.nl)
 >  
 > [Laanlab, Delft University of Technology](https://www.tudelft.nl/en/faculty-of-applied-sciences/about-faculty/departments/bionanoscience/research/research-labs/liedewij-laan-lab/research-projects/evolvability-and-modularity-of-essential-functions-in-budding-yeast "LaanLab TUDelft")
 
