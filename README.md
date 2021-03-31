@@ -3,6 +3,8 @@
 Our first release of the pipeline has now a DOI :) to be citable, and findable!!! 
 [![DOI](https://zenodo.org/badge/248577762.svg)](https://zenodo.org/badge/latestdoi/248577762)
 
+[Look our documentation using Jupyter Book 🎆🎉](https://leilaicruz.github.io/SATAY-jupyter-book/Introduction.html) 
+
 ## Overview
 
 This workflow is created for processing sequencing data for SAturated Transposon Analysis in Yeast (SATAY) for Saccharomyces Cerevisiae.
@@ -49,7 +51,7 @@ NOTE: Before starting the workflow on your Linux machine, you might need to chan
 
 [LaanLab. Department of BioNanoScience, Delft University of Technology](https://www.tudelft.nl/en/faculty-of-applied-sciences/about-faculty/departments/bionanoscience/research/research-labs/liedewij-laan-lab/research-projects/evolvability-and-modularity-of-essential-functions-in-budding-yeast)
 
-- Leila Inigo de la Cruz
+- Leila Iñigo de la Cruz
 - Enzo Kingma
 - Gregory van Beek
 
