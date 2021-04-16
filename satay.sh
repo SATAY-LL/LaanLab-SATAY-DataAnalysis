@@ -28,27 +28,27 @@ main () {
 
 	#CACHEFILE (this is a temporary file that is created to store user settings when 'Quality check interrupt is set to true).
 	#cachefile="/home/gregoryvanbeek/Desktop/processing_workflow_cache.txt"
-	cachefile="/home/laanlab/Documents/satay/software/processing_workflow_cache.txt"
+	cachefile="/data/localhome/linigodelacruz/Documents/satay/software/processing_workflow_cache.txt"
 
 	#ADAPTERFILE (this refers to the file with adapter sequences that are used for trimming).
 	#adapterfile="/home/gregoryvanbeek/Documents/Software/BBMap/bbmap/resources/adapters.fa"
-	adapterfile="/home/laanlab/Documents/satay/software/bbmap/resources/adapters.fa"
+	adapterfile="/data/localhome/linigodelacruz/Documents/satay/software/bbmap/resources/adapters.fa"
 
 	#REFERENCE GENOME (path to the fasta file of the reference genome).
 	#path_refgenome='/home/gregoryvanbeek/Documents/Reference_Sequences/Reference_Sequence_S288C/S288C_reference_sequence_R64-2-1_20150113.fsa'
-	path_refgenome=/home/laanlab/Documents/satay/reference_sequences/Cerevisiae_S288C_reference/S288C_reference_sequence_R64-2-1_20150113.fsa
+	path_refgenome="/data/localhome/linigodelacruz/Documents/satay/reference_sequences/Cerevisiae_S288C_reference/S288C_reference_sequence_R64-2-1_20150113.fsa"
 
 	#DDBUK SOFTWARE (path to bbduk for trimming).
 	#path_bbduk_software=/home/gregoryvanbeek/Documents/Software/BBMap/bbmap/
-	path_bbduk_software=/home/laanlab/Documents/satay/software/bbmap/
+	path_bbduk_software="/data/localhome/linigodelacruz/Documents/satay/software/bbmap/"
 
 	#TRIMMOMATIC (path to trimmomatic for trimming).
 	#path_trimm_software=/home/gregoryvanbeek/Documents/Software/Trimmomatic-0.39/
-	path_trimm_software=/home/laanlab/Documents/satay/software/Trimmomatic-0.39/
+	path_trimm_software="/data/localhome/linigodelacruz/Documents/satay/software/Trimmomatic-0.39/"
 
 	#PYTHON CODES (path to python code for transposon_mapping).
 	#path_python_codes=/home/gregoryvanbeek/Documents/Software/python_codes/
-	path_python_codes=/home/laanlab/Documents/satay/software/python_codes/
+	path_python_codes="/data/localhome/linigodelacruz/Documents/satay/software/python_codes/"
 
 ############################################################
 
@@ -589,7 +589,7 @@ fi
 	if [[ ${sort_and_index} == TRUE ]]
 	then
 		echo 'Indexing bam file ...'
-		sambamba-0.7.1-linux-static sort -m 500MB ${path_align_out}/${filename_bam}
+		sambamba sort -m 500MB ${path_align_out}/${filename_bam}
 		echo 'Indexing completed. Results are stored in' ${path_align_out}
 		echo ''
 	fi
