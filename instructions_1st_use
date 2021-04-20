@@ -1,0 +1,120 @@
+
+- change path of satay.sh to the /data/localhome/username/
+- make a folder structure as follows:
+├── reference_sequences
+│   └── Cerevisiae_S288C_reference
+└── software
+    ├── bbmap
+    │   ├── config
+    │   ├── current
+    │   │   ├── align2
+    │   │   ├── aligner
+    │   │   ├── assemble
+    │   │   ├── bloom
+    │   │   ├── cardinality
+    │   │   ├── clump
+    │   │   ├── cluster
+    │   │   ├── consensus
+    │   │   ├── covid
+    │   │   ├── dna
+    │   │   ├── driver
+    │   │   ├── fileIO
+    │   │   ├── fun
+    │   │   ├── gff
+    │   │   ├── hiseq
+    │   │   ├── hmm
+    │   │   ├── icecream
+    │   │   ├── jasper
+    │   │   ├── jgi
+    │   │   ├── json
+    │   │   ├── kmer
+    │   │   ├── ml
+    │   │   ├── pacbio
+    │   │   ├── prok
+    │   │   ├── server
+    │   │   ├── shared
+    │   │   ├── sketch
+    │   │   ├── sort
+    │   │   ├── stream
+    │   │   ├── structures
+    │   │   ├── tax
+    │   │   ├── template
+    │   │   ├── ukmer
+    │   │   ├── var
+    │   │   └── var2
+    │   ├── docs
+    │   │   └── guides
+    │   ├── jni
+    │   ├── pipelines
+    │   │   ├── covid
+    │   │   ├── fetch
+    │   │   ├── server
+    │   │   └── silva
+    │   ├── pytools
+    │   │   ├── css
+    │   │   ├── filter_desc
+    │   │   ├── filter_param
+    │   │   ├── images
+    │   │   ├── lib
+    │   │   ├── template
+    │   │   └── tools
+    │   └── resources
+    ├── python_codes
+    │   ├── data_files
+    │   └── python_modules
+    │       └── __pycache__
+    └── trimmomatic-0.39
+        ├── adapters
+        ├── distSrc
+        ├── lib
+        └── src
+            └── org
+                └── usadellab
+                    └── trimmomatic
+                        ├── fasta
+                        ├── fastq
+                        ├── threading
+                        ├── trim
+                        └── util
+
+
+Installing applications
+- yap
+- FASTQC 
+	sudo apt install fastqc (https://command-not-found.com/fastqc)
+- BBMAP
+	- the extracted folder is just copied to the a folder inside software
+- BWA
+	- the link in the document does not point to the installation folder 
+	- go to the source-forge page and onces downloaded do :
+		sudo apt install bwa
+- SAMTOOLs
+	- download the zip folder
+	- sudo apt install samtools
+- sambamba-0.7.1-linux-static
+	- sudo apt install sambamba 
+		- sambamba 0.6.7-pre1
+	- see a whole set of instructions here : https://github.com/biod/sambamba/issues/195#issuecomment-197495974
+
+- pysam
+	- pip install pysam
+
+- Indexing the reference genome
+  Two ways:
+1- in the satay.sh
+ 	- add this line `bwa index reference_genome` in line 538 before comitting the alignment 
+	echo 'Index reference genome ...'
+		bwa index ${path_refgenome} 
+	- then check your folder where the reference genome is and these files should be there:
+└── Cerevisiae_S288C_reference
+    ├── S288C_reference_sequence_R64-2-1_20150113.fsa
+    ├── S288C_reference_sequence_R64-2-1_20150113.fsa.amb
+    ├── S288C_reference_sequence_R64-2-1_20150113.fsa.ann
+    ├── S288C_reference_sequence_R64-2-1_20150113.fsa.bwt
+    ├── S288C_reference_sequence_R64-2-1_20150113.fsa.pac
+    └── S288C_reference_sequence_R64-2-1_20150113.fsa.sa
+2- run  the file satay_first_use.sh
+
+
+
+
