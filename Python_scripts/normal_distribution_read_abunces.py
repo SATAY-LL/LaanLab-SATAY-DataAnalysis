@@ -41,12 +41,10 @@ for index, row in df.iterrows():
                                 
 totalins = len(all_reads)                  
 totalreads = sum(all_reads)
-print(max(all_reads))
 
 #make a dataframe with genes and reads sorted so we can see to which genes the outliers belong
 dictionary = {'gene':gene_list, 'reads':all_reads}
 df_gene_reads = pd.DataFrame(dictionary)
-
 
 # plot the distribution of read counts :
 abundance_reads_counter = Counter(all_reads)
@@ -54,10 +52,9 @@ abundance_reads_counter = Counter(all_reads)
 abundance_reads = pd.DataFrame.from_dict(abundance_reads_counter, orient='index').reset_index()
 abundance_reads.columns = ["number of reads","abundance"]
 ab =  abundance_reads.sort_values(by ='number of reads' )
-ab.plot.scatter(x= 'number of reads', y='abundance', s=2 ,title='Abundance of different reads counts' )
-plt.xlim([0,400])
-plt.ylim([0,500])
-plt.xticks(np.arange(0, 500, 100))
+
+
+#plt.xticks(np.arange(0, 8500, 500))
 
 # Now we are trying to fit our data to an exponential distribution
 
@@ -65,8 +62,11 @@ plt.xticks(np.arange(0, 500, 100))
 def exponential(x, a, b):
     return a*np.exp(b*x)
 
-x_data = ab['number of reads'].reset_index(drop=True).truncate(0, 400, copy = False)
-y_data = ab['abundance'].reset_index(drop=True).truncate(0, 400, copy = False);
+# because the value for 1 read is really high (~17000), and the there are a lot of reads (from 150 reads-8000reads)
+# with abundance 1, you might want to truncate the data
+x_data = ab['number of reads'].reset_index(drop=True).truncate(4, 400, copy = False)
+y_data = ab['abundance'].reset_index(drop=True).truncate(4, 400, copy = False);
+y_data = y_data/max(ab['abundance'])
 
 pars, cov = curve_fit(f=exponential, xdata= x_data, ydata=y_data, p0=[0, 0], bounds=(-np.inf, np.inf))
 
@@ -76,50 +76,44 @@ stdevs = np.sqrt(np.diag(cov))
 # Calculate the residuals
 res = y_data - exponential(x_data, *pars)
 
-# Plot the fit data as an overlay on the scatter data
+# Plot the fit data
 ax = plt.axes()
-ax.plot(x_data, exponential(x_data, *pars), linestyle='--', linewidth=2, color='black')
+expo, = ax.plot(x_data, exponential(x_data, *pars), linestyle='--', linewidth=1, color='black', label = 'expo') 
 plt.xlim([0,400])
-plt.ylim([0,500])
-
-# plt.xscale('log')
-# plt.yscale('log')
-
-#plt.savefig('plots/fit data to exponential funtion- #reads_ 1to421-zoomed in.png', dpi=800)
-
+plt.ylim([0,0.1])
+print('for the exponential function: mu={:.4f} +/- {:.4f}, sigma={:.4f} +/- {:.4f}'.format(pars[0],np.sqrt(cov[0,0]), pars[1],np.sqrt(cov[1,1 ]))) 
 del(x)
 
-
 # # geometric distribution
-y_data = y_data/max(ab['abundance'])
+# I use the same x_data and y_data as with exponential
 
 def geometric(x, p):
     return (1-p)**(x)*p
 
-pars, cov = curve_fit(f=geometric, xdata= x_data, ydata=y_data, p0=[0], bounds=(-np.inf, np.inf))
+ax.set_yscale('log')
+pars, cov1 = curve_fit(f=geometric, xdata= x_data, ydata=y_data, p0=[0], bounds=(-np.inf, np.inf))
 
 # Get the standard deviations of the parameters (square roots of the # diagonal of the covariance)
-stdevs = np.sqrt(np.diag(cov))
+stdevs1 = np.sqrt(np.diag(cov1))
 
 # Calculate the residuals
 res = y_data - geometric(x_data, *pars)
 
-plt.figure()
+#print('for the geometric distribution: mu={:.4f} +/- {:.4f}, sigma={:.4f} +/- {:.4f}'.format(pars[0],np.sqrt(cov[0]), pars[1],np.sqrt(cov[1 ]))) 
+
+
+
+#plt.figure(), plot them in the same figure, so put this off
 plt.scatter(x_data, y_data, s=2)
 plt.title('Distribution of #reads, scaled to max(abundance) ')
 plt.xlabel('number of reads')
 plt.ylabel('Percentage of transposons with 1 read')
 
 ax = plt.axes()
-ax.plot(x_data, geometric(x_data, *pars), linestyle='--', linewidth=2, color='black')
-plt.xlim([0,200])
-plt.ylim([0,0.2])
-# plt.xscale('log')
-#plt.yscale('log')
+geo, = ax.plot(x_data, geometric(x_data, *pars), linestyle='--', linewidth=1, color='red', label= 'geo')
+plt.xlim([0,400])
+plt.ylim([0,0.1])
+plt.legend([geo, expo], ['Geometric distribution', 'Exponential distribution'])
+#plt.legend(('geo', 'expo'), ('Geometric distribution', 'Exponential function'))
 
-#plt.savefig('plots/fit data to geometric distribution.png', dpi=800)
-
- 
-
-
-     
+#plt.savefig('plots/fit data geo and expo_4_to_400_logscale', dpi=800)
