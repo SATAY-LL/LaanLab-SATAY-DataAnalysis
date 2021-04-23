@@ -12,10 +12,10 @@ import numpy as np
 
 
 #creating initial population with i types of transposons
-i=70000
+i=2
 types = list(range(i))
 
-m=10000000 #= total number of transposons in initial population
+m=100 #= total number of transposons in initial population
 initial_population = random.choices(types, k=m)
 DNA1= initial_population.count(1)
 perc_DNA1 = DNA1/m
