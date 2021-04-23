@@ -17,7 +17,7 @@ import collections, numpy
 ## create initial population
 population = []
 N=1000 #total initial population size
-types = 4
+types = 7
 
 b=1
 for i in range (1, N+1):
