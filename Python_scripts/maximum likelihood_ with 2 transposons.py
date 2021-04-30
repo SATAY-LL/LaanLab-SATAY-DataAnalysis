@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # -*- coding: utf-8 -*-
 """
 Created on Thu Apr 22 10:52:22 2021
@@ -99,8 +99,6 @@ plt.show
 
        
 
-    
-=======
 # -*- coding: utf-8 -*-
 """
 Created on Thu Apr 22 10:52:22 2021
@@ -199,8 +197,4 @@ plt.ylabel('variance')
 
 plt.show
 
-       
-
-    
->>>>>>> 7a742ccd0a602eae31a515f74c1de5b4f2edf0f9
     
