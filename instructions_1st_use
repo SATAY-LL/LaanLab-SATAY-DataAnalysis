@@ -4,78 +4,11 @@
 ├── reference_sequences
 │   └── Cerevisiae_S288C_reference
 └── software
-    ├── bbmap
-    │   ├── config
-    │   ├── current
-    │   │   ├── align2
-    │   │   ├── aligner
-    │   │   ├── assemble
-    │   │   ├── bloom
-    │   │   ├── cardinality
-    │   │   ├── clump
-    │   │   ├── cluster
-    │   │   ├── consensus
-    │   │   ├── covid
-    │   │   ├── dna
-    │   │   ├── driver
-    │   │   ├── fileIO
-    │   │   ├── fun
-    │   │   ├── gff
-    │   │   ├── hiseq
-    │   │   ├── hmm
-    │   │   ├── icecream
-    │   │   ├── jasper
-    │   │   ├── jgi
-    │   │   ├── json
-    │   │   ├── kmer
-    │   │   ├── ml
-    │   │   ├── pacbio
-    │   │   ├── prok
-    │   │   ├── server
-    │   │   ├── shared
-    │   │   ├── sketch
-    │   │   ├── sort
-    │   │   ├── stream
-    │   │   ├── structures
-    │   │   ├── tax
-    │   │   ├── template
-    │   │   ├── ukmer
-    │   │   ├── var
-    │   │   └── var2
-    │   ├── docs
-    │   │   └── guides
-    │   ├── jni
-    │   ├── pipelines
-    │   │   ├── covid
-    │   │   ├── fetch
-    │   │   ├── server
-    │   │   └── silva
-    │   ├── pytools
-    │   │   ├── css
-    │   │   ├── filter_desc
-    │   │   ├── filter_param
-    │   │   ├── images
-    │   │   ├── lib
-    │   │   ├── template
-    │   │   └── tools
-    │   └── resources
-    ├── python_codes
-    │   ├── data_files
+    ├── python_codes (folder python_transposonmapping from LaanLab-SATAY-DataAnalysis)
+    │   ├── data_files (folder data_files from LaanLab-SATAY-DataAnalysis))
     │   └── python_modules
-    │       └── __pycache__
-    └── trimmomatic-0.39
-        ├── adapters
-        ├── distSrc
-        ├── lib
-        └── src
-            └── org
-                └── usadellab
-                    └── trimmomatic
-                        ├── fasta
-                        ├── fastq
-                        ├── threading
-                        ├── trim
-                        └── util
+    
+  
 
 
 Installing applications
