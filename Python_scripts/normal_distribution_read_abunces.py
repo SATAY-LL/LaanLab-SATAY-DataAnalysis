@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-# -*- coding: utf-8 -*-
+ # -*- coding: utf-8 -*-
 """
 Created on Thu Mar  4 16:14:01 2021
 
@@ -117,7 +116,6 @@ plt.ylim([0,0.1])
 plt.legend([geo, expo], ['Geometric distribution', 'Exponential distribution'])
 #plt.legend(('geo', 'expo'), ('Geometric distribution', 'Exponential function'))
 
-=======
 # -*- coding: utf-8 -*-
 """
 Created on Thu Mar  4 16:14:01 2021
@@ -235,6 +233,4 @@ plt.xlim([0,400])
 plt.ylim([0,0.1])
 plt.legend([geo, expo], ['Geometric distribution', 'Exponential distribution'])
 #plt.legend(('geo', 'expo'), ('Geometric distribution', 'Exponential function'))
-
->>>>>>> 7a742ccd0a602eae31a515f74c1de5b4f2edf0f9
 #plt.savefig('plots/fit data geo and expo_4_to_400_logscale', dpi=800)
