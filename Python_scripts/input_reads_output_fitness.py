@@ -9,30 +9,30 @@ import numpy as np
 import math 
 import pandas as pd
 import ast
+import wiggelen
+import os, sys, tarfile
+import matplotlib.pyplot as plt
 
 
-N=117601914802*10 #number of transposons before sequencing
+ 
+    
+list = []
+for x in wiggelen.walk(open(r'C:\Users\floor\OneDrive\Documenten\MASTER\MEP\codes\LaanLab-SATAY-DataAnalysis\Python_scripts\Processed_data_WT1.wig')):
+    y = [x[0], x[1], x[2]]
+    list.append(y)
+data = pd.DataFrame(list,columns=['chromosome','tn start position', '#reads'])
+
+N=117601914802*10 #number of transposons before sequencing (())
  #different transposons
 
 #number of reads for every transposon (ni). 
 # Import .txt 
-a = ['variableStep',0]
-df = pd.read_csv(r"C:\Users\floor\OneDrive\Documenten\MASTER\MEP\codes\LaanLab-SATAY-DataAnalysis\Python_scripts\dataWT1.txt", sep = " ")
-df.reset_index(level=0, inplace=True)
-df = df[~df['index'].isin(a)]
-df = df[~df['1'].isin(a)]
-ins_loc = df['1'].tolist()
-ni = df['2'].tolist()
-
-for i in range(0,len(ni)):
-    ni[i] = int(ni[i])
-for i in range(0,len(ni)):
-    ins_loc[i] = int(ins_loc[i])
     
 #use imput to find n and m
-n = sum(ni) #total number of reads#m = len(ni) #number of different type transposons
-m = len(ins_loc) #number of different transposons
+n =data['#reads'].sum()      #total number of reads#m = len(ni) #number of different type transposons
+m =len(data) #number of different transposons
 
+ni = data['#reads'].to_numpy()
 Ni = np.zeros(m)
 Ci = np.zeros(m)
 gf = np.zeros(m)
@@ -58,6 +58,12 @@ A = (mx-mn)
 for i in range (0,m):
     fitness [i] = 1- (gf[i]-mn)/A #define fitness ion scale 0-1
 
-ins_fitness = np.column_stack((ins_loc, fitness))
+data = data.join(pd.DataFrame(fitness))
+
+plt.plot(fitness)
+plt.xlabel('start position transposon')
+plt.ylabel('relative fitness')
+#plt.savefig('plots/afb', dpi=800)
+plt.show
     
-del (A, mx, mn, a,i)
+del (A, mx, mn, a,i, list, x, y)
