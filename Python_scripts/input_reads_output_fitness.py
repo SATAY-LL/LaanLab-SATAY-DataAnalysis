@@ -61,16 +61,17 @@ def fitness (filepath_and_name):
     gfHO = math.log(CiHO, (2))
     
     for i in range (0,m):
-        fitness [i] = -(gf[i]-gfHO) #define fitness relative to HO locus
+        fitness [i] = 1-(gf[i]/gfHO) #define fitness relative to HO locus
     
     data = data.join(pd.DataFrame(fitness))
     data.rename(columns = {0:'fitness'}, inplace = True)
+    data = data.reset_index()
     return(data)
 
 
 data = fitness(r'C:\Users\floor\OneDrive\Documenten\MASTER\MEP\codes\LaanLab-SATAY-DataAnalysis\Python_scripts\Processed_data_WT1.wig')
 
-plt.plot(data['fitness'])
+plt.plot(data['fitness'],  linewidth=0.50)
 plt.title('Fitness relative to the HO locus')
 plt.xlabel('start position transposon')
 plt.ylabel('relative fitness')
