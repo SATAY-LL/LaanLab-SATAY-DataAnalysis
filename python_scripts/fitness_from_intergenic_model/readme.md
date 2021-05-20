@@ -4,3 +4,5 @@ The dataset for the 1st script is the outcome of the python script ../genomicfea
 1. script_basic_data_analysis_satay_libraries.py this script requires an available dataset inside the datasets folder
 2. script_fitness-from-reads-per-transposon-satay-data.py generates the fitness values from the intergenic model that requires an excel file from the previous script
 3. script_checking_interactors_from_intergenic_fitness_model.py which checks the estimated interactors of nrp1 with existing constanzo interactors. 
+
+**It is still no tested code**
