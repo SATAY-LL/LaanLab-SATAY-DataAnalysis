@@ -33,7 +33,7 @@ from chromosome_and_gene_positions import chromosomename_roman_to_arabic, gene_p
 from gene_names import gene_aliases
 from samflag import samflags
 
-bam_arg = sys.argv[1]
+bam_arg = sys.argv[0] # originally is sys.argv[1]
 
 ### Defining the function transposonmapper 
 
@@ -67,9 +67,9 @@ def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenam
 
 ### LOADING BAM FILE
     if bamfile is None:
-        path = os.path.join('/home', 'gregoryvanbeek', 'Documents', 'data_processing')
+        path = os.path.join('/data/localhome/linigodelacruz/Documents/PhD_2018/Documentation/SATAY/data/15022021-sequencing-data-WT-dnrp1-SATAY-from-Oxford/fastQ-data-files/align_out')
         # filename = 'E-MTAB-4885.WT2.bam'
-        filename = 'SRR062634.filt_trimmed.sorted.bam'
+        filename = 'WT_merged-DpnII-NlaIII-a_trimmed.sorted.bam'
         bamfile = os.path.join(path,filename)
     else:
         filename = os.path.basename(bamfile)
@@ -566,7 +566,7 @@ def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenam
 
 #%%
 if __name__ == '__main__':
-    transposonmapper()
+    transposonmapper(bamfile=None)
 
 
 
