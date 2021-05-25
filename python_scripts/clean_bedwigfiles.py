@@ -6,6 +6,7 @@ Created on Fri Mar  5 15:39:53 2021
 
 This script removes transposon insertions in .bed and .wig files that were mapped outside the chromosomes, creates consistent naming for chromosomes and change the header of files with custom headers.
 """
+### Importing basic libraries and python modules 
 
 import os, sys
 
@@ -16,14 +17,14 @@ from chromosome_names_in_files import chromosome_name_bedfile, chromosome_name_w
 
 
 
-#%% INPUT -> FILEPATH TAKES PATHS TO .BED OR .WIG FILES
+### INPUT -> FILEPATH TAKES PATHS TO .BED OR .WIG FILES
 filepath = r""
 custom_header = ""
 split_chromosomes = False
 
 
 
-#%%
+###
 def cleanfiles(filepath=None, custom_header=None, split_chromosomes=False):
     '''
     This code reads a .bed or .wig file and remove any insertions that were mapped outside a chromosome.
@@ -36,12 +37,14 @@ def cleanfiles(filepath=None, custom_header=None, split_chromosomes=False):
     Besides removing the reads outside the chromosomes, it also changes the names of the chromosomes to roman numerals and a custom header can be inputted (optional).
     Finally, the bed and wig files can be split up in separate files for each chromosome. These are placed in _chromosomesplit folder located at the location of the bed or wig file.
     '''
+    ## checking input files 
 
     if filepath == None:
         sys.exit(0)
     else:
         assert os.path.isfile(filepath), 'File not found: %s' % filepath
 
+    ## setiing some variables 
     chr_length_dict = chromosome_position()[0]
 
     filepath_splitext = os.path.splitext(filepath)
@@ -51,7 +54,7 @@ def cleanfiles(filepath=None, custom_header=None, split_chromosomes=False):
 
     num_roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI']
 
-
+    ## main processing 
 
     if exten == ".bed":
         print("Bed file loaded %s" % filepath)
