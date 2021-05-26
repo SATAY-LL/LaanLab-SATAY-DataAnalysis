@@ -84,8 +84,8 @@ def scatterplot(pergenefile):
 #%% determine number of reads per insertion per gene
     readperinspergene_list = [np.nan]*len(lines)
     for i in range(len(tnpergene_list)):
-        if not tnpergene_list[i] == 0:
-            readperinspergene_list[i] = readpergene_list[i] / tnpergene_list[i]
+        if not tnpergene_list[i] < 5:
+            readperinspergene_list[i] = readpergene_list[i] / (tnpergene_list[i] - 1)
         else:
             readperinspergene_list[i] = 0
 
@@ -96,8 +96,8 @@ def scatterplot(pergenefile):
     # known_essential_gene_list = list_known_essentials(input_files=[os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
     #                                                                 os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_2.txt')])
 
-    known_essential_gene_list = list_known_essentials(input_files=[r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\data_files\Cerevisiae_EssentialGenes_List_1.txt",
-                                                                    r"C:\Users\gregoryvanbeek\Documents\GitHub\LaanLab-SATAY-DataAnalysis\data_files\Cerevisiae_EssentialGenes_List_2.txt"])
+    #known_essential_gene_list = list_known_essentials(input_files=[r"../data_files/Cerevisiae_AllEssentialGenes_List_1.txt",r"../data_files/Cerevisiae_AllEssentialGenes_List_2.txt"])
+    known_essential_gene_list = list_known_essentials(None)
 
     geneessentiality_list = [None]*len(lines)
     for i in range(len(genenames_list)):

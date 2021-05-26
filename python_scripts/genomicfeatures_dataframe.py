@@ -371,14 +371,14 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
     N_reads_per_ins_list = []
     N_reads_per_ins_truncatedgene_list = []
     for i in range(len(N_reads_list)):
-        if N_insrt_list[i] == 0:
+        if N_insrt_list[i] < 5:
             N_reads_per_ins_list.append(0)
             N_reads_per_ins_truncatedgene_list.append(0)
-        elif N_insrt_truncatedgene_list[i] == 0:
-            N_reads_per_ins_list.append(N_reads_list[i]/N_insrt_list[i])
+        elif N_insrt_truncatedgene_list[i] < 5:
+            N_reads_per_ins_list.append(N_reads_list[i]/(N_insrt_list[i]-1))
             N_reads_per_ins_truncatedgene_list.append(0)
         else:
-            N_reads_per_ins_list.append(N_reads_list[i]/N_insrt_list[i])
+            N_reads_per_ins_list.append(N_reads_list[i]/(N_insrt_list[i]-1))
             N_reads_per_ins_truncatedgene_list.append(N_reads_truncatedgene_list[i]/N_insrt_truncatedgene_list[i])
 
 

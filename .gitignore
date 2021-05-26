@@ -7,6 +7,12 @@
 *.rar
 *.tar
 *.zip
+*.bed
+*.wig
+*.bam
+*.sam
+*.fai
+
 
 # Compiled source #
 *.exe

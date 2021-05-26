@@ -67,7 +67,7 @@ def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenam
 
 ### LOADING BAM FILE
     if bamfile is None:
-        path = os.path.join('/data/localhome/linigodelacruz/Documents/PhD_2018/Documentation/SATAY/data/15022021-sequencing-data-WT-dnrp1-SATAY-from-Oxford/fastQ-data-files/align_out')
+        path = os.path.join('../data_files/data_merged_wt/')
         # filename = 'E-MTAB-4885.WT2.bam'
         filename = 'WT_merged-DpnII-NlaIII-a_trimmed.sorted.bam'
         bamfile = os.path.join(path,filename)
