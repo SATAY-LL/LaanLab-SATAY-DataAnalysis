@@ -1,0 +1,11 @@
+name: satay
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - matplotlib
+  - numpy
+  - pandas
+  - scipy
+  - seaborn
+  - python >=3.7,<3.9
