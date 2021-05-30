@@ -1,0 +1,23 @@
+{
+    "creators": [
+        {
+            "affiliation": "Technische Universiteit Delft, Department of Bionanoscience",
+            "name": "van Beek, Gregory",
+            "orcid": ""
+        },
+        {
+            "affiliation": "Technische Universiteit Delft, Department of Bionanoscience",
+            "name": "Iñigo de la Cruz, Leila",
+            "orcid": ""
+        }
+    ],
+    "description": "Automated workflow for processing sequencing data for SAturated Transposon Analysis in Yeast (SATAY).",
+    "keywords": [
+        "transposon-mapping",
+        "Saccharomyces Cerevisiae"
+    ],
+    "license": {
+        "id": "Apache-2.0"
+    },
+    "title": "satay"
+}
