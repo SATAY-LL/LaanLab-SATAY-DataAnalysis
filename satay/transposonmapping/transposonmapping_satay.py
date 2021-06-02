@@ -31,12 +31,12 @@ from chromosome_and_gene_positions import chromosomename_roman_to_arabic, gene_p
 from gene_names import gene_aliases
 from samflag import samflags
 
-bam_arg = sys.argv[1]
+bam_arg = sys.argv[0] 
 
 
 
 #%%
-def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenamesfile=None):
+def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=None):
     '''
     This function is created for analysis of SATAY data using the species Saccharomyces Cerevisiae.
     It outputs the following files that store information regarding the location of all insertions:
@@ -65,9 +65,9 @@ def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenam
 
 #%% LOADING BAM FILE
     if bamfile is None:
-        path = os.path.join('/home', 'gregoryvanbeek', 'Documents', 'data_processing')
+        path = os.path.join('../data_files/data_merged_wt/')
         # filename = 'E-MTAB-4885.WT2.bam'
-        filename = 'SRR062634.filt_trimmed.sorted.bam'
+        filename = 'WT_merged-DpnII-NlaIII-a_trimmed.sorted.bam'
         bamfile = os.path.join(path,filename)
     else:
         filename = os.path.basename(bamfile)
@@ -564,7 +564,7 @@ def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenam
 
 #%%
 if __name__ == '__main__':
-    transposonmapper()
+    transposonmapper(bamfile=None)
 
 
 
