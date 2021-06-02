@@ -6,12 +6,12 @@ authors:
     affiliation: "Technische Universiteit Delft"
     family-names: "Iñigo de la Cruz"
     given-names: "Leila"
-    orcid: ""
+    orcid: "0000-0003-0852-9219"
   - 
-    affiliation: "Technische Universiteit Delft"
+    affiliation: " Eramus MC Rotterdam, department of Hematology"
     family-names: "van Beek"
     given-names: "Gregory"
-    orcid: ""
+    orcid: "0000-0003-0283-7069"
     
 cff-version: "1.1.0"
 keywords:
