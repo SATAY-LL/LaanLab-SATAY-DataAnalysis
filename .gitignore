@@ -12,6 +12,7 @@
 *.bam
 *.sam
 *.fai
+*.bai 
 
 
 # Compiled source #
