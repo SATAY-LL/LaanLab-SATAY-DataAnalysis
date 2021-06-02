@@ -69,7 +69,7 @@ def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenam
     if bamfile is None:
         path = os.path.join('../data_files/data_merged_wt/')
         # filename = 'E-MTAB-4885.WT2.bam'
-        filename = 'WT_merged-DpnII-NlaIII-a_trimmed.sorted.bam'
+        filename = 'WT_merged-techrep-a_techrep-b_trimmed.sorted.bam'
         bamfile = os.path.join(path,filename)
     else:
         filename = os.path.basename(bamfile)
