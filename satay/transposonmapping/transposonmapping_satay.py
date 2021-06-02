@@ -26,11 +26,12 @@ import numpy as np
 import pysam
 
 dirname = os.path.dirname(os.path.abspath('__file__'))
-sys.path.insert(1,os.path.join(dirname,'python_modules'))
+sys.path.insert(1,os.path.join(dirname,'satay/transposonmapping/python_modules'))
 from chromosome_and_gene_positions import chromosomename_roman_to_arabic, gene_position
 from gene_names import gene_aliases
 from samflag import samflags
 
+from loading_bam_file import loading_bam_file
 bam_arg = sys.argv[0] 
 
 
@@ -64,19 +65,7 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
     '''
 
 #%% LOADING BAM FILE
-    if bamfile is None:
-        path = os.path.join('../data_files/data_merged_wt/')
-        # filename = 'E-MTAB-4885.WT2.bam'
-        filename = 'WT_merged-DpnII-NlaIII-a_trimmed.sorted.bam'
-        bamfile = os.path.join(path,filename)
-    else:
-        filename = os.path.basename(bamfile)
-        path = bamfile.replace(filename,'')
-
-
-    assert os.path.isfile(bamfile), 'Bam file not found at: %s' % bamfile #check if given bam file exists
-
-
+    bamfile=loading_bam_file(bamfile=None)
 #%% LOADING ADDITIONAL FILES
     files_path = os.path.join(dirname,'..','data_files')
 
