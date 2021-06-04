@@ -46,17 +46,7 @@ from read_sgdfeatures import sgd_features
 
 
 
-#%% INPUT
 
-# for chrom in ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI']:
-#     region=chrom
-region = 1 #e.g. 1, "I", ["I", 0, 10000"], gene name (e.g. "CDC42")
-wig_file = r""
-pergene_insertions_file = r""
-plotting=True
-variable="reads" #"reads" or "insertions"
-savefigure=False
-verbose=True
 
 
 
@@ -371,14 +361,14 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
     N_reads_per_ins_list = []
     N_reads_per_ins_truncatedgene_list = []
     for i in range(len(N_reads_list)):
-        if N_insrt_list[i] == 0:
+        if N_insrt_list[i] < 5:
             N_reads_per_ins_list.append(0)
             N_reads_per_ins_truncatedgene_list.append(0)
-        elif N_insrt_truncatedgene_list[i] == 0:
-            N_reads_per_ins_list.append(N_reads_list[i]/N_insrt_list[i])
+        elif N_insrt_truncatedgene_list[i] < 5:
+            N_reads_per_ins_list.append(N_reads_list[i]/(N_insrt_list[i]-1))
             N_reads_per_ins_truncatedgene_list.append(0)
         else:
-            N_reads_per_ins_list.append(N_reads_list[i]/N_insrt_list[i])
+            N_reads_per_ins_list.append(N_reads_list[i]/(N_insrt_list[i]-1))
             N_reads_per_ins_truncatedgene_list.append(N_reads_truncatedgene_list[i]/N_insrt_truncatedgene_list[i])
 
 
@@ -611,6 +601,19 @@ def feature_position(feature_dict, chrom, start_chr, dna_dict, feature_type=None
 
 
 #%%
+#%% INPUT
+
+# for chrom in ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI']:
+#     region=chrom
+
+region = 1 #e.g. 1, "I", ["I", 0, 10000"], gene name (e.g. "CDC42")
+wig_file = r""
+pergene_insertions_file = r""
+plotting=True
+variable="reads" #"reads" or "insertions"
+savefigure=False
+verbose=True
+
 if __name__ == '__main__':
     dna_df2 = dna_features(region=region,
                  wig_file=wig_file,
