@@ -1,0 +1,16 @@
+name: satay-dev
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - matplotlib
+  - numpy
+  - pandas
+  - pip
+  - scipy
+  - seaborn
+  - python >=3.7,<3.9
+  - pip:
+      - bump2version
+      - pytest
+      - pytest-cov

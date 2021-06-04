@@ -26,6 +26,10 @@ version_text () {
 main () {
 ################### DEFINE PATHS ###########################
 
+##########these paths wont work because they are relative pointing to a different PC ################
+# - make these paths as inputs or relative paths 
+
+
 	#CACHEFILE (this is a temporary file that is created to store user settings when 'Quality check interrupt is set to true).
 	#cachefile="/home/gregoryvanbeek/Desktop/processing_workflow_cache.txt"
 	cachefile="/data/localhome/linigodelacruz/Documents/satay/software/processing_workflow_cache.txt"

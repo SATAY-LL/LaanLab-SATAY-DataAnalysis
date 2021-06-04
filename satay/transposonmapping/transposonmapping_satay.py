@@ -38,7 +38,7 @@ bam_arg = sys.argv[0] # originally is sys.argv[1]
 ### Defining the function transposonmapper 
 
 #%%
-def transposonmapper(bamfile=bam_arg, gfffile=None, essentialfiles=None, genenamesfile=None):
+def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=None):
     '''
     This function is created for analysis of SATAY data using the species Saccharomyces Cerevisiae.
     It outputs the following files that store information regarding the location of all insertions:
