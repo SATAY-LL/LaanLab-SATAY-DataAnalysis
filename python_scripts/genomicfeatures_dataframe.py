@@ -46,17 +46,7 @@ from read_sgdfeatures import sgd_features
 
 
 
-#%% INPUT
 
-# for chrom in ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI']:
-#     region=chrom
-region = 1 #e.g. 1, "I", ["I", 0, 10000"], gene name (e.g. "CDC42")
-wig_file = r""
-pergene_insertions_file = r""
-plotting=True
-variable="reads" #"reads" or "insertions"
-savefigure=False
-verbose=True
 
 
 
@@ -611,6 +601,19 @@ def feature_position(feature_dict, chrom, start_chr, dna_dict, feature_type=None
 
 
 #%%
+#%% INPUT
+
+# for chrom in ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI']:
+#     region=chrom
+
+region = 1 #e.g. 1, "I", ["I", 0, 10000"], gene name (e.g. "CDC42")
+wig_file = r""
+pergene_insertions_file = r""
+plotting=True
+variable="reads" #"reads" or "insertions"
+savefigure=False
+verbose=True
+
 if __name__ == '__main__':
     dna_df2 = dna_features(region=region,
                  wig_file=wig_file,
