@@ -25,8 +25,8 @@ def verify_data_files(path="", data_files=None):
 
     if data_files is None:
         data_files = {
-            # "bamfile": "WT_merged-techrep-a_techrep-b_trimmed.sorted.bam",
-            "gfffile": "Saccharomyces_cerevisiae.R64-1-1.99.gff3",
+            # "bam": "WT_merged-techrep-a_techrep-b_trimmed.sorted.bam",
+            "gff3": "Saccharomyces_cerevisiae.R64-1-1.99.gff3",
             "essential_genes": "Cerevisiae_AllEssentialGenes_List.txt",
             "gene_names": "Yeast_Protein_Names.txt",
         }
