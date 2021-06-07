@@ -36,7 +36,7 @@ main () {
 
 	#ADAPTERFILE (this refers to the file with adapter sequences that are used for trimming).
 	#adapterfile="/home/gregoryvanbeek/Documents/Software/BBMap/bbmap/resources/adapters.fa"
-	adapterfile="/data/localhome/linigodelacruz/Documents/satay/software/bbmap/resources/adapters.fa"
+	adapterfile=$adapters
 
 	#REFERENCE GENOME (path to the fasta file of the reference genome).
 	#path_refgenome='/home/gregoryvanbeek/Documents/Reference_Sequences/Reference_Sequence_S288C/S288C_reference_sequence_R64-2-1_20150113.fsa'
