@@ -1,7 +1,7 @@
 import os
 
 
-def verify_data_files(path="", data_files=None):
+def verify_data_files(path: str = "", data_files: dict = {}):
     """
     Verify presence of the following essential data files
     - bam
@@ -23,7 +23,7 @@ def verify_data_files(path="", data_files=None):
     # Verify existence data folder
     assert os.path.isdir(path), f"{path} was not found."
 
-    if data_files is None:
+    if not data_files:
         data_files = {
             # "bam": "WT_merged-techrep-a_techrep-b_trimmed.sorted.bam",
             "gff3": "Saccharomyces_cerevisiae.R64-1-1.99.gff3",

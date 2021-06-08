@@ -6,7 +6,7 @@ from satay.transposonmapping.python_modules.chromosome_and_gene_positions import
 from satay.transposonmapping.python_modules.gene_names import gene_aliases
 
 
-def get_coordinates_genes(path, data_files):
+def get_coordinates_genes(path: str = "", data_files: dict = {}):
     """
     Get coordinates of all genes
 
@@ -33,14 +33,14 @@ def get_coordinates_genes(path, data_files):
 
     # Get all annotated essential genes
     if "essential_genes" in data_files:
-        file_path = os.path.join(path, data_files["essential_genes"])
+        file_path = os.path.join(path, data_files["essentials"])
         with open(file_path, "r") as f:
             genes = f.readlines()[1:]
             for gene in genes:
                 name = gene.strip("\n")
                 essential_coordinates[name] = gene_coordinates.get(name).copy()
     else:
-        raise ValueError("essential_genes not found in data")
+        raise ValueError("essentials not found in data")
 
     # Get aliases of all genes
     if "gene_names" in data_files:
