@@ -94,13 +94,13 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
         - sgd_features_file: https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Data_Files/SGD_features.tab
     '''
 #%% FILES
-    essentials_file = os.path.join(file_dirname,'..','data_files',"Cerevisiae_AllEssentialGenes_List.txt")
+    essentials_file = os.path.join(file_dirname,'..','satay','data_files',"Cerevisiae_AllEssentialGenes_List.txt")
 
-    gene_information_file = os.path.join(file_dirname,'..','data_files','Yeast_Protein_Names.txt')
+    gene_information_file = os.path.join(file_dirname,'..','satay','data_files','Yeast_Protein_Names.txt')
 
-    gff_file = os.path.join(file_dirname,'..','data_files','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
+    gff_file = os.path.join(file_dirname,'..','satay','data_files','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
 
-    sgd_features_file = os.path.join(file_dirname,'..','data_files','SGD_features.tab')
+    sgd_features_file = os.path.join(file_dirname,'..','satay','data_files','SGD_features.tab')
 
     variable = variable.lower()
     if plotting == True:
