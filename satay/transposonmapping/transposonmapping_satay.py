@@ -31,7 +31,7 @@ from chromosome_and_gene_positions import chromosomename_roman_to_arabic, gene_p
 from gene_names import gene_aliases
 from samflag import samflags
 
-from loading_bam_file import loading_bam_file
+from loading_files import *
 bam_arg = sys.argv[0] 
 
 
@@ -65,25 +65,39 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
     '''
 
 #%% LOADING BAM FILE
-    bamfile=loading_bam_file(bamfile=None)
+    bamfile=access_files(file_path=None,extension='.sorted.bam')
 #%% LOADING ADDITIONAL FILES
-    files_path = os.path.join(dirname,'..','data_files')
-
-    #LOADING GFF-FILE
-    if gfffile is None:
-        gfffile = os.path.join(files_path,'Saccharomyces_cerevisiae.R64-1-1.99.gff3')
-    assert os.path.isfile(gfffile), 'Path to GFF-file does not exist.'
-
-    #LOADING TEXT FILES WITH ESSENTIAL GENES
+    if gfffile is None: 
+        gfffile=access_files(file_path=None,extension='.gff3')
+    
     if essentialfiles is None:
-        essentialfiles = os.path.join(files_path,'Cerevisiae_AllEssentialGenes_List.txt')
-    assert os.path.isfile(essentialfiles), 'Following path does not exist: %s' % essentialfiles
-    del essentialfiles
-
-    #LOADING TEXT FILE WITH GENE NAME ALIASES
+        essentialfiles=access_files(file_path=None,extension='.essential_genes.txt')
+    
     if genenamesfile is None:
-        genenamesfile = os.path.join(files_path,'Yeast_Protein_Names.txt')
+        genenamesfile=access_files(file_path=None,extension='.protein_names.txt')
+        
+    assert os.path.isfile(gfffile), 'Following path does not exist: %s' % gfffile
+    assert os.path.isfile(essentialfiles), 'Following path does not exist: %s' % essentialfiles
     assert os.path.isfile(genenamesfile), 'Following path does not exist: %s' % genenamesfile
+     
+# #%% LOADING ADDITIONAL FILES
+#     files_path = os.path.join(dirname,'..','data_files')
+
+#     #LOADING GFF-FILE
+#     if gfffile is None:
+#         gfffile = os.path.join(files_path,'Saccharomyces_cerevisiae.R64-1-1.99.gff3')
+#     assert os.path.isfile(gfffile), 'Path to GFF-file does not exist.'
+
+#     #LOADING TEXT FILES WITH ESSENTIAL GENES
+#     if essentialfiles is None:
+#         essentialfiles = os.path.join(files_path,'Cerevisiae_AllEssentialGenes_List.txt')
+#     assert os.path.isfile(essentialfiles), 'Following path does not exist: %s' % essentialfiles
+#     del essentialfiles
+
+#     #LOADING TEXT FILE WITH GENE NAME ALIASES
+#     if genenamesfile is None:
+#         genenamesfile = os.path.join(files_path,'Yeast_Protein_Names.txt')
+#     assert os.path.isfile(genenamesfile), 'Following path does not exist: %s' % genenamesfile
 
 
 #%% READ BAM FILE
@@ -271,13 +285,15 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
     print('Getting coordinates of all genes ...')
 
     # GET POSITION GENES
-    gff_path = os.path.join(files_path,'Saccharomyces_cerevisiae.R64-1-1.99.gff3')
+    #gff_path = os.path.join(files_path,'Saccharomyces_cerevisiae.R64-1-1.99.gff3')
+    gff_path=gfffile
     genecoordinates_dict = gene_position(gff_path) #'YAL069W' | ['I', 335, 649], ...
 
-
+#%%
 
     # GET ALL ANNOTATED ESSENTIAL GENES
-    essential_path = os.path.join(files_path,'Cerevisiae_AllEssentialGenes_List.txt')
+    #essential_path = os.path.join(files_path,'Cerevisiae_AllEssentialGenes_List.txt')
+    essential_path=essentialfiles
     essentialcoordinates_dict = {}
     with open(essential_path, 'r') as f:
         genes = f.readlines()[1:]
@@ -287,7 +303,8 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
 
 
     # GET ALIASES OF ALL GENES
-    names_path = os.path.join(files_path,'Yeast_Protein_Names.txt')
+    #names_path = os.path.join(files_path,'Yeast_Protein_Names.txt')
+    names_path=genenamesfile
     aliases_designation_dict = gene_aliases(names_path)[0] #'YMR056C' \ ['AAC1'], ...
 
 
