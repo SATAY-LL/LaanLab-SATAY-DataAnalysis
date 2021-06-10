@@ -32,7 +32,7 @@ main () {
 
 	#CACHEFILE (this is a temporary file that is created to store user settings when 'Quality check interrupt is set to true).
 	#cachefile="/home/gregoryvanbeek/Desktop/processing_workflow_cache.txt"
-	cachefile="/data/localhome/linigodelacruz/Documents/satay/software/processing_workflow_cache.txt"
+	cachefile="/data/processing_workflow_cache.txt"
 
 	#ADAPTERFILE (this refers to the file with adapter sequences that are used for trimming).
 	#adapterfile="/home/gregoryvanbeek/Documents/Software/BBMap/bbmap/resources/adapters.fa"
@@ -40,19 +40,19 @@ main () {
 
 	#REFERENCE GENOME (path to the fasta file of the reference genome).
 	#path_refgenome='/home/gregoryvanbeek/Documents/Reference_Sequences/Reference_Sequence_S288C/S288C_reference_sequence_R64-2-1_20150113.fsa'
-	path_refgenome="/data/localhome/linigodelacruz/Documents/satay/reference_sequences/Cerevisiae_S288C_reference/S288C_reference_sequence_R64-2-1_20150113.fsa"
+	#path_refgenome="/data/localhome/linigodelacruz/Documents/satay/reference_sequences/Cerevisiae_S288C_reference/S288C_reference_sequence_R64-2-1_20150113.fsa"
+	path_refgenome="/opt/satay/data_files/S288C_reference_sequence_R64-2-1_20150113.fsa"
 
 	#DDBUK SOFTWARE (path to bbduk for trimming).
 	#path_bbduk_software=/home/gregoryvanbeek/Documents/Software/BBMap/bbmap/
-	path_bbduk_software="/data/localhome/linigodelacruz/Documents/satay/software/bbmap/"
+	bbduk_software=$bbduk
 
 	#TRIMMOMATIC (path to trimmomatic for trimming).
 	#path_trimm_software=/home/gregoryvanbeek/Documents/Software/Trimmomatic-0.39/
-	path_trimm_software="/data/localhome/linigodelacruz/Documents/satay/software/Trimmomatic-0.39/"
+	path_trimm_software="/opt/conda/bin/trimmomatic"
 
 	#PYTHON CODES (path to python code for transposon_mapping).
-	#path_python_codes=/home/gregoryvanbeek/Documents/Software/python_codes/
-	path_python_codes="/data/localhome/linigodelacruz/Documents/satay/software/python_codes/"
+	path_python_codes="/opt/satay/transposonmapping/"
 
 ############################################################
 
@@ -388,10 +388,10 @@ fi
 	fi
 
 #CHECK PATH BBDUK SOFTWARE
-	[ ! -d ${path_ddbuk_software} ] && echo 'WARNING: Path to bbduk software does not exists.'
+	[ ! -f ${bbduk_software} ] && echo 'WARNING: bbduk software cannot be found.'
 
 #CHECK PATH TRIMMOMATIC SOFTWARE
-	[ ! -d ${path_trimm_software} ] && echo 'WARNING: Path to trimmomatic software does not exists.'
+	[ ! -f ${path_trimm_software} ] && echo 'WARNING: trimmomatic software cannot be found.'
 
 #CHECK PATH TO PYTHON SCRIPT
 	[ ! -d ${path_python_codes} ] && echo 'WARNING: Path to python codes does not exists.'
@@ -454,20 +454,21 @@ fi
 			if [[ ${paired^} == 'Single-end' ]]
 			then
 				echo 'Data trimming using bbduk single end reads...'
-				${path_bbduk_software}bbduk.sh -Xmx2g in=${pathdata}/${filename1} out=${path_trimm_out}/${filename_trimmed1} ref=${adapterfile} ${trimming_settings}
+				${bbduk_software} -Xmx2g in=${pathdata}/${filename1} out=${path_trimm_out}/${filename_trimmed1} ref=${adapterfile} ${trimming_settings}
 				echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed1}
 				echo ''
 			elif [[ ${paired^} == 'Paired-end' ]] && ! [[ ${filepath2} == 'none' ]]
 			then
 				echo 'Data trimming using bbduk paired end reads...'
-				${path_bbduk_software}bbduk.sh -Xmx2g in1=${pathdata}/${filename1} out1=${path_trimm_out}/${filename_trimmed1} in2=${pathdata}/${filename2} out2=${path_trimm_out}/${filename_trimmed2} ref=${adapterfile} ${trimming_settings}
+				${bbduk_software} -Xmx2g in1=${pathdata}/${filename1} out1=${path_trimm_out}/${filename_trimmed1} in2=${pathdata}/${filename2} out2=${path_trimm_out}/${filename_trimmed2} ref=${adapterfile} ${trimming_settings}
 				echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed1} 'and for the paired end reads in' ${path_trimm_out}/${filename_trimmed2}
 				echo ''
 
 			elif [[ ${paired^} == 'Paired-end' ]] && [[ ${filepath2} == 'none' ]]
 			then
 				echo 'Data trimming using bbduk paired end reads...'
-				${path_bbduk_software}bbduk.sh -Xmx2g interleaved=t in=${pathdata}/${filename1} out=${path_trimm_out}/${filename_trimmed1} ref=${adapterfile} ${trimming_settings}
+
+				${bbduk_software} -Xmx2g interleaved=t in=${pathdata}/${filename1} out=${path_trimm_out}/${filename_trimmed1} ref=${adapterfile} ${trimming_settings}
 				echo 'Trimming with bbduk is completed. Results are stored in' ${path_trimm_out}/${filename_trimmed1}
 				echo ''
 			fi
@@ -488,19 +489,13 @@ fi
 			if [[ ${paired^} == 'Single-end' ]]
 			then
 				echo 'Data trimming using trimmomatic ...'
-				currentpath=$(pwd)
-				cd ${path_bbduk_software}/resources/
-				java -jar ${path_trimm_software}trimmomatic-0.39.jar SE ${trimmomatic_initialization} ${pathdata}/${filename1} ${path_trimm_out}/${filename_trimmed1} ${trimming_settings_trimmomatic}
-				cd ${currentpath}
-
+				trimmomatic SE ${trimmomatic_initialization} ${pathdata}/${filename1} ${path_trimm_out}/${filename_trimmed1} ${trimming_settings_trimmomatic}
+				
 			elif [[ ${paired^} == 'Paired-end' ]] && ! [[ ${filepath2} == 'none' ]]
 			then
 				echo 'Data trimming using trimmomatic ...'
-				currentpath=$(pwd)
-				cd ${path_bbduk_software}/resources/
-				java -jar ${path_trimm_software}trimmomatic-0.39.jar PE ${trimmomatic_initialization} ${pathdata}/${filename1} ${pathdata}/${filename2} ${path_trimm_out}/${filename_trimmed1} ${path_trimm_out}/${filename_trimmed1%_trimmed.fastq*}'_trimmedorphanedreads.fastq' ${path_trimm_out}/${filename_trimmed2} ${path_trimm_out}/${filename_trimmed1%_trimmed.fastq*}'_trimmedorphanedreads.fastq' ${trimming_settings_trimmomatic}
-				cd ${currentpath}
-
+				trimmomatic PE ${trimmomatic_initialization} ${pathdata}/${filename1} ${pathdata}/${filename2} ${path_trimm_out}/${filename_trimmed1} ${path_trimm_out}/${filename_trimmed1%_trimmed.fastq*}'_trimmedorphanedreads.fastq' ${path_trimm_out}/${filename_trimmed2} ${path_trimm_out}/${filename_trimmed1%_trimmed.fastq*}'_trimmedorphanedreads.fastq' ${trimming_settings_trimmomatic}
+				
 			elif [[ ${paired^} = 'Paired-end' ]] && [[ ${filepath2} == 'none' ]]
 			then
 				echo 'Enter two input files for using paired end reads with Trimmomatic.'
@@ -593,7 +588,7 @@ fi
 	if [[ ${sort_and_index} == TRUE ]]
 	then
 		echo 'Indexing bam file ...'
-		sambamba-0.7.1-linux-static sort -m 500MB ${path_align_out}/${filename_bam}
+		sambamba sort -m 500MB ${path_align_out}/${filename_bam}
 		echo 'Indexing completed. Results are stored in' ${path_align_out}
 		echo ''
 	fi
