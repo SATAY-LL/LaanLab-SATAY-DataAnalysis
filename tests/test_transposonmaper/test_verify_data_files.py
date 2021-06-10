@@ -5,7 +5,7 @@ import pytest
 
 
 def test_packaged_data_files():
-    """Test if all required data files are packaged"""
+    """Test if all required data files are packaged(positive control for the data files path)"""
     data_path = pkg_resources.resource_filename("satay", "data_files/")
     try:
         verify_data_files(path=data_path)
@@ -14,7 +14,7 @@ def test_packaged_data_files():
 
 
 def test_incorrect_data_path():
-    """Test assertion error on incorrect data path"""
+    """Test assertion error on incorrect data pathc(negative control for the path)"""
     data_path = "/incorrect_path/"
     with pytest.raises(AssertionError) as err:
         verify_data_files(data_path)
@@ -24,7 +24,7 @@ def test_incorrect_data_path():
 
 
 def test_incorrect_data_files():
-    """Test assertion error on incorrect data file"""
+    """Test assertion error on incorrect data file (negative control for the file type and path)"""
     data_path = pkg_resources.resource_filename("satay", "data_files/")
     file_type = "test_type"
     file_path = "test_file"
