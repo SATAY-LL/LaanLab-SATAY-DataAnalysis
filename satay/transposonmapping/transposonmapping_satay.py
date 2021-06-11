@@ -34,10 +34,10 @@ from samflag import samflags
 from loading_files import *
 bam_arg = sys.argv[0] 
 
-
+bamfile=access_files(file_path=None,extension='.sorted.bam')
 
 #%%
-def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=None):
+def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=None):
     '''
     This function is created for analysis of SATAY data using the species Saccharomyces Cerevisiae.
     It outputs the following files that store information regarding the location of all insertions:
@@ -64,8 +64,7 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
     The function uses the pysam package for handling bam files (see pysam.readthedocs.io/en/latest/index.html) and therefore this function only runs on Linux systems with SAMTools installed.
     '''
 
-#%% LOADING BAM FILE
-    bamfile=access_files(file_path=None,extension='.sorted.bam')
+   
 #%% LOADING ADDITIONAL FILES
     if gfffile is None: 
         gfffile=access_files(file_path=None,extension='.gff3')
