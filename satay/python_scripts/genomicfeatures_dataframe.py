@@ -330,6 +330,7 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
     f_previous = dna_dict.get(start_chr)[0]
     f_type = dna_dict.get(start_chr)[1]
     N_reads = []
+    N_reads_list_true=[]
     N_reads_list = []
     N_reads_truncatedgene_list = []
     N_insrt_truncatedgene_list = []
@@ -350,6 +351,7 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
         elif (f_current != f_previous or (i+start_chr) == end_chr):# and not f_current.endswith('-A'):
             feature_NameAndType_list.append([f_previous, f_type])
             N_reads_list.append(sum(N_reads))
+            N_reads_list_true.append(np.array(N_reads,dtype=float))
             N_insrt_list.append(len([ins for ins in N_reads if not ins == 0]))
             if not f_type == None and f_type.startswith('Gene'):
                 N10percent = 100#int(len(N_reads) * 0.1) #TRUNCATED GENE DEFINITION
@@ -444,6 +446,7 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
                     'Ninsertions':N_insrt_list,
                     'Ninsertions_truncatedgene':N_insrt_truncatedgene_list,
                     'Nreads':N_reads_list,
+                    'Nreads_list':  N_reads_list_true,
                     'Nreads_truncatedgene':N_reads_truncatedgene_list,
                     'Nreadsperinsrt':N_reads_per_ins_list,
                     'Nreadsperinsrt_truncatedgene':N_reads_per_ins_truncatedgene_list}
