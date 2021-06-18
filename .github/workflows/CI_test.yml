@@ -39,7 +39,7 @@ jobs:
           run: |
         
             echo "## Model metrics" > report.md
-            cat ../../xunit-result.xml >> report.md
+            cat ../../coverage.xml >> report.md
             
           
             
