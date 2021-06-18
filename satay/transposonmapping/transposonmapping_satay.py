@@ -35,9 +35,7 @@ from loading_files import *
 bam_arg = sys.argv[0] 
 
 #bamfile=access_files(file_path=None,extension='.sorted.bam')
-# bamfile= 'satay/data_files/files4test/SRR062634.filt_trimmed.sorted.bam'
-# filename='SRR062634.filt_trimmed.sorted.bam'
-#assert os.path.isfile(bamfile), "Not a file or directoy"
+
 
 #%%
 def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=None):
