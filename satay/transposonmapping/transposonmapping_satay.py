@@ -31,10 +31,13 @@ from chromosome_and_gene_positions import chromosomename_roman_to_arabic, gene_p
 from gene_names import gene_aliases
 from samflag import samflags
 
-from loading_files import *
+#from loading_files import *
 bam_arg = sys.argv[0] 
 
-bamfile=access_files(file_path=None,extension='.sorted.bam')
+#bamfile=access_files(file_path=None,extension='.sorted.bam')
+bamfile= 'satay/data_files/files4test/SRR062634.filt_trimmed.sorted.bam'
+filename='SRR062634.filt_trimmed.sorted.bam'
+assert os.path.isfile(bamfile), "Not a file or directoy"
 
 #%%
 def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=None):
@@ -65,7 +68,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
     '''
 
    
-#%% LOADING ADDITIONAL FILES
+# LOADING ADDITIONAL FILES
     if gfffile is None: 
         gfffile=access_files(file_path=None,extension='.gff3')
     
@@ -99,12 +102,12 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 #     assert os.path.isfile(genenamesfile), 'Following path does not exist: %s' % genenamesfile
 
 
-#%% READ BAM FILE
+# READ BAM FILE
     bam = pysam.AlignmentFile(bamfile, 'rb') #open bam formatted file for reading
 
 
 
-#%% GET NAMES OF ALL CHROMOSOMES AS STORED IN THE BAM FILE
+# GET NAMES OF ALL CHROMOSOMES AS STORED IN THE BAM FILE
     ref_tid_dict = {} # 'I' | 0, 'II' | 1, ...
     ref_name_list = [] # 'I', 'II', ...
     for i in range(bam.nreferences): #if bam.nreferences does not work, use range(17) #16 chromosomes and the mitochondrial chromosome
@@ -118,7 +121,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 
 
 
-#%% CONVERT CHROMOSOME NAMES IN DATA FILE TO ROMAN NUMERALS
+# CONVERT CHROMOSOME NAMES IN DATA FILE TO ROMAN NUMERALS
     ref_romannums = chromosomename_roman_to_arabic()[0]
     ref_tid_roman_dict = {}
     for key,val in ref_tid_dict.items():
@@ -130,7 +133,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 
 
 
-#%% GET SEQUENCE LENGTHS OF ALL CHROMOSOMES
+# GET SEQUENCE LENGTHS OF ALL CHROMOSOMES
     chr_length_dict = {} # 'I' | 230218, 'II' | 813184, ...
     chr_summedlength_dict = {} # 'I' | 0, 'II' | 230218, 'III' |  1043402, ...
     ref_summedlength = 0
@@ -146,7 +149,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 
 
 
-#%% GET NUMBER OF MAPPED, UNMAPPED AND TOTAL AMOUNT OF READS PER CHROMOSOME
+# GET NUMBER OF MAPPED, UNMAPPED AND TOTAL AMOUNT OF READS PER CHROMOSOME
     # total_reads = bam.mapped
     stats = bam.get_index_statistics()
     chr_mappedreads_dict = {} # 'I' | [mapped, unmapped, total reads]
@@ -161,7 +164,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 
 
 
-#%% GET ALL READS WITHIN A SPECIFIED GENOMIC REGION
+# GET ALL READS WITHIN A SPECIFIED GENOMIC REGION
     tnnumber_dict = {}
     ll = 0 #Number of unique insertions in entire genome
     for kk in ref_name_list:
@@ -280,7 +283,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 
 
 
-#%% GET LIST OF ALL GENES AND ALL ESSENTIAL GENES
+# GET LIST OF ALL GENES AND ALL ESSENTIAL GENES
     print('Getting coordinates of all genes ...')
 
     # GET POSITION GENES
@@ -288,7 +291,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
     gff_path=gfffile
     genecoordinates_dict = gene_position(gff_path) #'YAL069W' | ['I', 335, 649], ...
 
-#%%
+#
 
     # GET ALL ANNOTATED ESSENTIAL GENES
     #essential_path = os.path.join(files_path,'Cerevisiae_AllEssentialGenes_List.txt')
@@ -312,7 +315,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 
 
 
-#%% CONCATENATE ALL CHROMOSOMES
+# CONCATENATE ALL CHROMOSOMES
 
     #FOR EACH INSERTION LOCATION, ADD THE LENGTH OF ALL PREVIOUS CHROMOSOMES.
     ll = 0
@@ -343,7 +346,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 
 
 
-#%% GET NUMBER OF TRANSPOSONS AND READS PER GENE
+# GET NUMBER OF TRANSPOSONS AND READS PER GENE
     print('Get number of insertions and reads per gene ...')
     
     #ALL GENES
@@ -385,7 +388,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 
 
 
-#%% CREATE BED FILE
+# CREATE BED FILE
     bedfile = bamfile+'.bed'
     print('Writing bed file at: ', bedfile)
     print('')
@@ -407,7 +410,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 
     del (bedfile, coordinates_counter, refname)
 
-#%% CREATE TEXT FILE WITH TRANSPOSONS AND READS PER GENE
+# CREATE TEXT FILE WITH TRANSPOSONS AND READS PER GENE
 # NOTE THAT THE TRANSPOSON WITH THE HIGHEST READ COUNT IS IGNORED.
 # E.G. IF THIS FILE IS COMPARED WITH THE _PERGENE_INSERTIONS.TXT FILE THE READS DON'T ADD UP (SEE https://groups.google.com/forum/#!category-topic/satayusers/bioinformatics/uaTpKsmgU6Q)
 # TOO REMOVE THIS HACK, CHANGE THE INITIALIZATION OF THE VARIABLE readpergene
@@ -432,7 +435,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 
     del (pergenefile, gene, gene_alias, tnpergene, readpergene)
 
-#%% CREATE TEXT FILE TRANSPOSONS AND READS PER ESSENTIAL GENE
+# CREATE TEXT FILE TRANSPOSONS AND READS PER ESSENTIAL GENE
     peressentialfile = bamfile+'_peressential.txt'
     print('Writing peressential.txt file at: ',peressentialfile)
     print('')
@@ -455,7 +458,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
     del (peressentialfile, essential, essential_alias, tnperessential, readperessential)
 
 
-#%% CREATE TEXT FILE WITH LOCATION OF INSERTIONS AND READS PER GENE
+# CREATE TEXT FILE WITH LOCATION OF INSERTIONS AND READS PER GENE
     pergeneinsertionsfile = bamfile+'_pergene_insertions.txt'
     print('Witing pergene_insertions.txt file at: ',pergeneinsertionsfile)
     print('')
@@ -479,7 +482,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 
     del (gene, gene_chrom, tncoordinates, gene_alias, pergeneinsertionsfile)
 
-#%% CREATE TEXT FILE WITH LOCATION OF INSERTIONS AND READS PER ESSENTIAL GENE
+# CREATE TEXT FILE WITH LOCATION OF INSERTIONS AND READS PER ESSENTIAL GENE
     peressentialinsertionsfile = bamfile+'_peressential_insertions.txt'
     print('Writing peressential_insertions.txt file at: ', peressentialinsertionsfile)
     print('')
@@ -503,7 +506,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 
     del (essential, gene_chrom, tncoordinates, essential_alias, peressentialinsertionsfile)
 
-#%% ADD INSERTIONS AT SAME LOCATION BUT WITH DIFFERENT ORIENTATIONS TOGETHER (FOR STORING IN WIG-FILE)
+# ADD INSERTIONS AT SAME LOCATION BUT WITH DIFFERENT ORIENTATIONS TOGETHER (FOR STORING IN WIG-FILE)
     wigfile = bamfile+'.wig'
     print('Writing wig file at: ', wigfile)
     print('')
@@ -554,7 +557,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 
     del (ll, ii, jj, N_uniques_perchr_list, index_last_unique, duplicate_list, readnumbwig_array)
 
-#%% CREATING WIG FILE
+# CREATING WIG FILE
     with  open(wigfile, 'w') as f:
         f.write('track type=wiggle_0 ,maxheightPixels=60 name='+filename+'\n')
         for kk in ref_name_list:
@@ -569,7 +572,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 
 #%%
 if __name__ == '__main__':
-    transposonmapper(bamfile=None)
+    transposonmapper(bamfile=bamfile)
 
 
 
