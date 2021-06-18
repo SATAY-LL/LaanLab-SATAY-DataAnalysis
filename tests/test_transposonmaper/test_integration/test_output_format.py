@@ -25,9 +25,9 @@ def test_output_format_pergene():
     assert data.columns.tolist() == ['Gene name', 
                                      'Number of transposons per gene',
                                      'Number of reads per gene'] , "wrong columns names"
-    assert len(data)==6600
-    assert data.iloc[:,0].dtypes=='object'
-    assert data.iloc[:,1].dtypes=='int64'
-    assert data.iloc[:,2].dtypes=='int64'
+    assert len(data)==6600, "Incorrect length of the file"
+    assert data.iloc[:,0].dtypes=='object' , "Incorrect data type"
+    assert data.iloc[:,1].dtypes=='int64', "Incorrect data type"
+    assert data.iloc[:,2].dtypes=='int64', "Incorrect data type"
     
     
