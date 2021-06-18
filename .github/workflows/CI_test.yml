@@ -27,3 +27,9 @@ jobs:
       - name: Test with coverage
         run: |
           pytest --cov --cov-report term --cov-report xml --junitxml=xunit-result.xml
+          
+          echo "## Model metrics" > report.md
+          cat xunit-result.xml >> report.md
+          cml-send-comment report.md
+         
+
