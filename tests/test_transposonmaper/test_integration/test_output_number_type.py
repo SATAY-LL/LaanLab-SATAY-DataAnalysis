@@ -5,6 +5,7 @@ import glob
 from satay.transposonmapping.transposonmapping_satay import (
     transposonmapper 
 )
+
 def test_transposonmapper_output_data():
     """Test default number of outputs"""
 
