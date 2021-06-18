@@ -31,7 +31,7 @@ from chromosome_and_gene_positions import chromosomename_roman_to_arabic, gene_p
 from gene_names import gene_aliases
 from samflag import samflags
 
-#from loading_files import *
+from loading_files import *
 bam_arg = sys.argv[0] 
 
 #bamfile=access_files(file_path=None,extension='.sorted.bam')
