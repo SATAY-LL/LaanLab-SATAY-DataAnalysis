@@ -35,9 +35,9 @@ from loading_files import *
 bam_arg = sys.argv[0] 
 
 #bamfile=access_files(file_path=None,extension='.sorted.bam')
-bamfile= 'satay/data_files/files4test/SRR062634.filt_trimmed.sorted.bam'
-filename='SRR062634.filt_trimmed.sorted.bam'
-assert os.path.isfile(bamfile), "Not a file or directoy"
+# bamfile= 'satay/data_files/files4test/SRR062634.filt_trimmed.sorted.bam'
+# filename='SRR062634.filt_trimmed.sorted.bam'
+#assert os.path.isfile(bamfile), "Not a file or directoy"
 
 #%%
 def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=None):
@@ -66,7 +66,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
         "path_current_pythonscript/../data_files"
     The function uses the pysam package for handling bam files (see pysam.readthedocs.io/en/latest/index.html) and therefore this function only runs on Linux systems with SAMTools installed.
     '''
-
+    filename=os.path.basename(bamfile)
    
 # LOADING ADDITIONAL FILES
     if gfffile is None: 
@@ -572,6 +572,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
 
 #%%
 if __name__ == '__main__':
+    bamfile= 'satay/data_files/files4test/SRR062634.filt_trimmed.sorted.bam'
     transposonmapper(bamfile=bamfile)
 
 
