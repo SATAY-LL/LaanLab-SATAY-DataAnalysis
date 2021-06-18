@@ -35,6 +35,6 @@ setup(
         "Programming Language :: Bash",
     ],
     test_suite="tests",
-    install_requires=["matplotlib", "numpy", "pandas", "scipy", "seaborn"],
+    install_requires=["matplotlib", "numpy", "pandas", "scipy", "seaborn","pysam"],
     extras_require={"dev": ["bump2version", "pytest", "pytest-cov"]},
 )
