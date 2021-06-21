@@ -70,21 +70,12 @@ def chromosomename_roman_to_arabic():
     The call is like this: arabic_to_roman_dict, roman_to_arabic_dict = chromosomename_roman_to_arabic()
     '''
     num_arabic = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]
-    num_roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','Mito']
+    num_roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','Mito']    
+
+    arabic_to_roman_dict = dict(zip(num_arabic, num_roman))
+    roman_to_arabic_dict = dict(zip(num_roman, num_arabic))
     
-    arabic_to_roman_dict = {}
-    index_counter = 0
-    for arab in num_arabic:
-        arabic_to_roman_dict[arab] = num_roman[index_counter]
-        index_counter += 1
-    
-    roman_to_arabic_dict = {}
-    index_counter = 0
-    for rom in num_roman:
-        roman_to_arabic_dict[rom] = num_arabic[index_counter]
-        index_counter += 1
-    
-    return(arabic_to_roman_dict,roman_to_arabic_dict)
+    return arabic_to_roman_dict, roman_to_arabic_dict
 
 
 
