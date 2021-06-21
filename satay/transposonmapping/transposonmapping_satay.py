@@ -19,26 +19,22 @@ Version history:
     1.5; Added functionality to handle all possible sam flags in the alignment file (bam-file) instead of only flag=0 or flag=16. This is needed for the function to handle paired-end sequencing data [2021-01-11]
 """
 
-import os, sys
+import os
 import warnings
 import timeit
 import numpy as np
 import pysam
 
-dirname = os.path.dirname(os.path.abspath('__file__'))
-sys.path.insert(1,os.path.join(dirname,'satay/transposonmapping/python_modules'))
-from chromosome_and_gene_positions import chromosomename_roman_to_arabic, gene_position
-from gene_names import gene_aliases
-from samflag import samflags
-
-from loading_files import *
-bam_arg = sys.argv[0] 
-
-#bamfile=access_files(file_path=None,extension='.sorted.bam')
+# Local imports
+from .python_modules import access_files
+from .python_modules import chromosomename_roman_to_arabic
+from .python_modules import gene_position
+from .python_modules import gene_aliases
+from .python_modules import samflags
 
 
 #%%
-def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=None):
+def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=None):
     '''
     This function is created for analysis of SATAY data using the species Saccharomyces Cerevisiae.
     It outputs the following files that store information regarding the location of all insertions:
@@ -66,7 +62,7 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
     '''
     filename=os.path.basename(bamfile)
    
-# LOADING ADDITIONAL FILES
+#%% LOADING ADDITIONAL FILES
     if gfffile is None: 
         gfffile=access_files(file_path=None,extension='.gff3')
     
@@ -80,26 +76,6 @@ def transposonmapper(bamfile,gfffile=None, essentialfiles=None, genenamesfile=No
     assert os.path.isfile(essentialfiles), 'Following path does not exist: %s' % essentialfiles
     assert os.path.isfile(genenamesfile), 'Following path does not exist: %s' % genenamesfile
      
-# #%% LOADING ADDITIONAL FILES
-#     files_path = os.path.join(dirname,'..','data_files')
-
-#     #LOADING GFF-FILE
-#     if gfffile is None:
-#         gfffile = os.path.join(files_path,'Saccharomyces_cerevisiae.R64-1-1.99.gff3')
-#     assert os.path.isfile(gfffile), 'Path to GFF-file does not exist.'
-
-#     #LOADING TEXT FILES WITH ESSENTIAL GENES
-#     if essentialfiles is None:
-#         essentialfiles = os.path.join(files_path,'Cerevisiae_AllEssentialGenes_List.txt')
-#     assert os.path.isfile(essentialfiles), 'Following path does not exist: %s' % essentialfiles
-#     del essentialfiles
-
-#     #LOADING TEXT FILE WITH GENE NAME ALIASES
-#     if genenamesfile is None:
-#         genenamesfile = os.path.join(files_path,'Yeast_Protein_Names.txt')
-#     assert os.path.isfile(genenamesfile), 'Following path does not exist: %s' % genenamesfile
-
-
 # READ BAM FILE
     bam = pysam.AlignmentFile(bamfile, 'rb') #open bam formatted file for reading
 
