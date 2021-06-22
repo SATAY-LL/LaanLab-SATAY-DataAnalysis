@@ -33,20 +33,22 @@ def get_sequence_length(bam):
 
     Returns
     -------
+    chr_lengths : dict
+    chr_lengths_cumsum : dict
 
     """
 
     chr_lengths = {}  # 'I' | 230218, 'II' | 813184, ...
-    cumsum_chr_lengths = {}  # 'I' | 0, 'II' | 230218, 'III' |  1043402, ...
+    chr_lengths_cumsum = {}  # 'I' | 0, 'II' | 230218, 'III' |  1043402, ...
     ref_summedlength = 0
     ref_tid = get_chromosome_names(bam)
     for key in ref_tid.keys():
         ref_length = bam.get_reference_length(key)
         chr_lengths[key] = bam.get_reference_length(key)
-        cumsum_chr_lengths[key] = ref_summedlength
+        chr_lengths_cumsum[key] = ref_summedlength
         ref_summedlength += ref_length
 
-    return chr_lengths, cumsum_chr_lengths
+    return chr_lengths, chr_lengths_cumsum
 
 
 def get_chromosome_reads(bam):

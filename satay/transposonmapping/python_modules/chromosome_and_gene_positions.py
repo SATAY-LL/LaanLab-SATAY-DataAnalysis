@@ -57,15 +57,15 @@ def chromosome_position(gff_file):
 #%%
 def chromosomename_roman_to_arabic():
     '''This creates two dictionaries for translating the chromosome names from roman to arabic numerals or vice versa.
-    The call is like this: arabic_to_roman_dict, roman_to_arabic_dict = chromosomename_roman_to_arabic()
+    The call is like this: arabic_to_roman, roman_to_arabic = chromosomename_roman_to_arabic()
     '''
     num_arabic = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]
     num_roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','Mito']    
 
-    arabic_to_roman_dict = dict(zip(num_arabic, num_roman))
-    roman_to_arabic_dict = dict(zip(num_roman, num_arabic))
+    arabic_to_roman = dict(zip(num_arabic, num_roman))
+    roman_to_arabic = dict(zip(num_roman, num_arabic))
     
-    return arabic_to_roman_dict, roman_to_arabic_dict
+    return arabic_to_roman, roman_to_arabic
 
 
 
