@@ -23,16 +23,16 @@ def test_output_type_is_dict(bam):
 
 def test_output_dict_size(bam):
     ref_tid = get_chromosome_names(bam)
-    assert len(ref_tid) == 17
+    assert len(ref_tid) == 17, "Expected dictionary of size 17"
 
 def test_output_dict_values(bam):
     ref_tid = get_chromosome_names(bam)
     exp_values = np.arange(17).tolist()
     act_values = list(ref_tid.values())
-    assert exp_values == act_values
+    assert exp_values == act_values, "Expected values to range from 0 to 16"
 
 def test_output_dict_keys(bam):
     ref_tid = get_chromosome_names(bam)
     exp_key = "ref|NC_001133|"
     act_key = list(ref_tid.keys())[0]
-    assert exp_key == act_key
+    assert exp_key == act_key, "Expected different reference key"
