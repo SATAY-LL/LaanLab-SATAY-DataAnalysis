@@ -2,95 +2,93 @@ import numpy as np
 import timeit
 
 from .samflag import samflags
+from .get_chromosome_properties import get_chromosome_names
+from .get_chromosome_properties import get_sequence_length
+from .get_chromosome_properties import get_chromosome_reads
 
 
-def get_reads(bam, ref_name: list, chr_mapped_reads: dict):
+def get_reads(bam):
     """
 
 
     Parameters
     ----------
     bam : 
-    ref_name : list
-    chr_mapped_reads : dict
 
     Returns
     -------
 
     """
 
+    # Get chromosome properties
+    ref_tid = get_chromosome_names(bam)
+    ref_names = list(ref_tid.keys())
+    chr_lengths, _ = get_sequence_length(bam)
+    chr_mapped_reads = get_chromosome_reads(bam)
+
+
     #%% GET ALL READS WITHIN A SPECIFIED GENOMIC REGION
     tnnumber_dict = {}
     unique_insertions = 0
 
-    for chr_num in ref_name:
+    for chr_num in ref_names:
         timer_start = timeit.default_timer()
 
         print("Getting reads for chromosome %s ..." % chr_num)
-        chromosome = bam.fetch(chr_num, 0, chr_length_dict[chr_num], until_eof=True)
+        chromosome = bam.fetch(chr_num, 0, chr_lengths[chr_num], until_eof=True)
         N_reads = chr_mapped_reads[chr_num][2]
 
-        [flags, start_position, readlength] = get_chromosome_reads(chromosome, N_reads)
+        [flags, start_position, readlength] = find_chromosome_reads(chromosome, N_reads)
 
-        start2_array, flag2_array = correct_read_position(
+        start_position_corrected, flags_corrected = correct_read_position(
             flags, start_position, readlength
         )
 
         # REFACTOR BELOW
 
         # CREATE ARRAY OF START POSITION AND FLAGS OF ALL READS IN GENOME
-        ref_tid_kk = int(ref_tid_dict[chr_num] + 1)
+        ref_tid_kk = int(ref_tid[chr_num] + 1)
         if unique_insertions == 0:
             tncoordinates_array = np.array([])
 
-        mm = 0  # Number of unique reads per insertion
-        jj = 1  # Number of unique reads in current chromosome (Number of transposons in current chromosome)
-        for ii in range(1, len(start2_array)):
+        unique_insertions_per_read = 0  # Number of unique reads per insertion
+        num_transposons = 1  # Number of unique reads in current chromosome (Number of transposons in current chromosome)
+        for ii in range(1, len(start_position_corrected)):
             if (
-                abs(start2_array[ii] - start2_array[ii - 1]) <= 2
-                and flag2_array[ii] == flag2_array[ii - 1]
+                abs(start_position_corrected[ii] - start_position_corrected[ii - 1]) <= 2
+                and flags_corrected[ii] == flags_corrected[ii - 1]
             ):  # If two subsequent reads are within two basepairs and have the same orientation, add them together.
-                mm += 1
+                unique_insertions_per_read += 1
             else:
-                avg_start_pos = abs(round(np.mean(start2_array[ii - mm - 1 : ii])))
+                avg_start_pos = abs(round(np.mean(start_position_corrected[ii - unique_insertions_per_read - 1 : ii])))
                 if tncoordinates_array.size == 0:  # include first read
                     tncoordinates_array = np.array(
-                        [ref_tid_kk, int(avg_start_pos), int(flag2_array[ii - 1])]
+                        [ref_tid_kk, int(avg_start_pos), int(flags_corrected[ii - 1])]
                     )
-                    readnumb_list = [mm + 1]
+                    readnumb_list = [unique_insertions_per_read + 1]
                 else:
                     tncoordinates_array = np.vstack(
                         (
                             tncoordinates_array,
-                            [ref_tid_kk, int(avg_start_pos), int(flag2_array[ii - 1])],
+                            [ref_tid_kk, int(avg_start_pos), int(flags_corrected[ii - 1])],
                         )
                     )
-                    readnumb_list.append(mm + 1)
-                mm = 0
-                jj += 1
+                    readnumb_list.append(unique_insertions_per_read + 1)
+                unique_insertions_per_read = 0
+                num_transposons += 1
                 unique_insertions += 1
 
-            if ii == len(start2_array) - 1:  # include last read
-                avg_start_pos = abs(round(np.mean(start2_array[ii - mm - 1 : ii])))
+            if ii == len(start_position_corrected) - 1:  # include last read
+                avg_start_pos = abs(round(np.mean(start_position_corrected[ii - unique_insertions_per_read - 1 : ii])))
                 tncoordinates_array = np.vstack(
                     (
                         tncoordinates_array,
-                        [ref_tid_kk, int(avg_start_pos), int(flag2_array[ii - 1])],
+                        [ref_tid_kk, int(avg_start_pos), int(flags_corrected[ii - 1])],
                     )
                 )
-                readnumb_list.append(mm + 1)
+                readnumb_list.append(unique_insertions_per_read + 1)
 
-        tnnumber_dict[chromosome] = jj
-
-        del (
-            jj,
-            start_array,
-            flag_array,
-            readlength_array,
-            flag2_array,
-            start2_array,
-            ref_tid_kk,
-        )
+        tnnumber_dict[chromosome] = num_transposons
 
         timer_end = timeit.default_timer()
         print(
@@ -104,10 +102,10 @@ def get_reads(bam, ref_name: list, chr_mapped_reads: dict):
 
     tncoordinatescopy_array = np.array(tncoordinates_array, copy=True)
 
-    return readnumb_array, tncoordinatescopy_array
+    return readnumb_array, tncoordinates_array, tncoordinatescopy_array
 
 
-def get_chromosome_reads(chromosome, N_reads: int):
+def find_chromosome_reads(chromosome, N_reads: int):
     """
     
     Syntax: [flags, start_position, readlength] = get_chromosome_reads(chromosome, N_reads)
@@ -165,13 +163,13 @@ def correct_read_position(flags, start_position, readlength):
     )
     flagindirect_array = flags[flag16coor_array]
 
-    start2_array = np.concatenate((startdirect_array, startindirect_array), axis=0)
-    flag2_array = np.concatenate((flagdirect_array, flagindirect_array), axis=0)
+    start_position_corrected = np.concatenate((startdirect_array, startindirect_array), axis=0)
+    flags_corrected = np.concatenate((flagdirect_array, flagindirect_array), axis=0)
 
-    start2_sortindices = start2_array.argsort(
+    start_sortindices = start_position_corrected.argsort(
         kind="mergesort"
     )  # use mergesort for stable sorting
-    start2_array = start2_array[start2_sortindices]
-    flag2_array = flag2_array[start2_sortindices]
+    start_position_corrected = start_position_corrected[start_sortindices]
+    flags_corrected = flags_corrected[start_sortindices]
 
-    return start2_array, flag2_array
+    return start_position_corrected, flags_corrected

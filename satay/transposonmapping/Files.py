@@ -1,9 +1,5 @@
 import os
 import pkg_resources
-import pysam
-
-from .python_modules import verify_data_files
-
 
 class Files:
     """ Container for transposon mapping datafiles
@@ -14,21 +10,12 @@ class Files:
     def __init__(
         self, bam_file=None, gff_file=None, essentials_file=None, gene_names_file=None,
     ):
-        self.bam_file = bam_file      
-
         self.default_path = pkg_resources.resource_filename("satay", "data_files/")
-
-        self.gff_file = (
-            gff_file if gff_file else os.path.join(self.default_path, "Saccharomyces_cerevisiae.R64-1-1.99.gff3")
-        )
-        self.essentials_file = (
-            essentials_file
-            if essentials_file
-            else "Cerevisiae_AllEssentialGenes_List.txt"
-        )
-        self.gene_names_file = (
-            gene_names_file if gene_names_file else "Yeast_Protein_Names.txt"
-        )
+        
+        self.bam_file = bam_file             
+        self.gff_file = gff_file 
+        self.essentials_file = essentials_file
+        self.gene_names_file = gene_names_file
         
         self._set_default_files()
         self.verify_data_files()
