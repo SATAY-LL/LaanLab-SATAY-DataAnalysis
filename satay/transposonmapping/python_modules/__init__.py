@@ -4,6 +4,7 @@ from .gene_names import gene_aliases
 from .samflag import samflags
 from .get_chromosome_properties import get_chromosome_names, get_sequence_length, get_chromosome_reads
 from .get_reads import get_reads
+from .read_genes import read_genes
 
 __all__ = [
     access_files, 
@@ -14,5 +15,6 @@ __all__ = [
     get_chromosome_reads,
     get_reads,
     get_sequence_length,
+    read_genes,
     samflags, 
     ]
