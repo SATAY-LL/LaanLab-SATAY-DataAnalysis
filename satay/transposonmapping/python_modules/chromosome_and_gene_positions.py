@@ -5,7 +5,7 @@ The function 'chromosomename_roman_to_arabic' does not take any input. It return
 '''
 
 #%%
-def chromosome_position(gff_file = None):
+def chromosome_position(gff_file):
     '''Get the start and end position of each chromosome and determine their respective length.
     Input is a .gff file downloaded from https://www.ensembl.org/Saccharomyces_cerevisiae/Info/Index
     Output are three dictionaries for length, start and end position. All dictionaries have keys representing the chromosome number in roman numerals.
@@ -14,13 +14,6 @@ def chromosome_position(gff_file = None):
     'b' = chromosome start position
     'c' = chromosome end position
     '''
-
-    if gff_file == None:
-        import os
-        file_dirname = os.path.dirname(os.path.abspath('__file__'))
-        gff_file = os.path.join(file_dirname,'..','Data_Files','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
-
-
 
     #CONVERT ROMAN NUMERALS TO ARABIC NUMERALS
     roman_to_arabic_dict = {}
@@ -61,36 +54,24 @@ def chromosome_position(gff_file = None):
 
 
 
-
-
-
 #%%
 def chromosomename_roman_to_arabic():
     '''This creates two dictionaries for translating the chromosome names from roman to arabic numerals or vice versa.
-    The call is like this: arabic_to_roman_dict, roman_to_arabic_dict = chromosomename_roman_to_arabic()
+    The call is like this: arabic_to_roman, roman_to_arabic = chromosomename_roman_to_arabic()
     '''
     num_arabic = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]
-    num_roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','Mito']
+    num_roman = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','Mito']    
+
+    arabic_to_roman = dict(zip(num_arabic, num_roman))
+    roman_to_arabic = dict(zip(num_roman, num_arabic))
     
-    arabic_to_roman_dict = {}
-    index_counter = 0
-    for arab in num_arabic:
-        arabic_to_roman_dict[arab] = num_roman[index_counter]
-        index_counter += 1
-    
-    roman_to_arabic_dict = {}
-    index_counter = 0
-    for rom in num_roman:
-        roman_to_arabic_dict[rom] = num_arabic[index_counter]
-        index_counter += 1
-    
-    return(arabic_to_roman_dict,roman_to_arabic_dict)
+    return arabic_to_roman, roman_to_arabic
 
 
 
 
 #%%
-def gene_position(gff_file = None, get_dict = True):
+def gene_position(gff_file, get_dict = True):
     '''Get the start and end position of each gene and determine their respective length.
     Input is a .gff file downloaded from https://www.ensembl.org/Saccharomyces_cerevisiae/Info/Index
     Output is a dictionary that includes all gene names as keys. The values are lists with four inputs.
@@ -99,11 +80,6 @@ def gene_position(gff_file = None, get_dict = True):
     The get_dict by defulat sets that the output should be given as a dictionary with keys the different genes and the values a list of the different parameters.
     When the get_dict is set to False, the code returns all the values as individual lists.
     '''
-
-    if gff_file == None:
-        import os
-        file_dirname = os.path.dirname(os.path.abspath('__file__'))
-        gff_file = os.path.join(file_dirname,'..','Data_Files','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
 
     if get_dict == True:
         gene_pos_dict = {}

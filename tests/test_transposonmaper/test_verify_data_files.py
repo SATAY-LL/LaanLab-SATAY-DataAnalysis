@@ -1,4 +1,4 @@
-from satay.transposonmapping.python_modules.verify_data_files import verify_data_files
+from satay.transposonmapping.importing import verify_data_files
 import os
 import pkg_resources
 import pytest
