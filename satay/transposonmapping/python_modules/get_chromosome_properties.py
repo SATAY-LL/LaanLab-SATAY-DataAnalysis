@@ -1,18 +1,7 @@
-# def get_chromosome_names(bam):
-
-#     ref_tid_dict = {} # 'I' | 0, 'II' | 1, ...
-#     ref_name_list = [] # 'I', 'II', ...
-#     for ref_name in bam.get_reference_name:
-#         ref_tid_dict[ref_name] = bam.get_tid(ref_name)
-#         ref_name_list.append(ref_name)
-
-#     return
-
-from typing import Dict
 import warnings
 
 
-def get_chromosome_names(bam) -> Dict:
+def get_chromosome_names(bam):
     """
 
     Parameters
@@ -25,7 +14,12 @@ def get_chromosome_names(bam) -> Dict:
     
     """
 
-    ref_tid = {str(name): int(bam.get_tid(name)) + 1 for name in bam.get_reference_name}
+    # ref_tid = {str(name): int(bam.get_tid(name)) + 1 for name in bam.get_reference_name}
+
+    ref_tid = {} # 'I' | 0, 'II' | 1, ...
+    for i in range(bam.nreferences): #if bam.nreferences does not work, use range(17) #16 chromosomes and the mitochondrial chromosome
+        ref_name = bam.get_reference_name(i)
+        ref_tid[ref_name] = bam.get_tid(ref_name)
 
     return ref_tid
 
@@ -42,20 +36,20 @@ def get_sequence_length(bam):
 
     """
 
-    seq_lengths = {}  # 'I' | 230218, 'II' | 813184, ...
-    cumsum_seq_lengths = {}  # 'I' | 0, 'II' | 230218, 'III' |  1043402, ...
+    chr_lengths = {}  # 'I' | 230218, 'II' | 813184, ...
+    cumsum_chr_lengths = {}  # 'I' | 0, 'II' | 230218, 'III' |  1043402, ...
     ref_summedlength = 0
     ref_tid = get_chromosome_names(bam)
-    for key in ref_tid:
+    for key in ref_tid.keys():
         ref_length = bam.get_reference_length(key)
-        seq_lengths[key] = ref_length
-        cumsum_seq_lengths[key] = ref_summedlength
+        chr_lengths[key] = bam.get_reference_length(key)
+        cumsum_chr_lengths[key] = ref_summedlength
         ref_summedlength += ref_length
 
-    return seq_lengths, cumsum_seq_lengths
+    return chr_lengths, cumsum_chr_lengths
 
 
-def get_chromosome_reads(bam) -> Dict:
+def get_chromosome_reads(bam):
     """
     
     Parameters
