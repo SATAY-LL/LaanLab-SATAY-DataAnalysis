@@ -27,10 +27,11 @@ import pysam
 from .python_modules import chromosomename_roman_to_arabic
 from .python_modules import get_chromosome_names
 from .python_modules import get_sequence_length
-from .python_modules import get_chromosome_reads
 from .Files import Files
 from .python_modules import get_reads
 from .python_modules import read_genes
+from .python_modules import add_chromosome_length
+from .python_modules import add_chromosome_length_inserts
 
 
 #%%
@@ -62,9 +63,7 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
     '''
     
     filename = os.path.basename(bamfile)
-   
-#%% LOADING ADDITIONAL FILES
-    
+      
     # Load files paths into Files() object
     files = Files(bam_file=bamfile, gff_file=gfffile, essentials_file=essentialfiles, gene_names_file=genenamesfile)
 
@@ -83,41 +82,22 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
     chr_lengths, chr_lengths_cumsum = get_sequence_length(bam)
 
     # Get all reads within a specified genomic region
-    [readnumb_array, tncoordinates_array, tncoordinatescopy_array] = get_reads(bam)
+    readnumb_array, tncoordinates_array, tncoordinatescopy_array = get_reads(bam)
 
     # Read files for all genes and all essential genes
     print('Getting coordinates of all genes ...')
     [gene_coordinates, essential_coordinates, aliases_designation] = read_genes(files.gff_file, files.essentials_file, files.gene_names_file)
 
 #%% CONCATENATE ALL CHROMOSOMES
-
-    #FOR EACH INSERTION LOCATION, ADD THE LENGTH OF ALL PREVIOUS CHROMOSOMES.
-    ll = 0
-    for ii in range(1,len(ref_names)):
-        ll += chr_lengths[ref_names[ii-1]]
-        aa = np.where(tncoordinatescopy_array[:,0] == ii + 1)
-        tncoordinatescopy_array[aa,1] = tncoordinatescopy_array[aa,1] + ll
-
-
-
-    #FOR EACH GENE LOCATION, ADD THE LENGTH OF ALL PREVIOUS CHROMOSOMES.
-    for key in gene_coordinates:
-        gene_chrom = ref_tid_roman.get(gene_coordinates.get(key)[0])
-        gene_coordinates[key][1] = gene_coordinates.get(key)[1] + chr_lengths_cumsum.get(gene_chrom)
-        gene_coordinates[key][2] = gene_coordinates.get(key)[2] + chr_lengths_cumsum.get(gene_chrom)
-
-
-
-    #FOR EACH ESSENTIAL GENE LOCATION, ADD THE LENGTH OF ALL PREVIOUS CHROMOSOMES.
-    for key in essential_coordinates:
-        gene_chrom = ref_tid_roman.get(essential_coordinates.get(key)[0])
-        essential_coordinates[key][1] = essential_coordinates.get(key)[1] + chr_lengths_cumsum.get(gene_chrom)
-        essential_coordinates[key][2] = essential_coordinates.get(key)[2] + chr_lengths_cumsum.get(gene_chrom)
-
-
-
-    del (ii, ll, aa, key, gene_chrom)
-
+    
+    # For each insertion location, add the length of all previous chromosomes
+    tncoordinatescopy_array = add_chromosome_length_inserts(tncoordinatescopy_array, ref_names, chr_lengths)
+    
+    # For each gene location, add the length of all previous chromosomes
+    gene_coordinates = add_chromosome_length(gene_coordinates, chr_lengths_cumsum, ref_tid_roman)
+        
+    # For each essential gene location, add the length of all previous chromosomes
+    essential_coordinates = add_chromosome_length(essential_coordinates, chr_lengths_cumsum, ref_tid_roman)    
 
 
 # GET NUMBER OF TRANSPOSONS AND READS PER GENE
