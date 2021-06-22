@@ -32,7 +32,6 @@ class Files:
         
         self._set_default_files()
         self.verify_data_files()
-        self.get_bam()
 
     def _set_default_files(self):        
         if self.gff_file is None:
@@ -51,7 +50,3 @@ class Files:
         }
         for filetype, file_path in data_files.items():
             assert file_path, f"{filetype} not found at {file_path}"
-
-
-    def get_bam(self):
-        self.bam = pysam.AlignmentFile(self.bam_file, "rb")
