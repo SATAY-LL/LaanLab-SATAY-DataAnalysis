@@ -32,6 +32,7 @@ from .python_modules import get_reads
 from .python_modules import read_genes
 from .python_modules import add_chromosome_length
 from .python_modules import add_chromosome_length_inserts
+from .python_modules import get_insertions_and_reads
 
 
 #%%
@@ -103,43 +104,11 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
 # GET NUMBER OF TRANSPOSONS AND READS PER GENE
     print('Get number of insertions and reads per gene ...')
     
-    #ALL GENES
-    tnpergene_dict = {}
-    readpergene_dict = {}
-    tncoordinates_pergene_dict = {}
-    # readpergenecrude_dict = {}
-    for gene in gene_coordinates:
-        xx = np.where(np.logical_and(tncoordinatescopy_array[:,1] >= gene_coordinates.get(gene)[1], tncoordinatescopy_array[:,1] <= gene_coordinates.get(gene)[2])) #get all insertions within range of current gene
-        tnpergene_dict[gene] = np.size(xx)
-        readpergene_dict[gene] = sum(readnumb_array[xx]) - max(readnumb_array[xx], default=0) #REMOVE LARGEST VALUE TO REDUCE NOISE
-        # readpergenecrude_dict[gene] = sum(readnumb_array[xx])
+    # All genes
+    tn_per_gene, reads_per_gene, tn_coordinates_per_gene = get_insertions_and_reads(gene_coordinates, tncoordinatescopy_array, readnumb_array)
 
-        if np.size(xx) > 0:
-            tncoordinates_pergene_dict[gene] = [gene_coordinates.get(gene)[0], gene_coordinates.get(gene)[1], gene_coordinates.get(gene)[2], list(tncoordinatescopy_array[xx[0][0]:xx[0][-1]+1, 1]), list(readnumb_array[xx])]
-        else:
-            tncoordinates_pergene_dict[gene] = [gene_coordinates.get(gene)[0], gene_coordinates.get(gene)[1], gene_coordinates.get(gene)[2], [], []]
-
-
-    #ONLY ESSENTIAL GENES
-    tnperessential_dict = {}
-    readperessential_dict = {}
-    tncoordinates_peressential_dict = {}
-    # readperessentialcrude_dict = {}
-    for gene in essential_coordinates:
-        xx = np.where(np.logical_and(tncoordinatescopy_array[:,1] >= essential_coordinates.get(gene)[1], tncoordinatescopy_array[:,1] <= essential_coordinates.get(gene)[2]))
-        tnperessential_dict[gene] = np.size(xx)
-        readperessential_dict[gene] = sum(readnumb_array[xx]) - max(readnumb_array[xx], default=0)
-        # readperessentialcrude_dict[gene] = sum(readnumb_array[xx])
-
-        if np.size(xx) > 0:
-            tncoordinates_peressential_dict[gene] = [essential_coordinates.get(gene)[0], essential_coordinates.get(gene)[1], essential_coordinates.get(gene)[2], list(tncoordinatescopy_array[xx[0][0]:xx[0][-1]+1, 1]), list(readnumb_array[xx])]
-        else:
-            tncoordinates_peressential_dict[gene] = [essential_coordinates.get(gene)[0], essential_coordinates.get(gene)[1], essential_coordinates.get(gene)[2], [], []]
-
-
-
-    del (xx, gene)
-
+    # Only essential genes
+    tn_per_essential, reads_per_essential, tn_coordinates_per_essential = get_insertions_and_reads(essential_coordinates, tncoordinatescopy_array, readnumb_array)
 
 
 # CREATE BED FILE
@@ -176,9 +145,9 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
 
         f.write('Gene name\tNumber of transposons per gene\tNumber of reads per gene\n')
 
-        for gene in tnpergene_dict:
-            tnpergene = tnpergene_dict[gene]
-            readpergene = readpergene_dict[gene]
+        for gene in tn_per_gene:
+            tnpergene = tn_per_gene[gene]
+            readpergene = reads_per_gene[gene]
             if gene in aliases_designation:
                 gene_alias = aliases_designation.get(gene)[0]
             else:
@@ -198,9 +167,9 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
         
         f.write('Gene name\tNumber of transposons per gene\tNumber of reads per gene\n')
         
-        for essential in tnperessential_dict:
-            tnperessential = tnperessential_dict[essential]
-            readperessential = readperessential_dict[essential]
+        for essential in tn_per_essential:
+            tnperessential = tn_per_essential[essential]
+            readperessential = reads_per_essential[essential]
             if essential in aliases_designation:
                 essential_alias = aliases_designation.get(essential)[0]
             else:
@@ -221,16 +190,16 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
 
         f.write('Gene name\tChromosome\tStart location\tEnd location\tInsertion locations\tReads per insertion location\n')
 
-        for gene in tncoordinates_pergene_dict:
+        for gene in tn_coordinates_per_gene:
             gene_chrom = ref_tid_roman.get(gene_coordinates.get(gene)[0])
-            tncoordinates = [ins - chr_lengths_cumsum.get(gene_chrom) for ins in tncoordinates_pergene_dict[gene][3]]
+            tncoordinates = [ins - chr_lengths_cumsum.get(gene_chrom) for ins in tn_coordinates_per_gene[gene][3]]
 
             if gene in aliases_designation:
                 gene_alias = aliases_designation.get(gene)[0]
             else:
                 gene_alias = gene
 
-            f.write(gene_alias + '\t' + str(tncoordinates_pergene_dict[gene][0]) + '\t' + str(tncoordinates_pergene_dict[gene][1] - chr_lengths_cumsum.get(gene_chrom)) + '\t' + str(tncoordinates_pergene_dict[gene][2] - chr_lengths_cumsum.get(gene_chrom)) + '\t' + str(tncoordinates) + '\t' + str(tncoordinates_pergene_dict[gene][4]) + '\n')
+            f.write(gene_alias + '\t' + str(tn_coordinates_per_gene[gene][0]) + '\t' + str(tn_coordinates_per_gene[gene][1] - chr_lengths_cumsum.get(gene_chrom)) + '\t' + str(tn_coordinates_per_gene[gene][2] - chr_lengths_cumsum.get(gene_chrom)) + '\t' + str(tncoordinates) + '\t' + str(tn_coordinates_per_gene[gene][4]) + '\n')
 
 
 
@@ -245,16 +214,16 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
 
         f.write('Essential gene name\tChromosome\tStart location\tEnd location\tInsertion locations\tReads per insertion location\n')
 
-        for essential in tncoordinates_peressential_dict:
+        for essential in tn_coordinates_per_essential:
             gene_chrom = ref_tid_roman.get(gene_coordinates.get(essential)[0])
-            tncoordinates = [ins - chr_lengths_cumsum.get(gene_chrom) for ins in tncoordinates_peressential_dict[essential][3]]
+            tncoordinates = [ins - chr_lengths_cumsum.get(gene_chrom) for ins in tn_coordinates_per_essential[essential][3]]
 
             if essential in aliases_designation:
                 essential_alias = aliases_designation.get(essential)[0]
             else:
                 essential_alias = essential
 
-            f.write(essential_alias + '\t' + str(tncoordinates_peressential_dict[essential][0]) + '\t' + str(tncoordinates_peressential_dict[essential][1] - chr_lengths_cumsum.get(gene_chrom)) + '\t' + str(tncoordinates_peressential_dict[essential][2] - chr_lengths_cumsum.get(gene_chrom)) + '\t' + str(tncoordinates) + '\t' + str(tncoordinates_peressential_dict[essential][4]) + '\n')
+            f.write(essential_alias + '\t' + str(tn_coordinates_per_essential[essential][0]) + '\t' + str(tn_coordinates_per_essential[essential][1] - chr_lengths_cumsum.get(gene_chrom)) + '\t' + str(tn_coordinates_per_essential[essential][2] - chr_lengths_cumsum.get(gene_chrom)) + '\t' + str(tncoordinates) + '\t' + str(tn_coordinates_per_essential[essential][4]) + '\n')
 
 
 

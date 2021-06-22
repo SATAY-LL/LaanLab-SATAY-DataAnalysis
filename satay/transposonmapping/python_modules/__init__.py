@@ -7,6 +7,7 @@ from .get_reads import get_reads
 from .read_genes import read_genes
 from .concatenate_chromosomes import add_chromosome_length
 from .concatenate_chromosomes import add_chromosome_length_inserts
+from .get_insertions_and_reads import get_insertions_and_reads
 
 __all__ = [
     access_files, 
@@ -17,6 +18,7 @@ __all__ = [
     gene_position, 
     get_chromosome_names,
     get_chromosome_reads,
+    get_insertions_and_reads,
     get_reads,
     get_sequence_length,
     read_genes,
