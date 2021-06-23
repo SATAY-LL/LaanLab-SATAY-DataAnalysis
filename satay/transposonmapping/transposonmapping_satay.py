@@ -150,10 +150,15 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
     # E.G. IF THIS FILE IS COMPARED WITH THE _PERGENE_INSERTIONS.TXT FILE THE READS DON'T ADD UP (SEE https://groups.google.com/forum/#!category-topic/satayusers/bioinformatics/uaTpKsmgU6Q)
     # TOO REMOVE THIS HACK, CHANGE THE INITIALIZATION OF THE VARIABLE readpergene
     per_gene_file = bamfile + "_pergene.txt"
+    print("Writing pergene.txt file at: ", per_gene_file)
+    print("")
+
     save_per_gene(per_gene_file, tn_per_gene, reads_per_gene, aliases_designation)
 
     # CREATE TEXT FILE TRANSPOSONS AND READS PER ESSENTIAL GENE
     per_essential_file = bamfile + "_peressential.txt"
+    print("Writing peressential.txt file at: ", per_essential_file)
+    print("")
     save_per_gene(
         per_essential_file, tn_per_essential, reads_per_essential, aliases_designation
     )

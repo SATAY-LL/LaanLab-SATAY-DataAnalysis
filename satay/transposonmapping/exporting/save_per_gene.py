@@ -1,4 +1,3 @@
-
 def save_per_gene(filename, tn_per_gene, reads_per_gene, aliases_designation):
     """
     Create text file with transposons and reads per gene
@@ -10,12 +9,9 @@ def save_per_gene(filename, tn_per_gene, reads_per_gene, aliases_designation):
  
     """
 
-    print('Writing txt file at: ', filename)
-    print('')
+    with open(filename, "w") as f:
 
-    with open(filename, 'w') as f:
-
-        f.write('Gene name\tNumber of transposons per gene\tNumber of reads per gene\n')
+        f.write("Gene name\tNumber of transposons per gene\tNumber of reads per gene\n")
 
         for gene in tn_per_gene:
             tnpergene = tn_per_gene[gene]
@@ -24,5 +20,5 @@ def save_per_gene(filename, tn_per_gene, reads_per_gene, aliases_designation):
                 gene_alias = aliases_designation.get(gene)[0]
             else:
                 gene_alias = gene
-            f.write(gene_alias + '\t' + str(tnpergene) + '\t' + str(readpergene) + '\n')
+            f.write(gene_alias + "\t" + str(tnpergene) + "\t" + str(readpergene) + "\n")
 
