@@ -142,8 +142,10 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
     )
 
     # CREATE BED FILE
-
-    save_as_bed(files.bam_file, tncoordinates_array, ref_tid, readnumb_array)
+    bedfile = bamfile + ".bed"
+    print("Writing bed file at: ", bedfile)
+    print("")
+    save_as_bed(bedfile, tncoordinates_array, ref_tid, readnumb_array)
 
     # CREATE TEXT FILE WITH TRANSPOSONS AND READS PER GENE
     # NOTE THAT THE TRANSPOSON WITH THE HIGHEST READ COUNT IS IGNORED.
