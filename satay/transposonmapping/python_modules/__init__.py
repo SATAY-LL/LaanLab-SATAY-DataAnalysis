@@ -1,4 +1,3 @@
-from .loading_files import access_files
 from .chromosome_and_gene_positions import chromosomename_roman_to_arabic, gene_position
 from .gene_names import gene_aliases
 from .samflag import samflags
@@ -13,7 +12,6 @@ from .concatenate_chromosomes import add_chromosome_length_inserts
 from .get_insertions_and_reads import get_insertions_and_reads
 
 __all__ = [
-    access_files,
     add_chromosome_length,
     add_chromosome_length_inserts,
     chromosomename_roman_to_arabic,
