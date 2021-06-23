@@ -44,8 +44,10 @@ from .exporting import (
     save_per_essential_insertions,
 )
 
-#%%
-def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=None):
+from .importing import load_default_files
+
+
+def transposonmapper(bamfile, gff_file=None, essential_file=None, gene_name_file=None):
     """
     This function is created for analysis of SATAY data using the species Saccharomyces Cerevisiae.
     It outputs the following files that store information regarding the location of all insertions:
@@ -72,20 +74,24 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
     The function uses the pysam package for handling bam files (see pysam.readthedocs.io/en/latest/index.html) and therefore this function only runs on Linux systems with SAMTools installed.
     """
 
-    filename = os.path.basename(bamfile)
-
-    # Load files paths into Files() object
-    files = Files(
-        bam_file=bamfile,
-        gff_file=gfffile,
-        essentials_file=essentialfiles,
-        gene_names_file=genenamesfile,
+    # Load required default files
+    gff_file, essential_file, gene_name_file = load_default_files(
+        gff_file, essential_file, gene_name_file
     )
 
+    # Verify files
+    data_files = {
+        "bam": bamfile,
+        "gff3": gff_file,
+        "essentials": essential_file,
+        "gene_names": gene_name_file,
+    }
+
+    for filetype, file_path in data_files.items():
+        assert file_path, f"{filetype} not found at {file_path}"
+
     # Read bam file
-    bam = pysam.AlignmentFile(
-        files.bam_file, "rb"
-    )  # open bam formatted file for reading
+    bam = pysam.AlignmentFile(bamfile, "rb")
 
     # Get names of all chromosomes as stored in the bam file
     ref_tid = get_chromosome_names(bam)
@@ -104,7 +110,7 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
     # Read files for all genes and all essential genes
     print("Getting coordinates of all genes ...")
     gene_coordinates, essential_coordinates, aliases_designation = read_genes(
-        files.gff_file, files.essentials_file, files.gene_names_file
+        gff_file, essential_file, gene_name_file
     )
 
     #%% CONCATENATE ALL CHROMOSOMES
@@ -260,6 +266,7 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
     )
 
     # CREATING WIG FILE
+    filename = os.path.basename(bamfile)
     with open(wigfile, "w") as f:
         f.write("track type=wiggle_0 ,maxheightPixels=60 name=" + filename + "\n")
         for kk in ref_names:
