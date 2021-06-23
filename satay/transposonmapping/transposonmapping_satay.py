@@ -34,6 +34,7 @@ from .python_modules import add_chromosome_length
 from .python_modules import add_chromosome_length_inserts
 from .python_modules import get_insertions_and_reads
 
+from .exporting import save_as_bed
 
 #%%
 def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=None):
@@ -112,26 +113,9 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
 
 
 # CREATE BED FILE
-    bedfile = bamfile+'.bed'
-    print('Writing bed file at: ', bedfile)
-    print('')
 
+    save_as_bed(files.bam_file, tncoordinates_array, ref_tid, readnumb_array)
 
-    with open(bedfile, 'w') as f:
-        
-        f.write('track name=' + filename + ' useScore=1\n')
-        
-        coordinates_counter = 0
-        for tn in tncoordinates_array:
-            refname = [key for key, val in ref_tid.items() if val == tn[0] - 1][0]
-            if refname == 'Mito':
-                refname = 'M'
-            f.write('chr' + refname + ' ' + str(tn[1]) + ' ' + str(tn[1] + 1) + ' . ' + str(100+readnumb_array[coordinates_counter]*20) + '\n')
-            coordinates_counter += 1
-
-
-
-    del (bedfile, coordinates_counter, refname)
 
 # CREATE TEXT FILE WITH TRANSPOSONS AND READS PER GENE
 # NOTE THAT THE TRANSPOSON WITH THE HIGHEST READ COUNT IS IGNORED.
