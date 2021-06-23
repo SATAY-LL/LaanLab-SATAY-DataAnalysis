@@ -34,7 +34,7 @@ from .python_modules import add_chromosome_length
 from .python_modules import add_chromosome_length_inserts
 from .python_modules import get_insertions_and_reads
 
-from .exporting import save_as_bed
+from .exporting import save_as_bed, save_per_gene
 
 #%%
 def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=None):
@@ -121,49 +121,12 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
 # NOTE THAT THE TRANSPOSON WITH THE HIGHEST READ COUNT IS IGNORED.
 # E.G. IF THIS FILE IS COMPARED WITH THE _PERGENE_INSERTIONS.TXT FILE THE READS DON'T ADD UP (SEE https://groups.google.com/forum/#!category-topic/satayusers/bioinformatics/uaTpKsmgU6Q)
 # TOO REMOVE THIS HACK, CHANGE THE INITIALIZATION OF THE VARIABLE readpergene
-    pergenefile = bamfile+'_pergene.txt'
-    print('Writing pergene.txt file at: ', pergenefile)
-    print('')
-
-    with open(pergenefile, 'w') as f:
-
-        f.write('Gene name\tNumber of transposons per gene\tNumber of reads per gene\n')
-
-        for gene in tn_per_gene:
-            tnpergene = tn_per_gene[gene]
-            readpergene = reads_per_gene[gene]
-            if gene in aliases_designation:
-                gene_alias = aliases_designation.get(gene)[0]
-            else:
-                gene_alias = gene
-            f.write(gene_alias + '\t' + str(tnpergene) + '\t' + str(readpergene) + '\n')
-
-
-
-    del (pergenefile, gene, gene_alias, tnpergene, readpergene)
+    per_gene_file = bamfile+'_pergene.txt'
+    save_per_gene(per_gene_file, tn_per_gene, reads_per_gene, aliases_designation)
 
 # CREATE TEXT FILE TRANSPOSONS AND READS PER ESSENTIAL GENE
-    peressentialfile = bamfile+'_peressential.txt'
-    print('Writing peressential.txt file at: ',peressentialfile)
-    print('')
-
-    with open(peressentialfile, 'w') as f:
-        
-        f.write('Gene name\tNumber of transposons per gene\tNumber of reads per gene\n')
-        
-        for essential in tn_per_essential:
-            tnperessential = tn_per_essential[essential]
-            readperessential = reads_per_essential[essential]
-            if essential in aliases_designation:
-                essential_alias = aliases_designation.get(essential)[0]
-            else:
-                essential_alias = essential
-            f.write(essential_alias + '\t' + str(tnperessential) + '\t' + str(readperessential) + '\n')
-
-
-
-    del (peressentialfile, essential, essential_alias, tnperessential, readperessential)
-
+    per_essential_file = bamfile + '_peressential.txt'
+    save_per_gene(per_essential_file, tn_per_essential, reads_per_essential, aliases_designation)
 
 # CREATE TEXT FILE WITH LOCATION OF INSERTIONS AND READS PER GENE
     pergeneinsertionsfile = bamfile+'_pergene_insertions.txt'
