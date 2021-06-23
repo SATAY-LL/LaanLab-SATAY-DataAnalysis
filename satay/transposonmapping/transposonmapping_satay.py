@@ -20,6 +20,9 @@ Version history:
 """
 
 import os
+from satay.transposonmapping.exporting.save_per_gene_insertions import (
+    save_per_gene_insertions,
+)
 import numpy as np
 import pysam
 
@@ -34,11 +37,16 @@ from .python_modules import add_chromosome_length
 from .python_modules import add_chromosome_length_inserts
 from .python_modules import get_insertions_and_reads
 
-from .exporting import save_as_bed, save_per_gene
+from .exporting import (
+    save_as_bed,
+    save_per_gene,
+    save_per_gene_insertions,
+    save_per_essential_insertions,
+)
 
 #%%
 def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=None):
-    '''
+    """
     This function is created for analysis of SATAY data using the species Saccharomyces Cerevisiae.
     It outputs the following files that store information regarding the location of all insertions:
         - .bed-file: Includes all individual basepair locations of the whole genome where at least one transposon has been mapped and the number of insertions for each locations (the number of reads) according to the Browser Extensible Data (bed) format.
@@ -62,20 +70,27 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
     When the arguments for the optional files are not given, the files are used that are stored at the following location:
         "path_current_pythonscript/../data_files"
     The function uses the pysam package for handling bam files (see pysam.readthedocs.io/en/latest/index.html) and therefore this function only runs on Linux systems with SAMTools installed.
-    '''
-    
+    """
+
     filename = os.path.basename(bamfile)
-      
+
     # Load files paths into Files() object
-    files = Files(bam_file=bamfile, gff_file=gfffile, essentials_file=essentialfiles, gene_names_file=genenamesfile)
+    files = Files(
+        bam_file=bamfile,
+        gff_file=gfffile,
+        essentials_file=essentialfiles,
+        gene_names_file=genenamesfile,
+    )
 
     # Read bam file
-    bam = pysam.AlignmentFile(files.bam_file, 'rb') #open bam formatted file for reading
+    bam = pysam.AlignmentFile(
+        files.bam_file, "rb"
+    )  # open bam formatted file for reading
 
     # Get names of all chromosomes as stored in the bam file
     ref_tid = get_chromosome_names(bam)
     ref_names = list(ref_tid.keys())
-    
+
     # Convert chromosome names in data file to roman numerals
     ref_romannums = chromosomename_roman_to_arabic()[1]
     ref_tid_roman = {key: value for key, value in zip(ref_romannums, ref_tid)}
@@ -87,163 +102,178 @@ def transposonmapper(bamfile, gfffile=None, essentialfiles=None, genenamesfile=N
     readnumb_array, tncoordinates_array, tncoordinatescopy_array = get_reads(bam)
 
     # Read files for all genes and all essential genes
-    print('Getting coordinates of all genes ...')
-    [gene_coordinates, essential_coordinates, aliases_designation] = read_genes(files.gff_file, files.essentials_file, files.gene_names_file)
+    print("Getting coordinates of all genes ...")
+    gene_coordinates, essential_coordinates, aliases_designation = read_genes(
+        files.gff_file, files.essentials_file, files.gene_names_file
+    )
 
-#%% CONCATENATE ALL CHROMOSOMES
-    
+    #%% CONCATENATE ALL CHROMOSOMES
+
     # For each insertion location, add the length of all previous chromosomes
-    tncoordinatescopy_array = add_chromosome_length_inserts(tncoordinatescopy_array, ref_names, chr_lengths)
-    
+    tncoordinatescopy_array = add_chromosome_length_inserts(
+        tncoordinatescopy_array, ref_names, chr_lengths
+    )
+
     # For each gene location, add the length of all previous chromosomes
-    gene_coordinates = add_chromosome_length(gene_coordinates, chr_lengths_cumsum, ref_tid_roman)
-        
+    gene_coordinates = add_chromosome_length(
+        gene_coordinates, chr_lengths_cumsum, ref_tid_roman
+    )
+
     # For each essential gene location, add the length of all previous chromosomes
-    essential_coordinates = add_chromosome_length(essential_coordinates, chr_lengths_cumsum, ref_tid_roman)    
+    essential_coordinates = add_chromosome_length(
+        essential_coordinates, chr_lengths_cumsum, ref_tid_roman
+    )
 
+    # GET NUMBER OF TRANSPOSONS AND READS PER GENE
+    print("Get number of insertions and reads per gene ...")
 
-# GET NUMBER OF TRANSPOSONS AND READS PER GENE
-    print('Get number of insertions and reads per gene ...')
-    
     # All genes
-    tn_per_gene, reads_per_gene, tn_coordinates_per_gene = get_insertions_and_reads(gene_coordinates, tncoordinatescopy_array, readnumb_array)
+    tn_per_gene, reads_per_gene, tn_coordinates_per_gene = get_insertions_and_reads(
+        gene_coordinates, tncoordinatescopy_array, readnumb_array
+    )
 
     # Only essential genes
-    tn_per_essential, reads_per_essential, tn_coordinates_per_essential = get_insertions_and_reads(essential_coordinates, tncoordinatescopy_array, readnumb_array)
+    (
+        tn_per_essential,
+        reads_per_essential,
+        tn_coordinates_per_essential,
+    ) = get_insertions_and_reads(
+        essential_coordinates, tncoordinatescopy_array, readnumb_array
+    )
 
-
-# CREATE BED FILE
+    # CREATE BED FILE
 
     save_as_bed(files.bam_file, tncoordinates_array, ref_tid, readnumb_array)
 
-
-# CREATE TEXT FILE WITH TRANSPOSONS AND READS PER GENE
-# NOTE THAT THE TRANSPOSON WITH THE HIGHEST READ COUNT IS IGNORED.
-# E.G. IF THIS FILE IS COMPARED WITH THE _PERGENE_INSERTIONS.TXT FILE THE READS DON'T ADD UP (SEE https://groups.google.com/forum/#!category-topic/satayusers/bioinformatics/uaTpKsmgU6Q)
-# TOO REMOVE THIS HACK, CHANGE THE INITIALIZATION OF THE VARIABLE readpergene
-    per_gene_file = bamfile+'_pergene.txt'
+    # CREATE TEXT FILE WITH TRANSPOSONS AND READS PER GENE
+    # NOTE THAT THE TRANSPOSON WITH THE HIGHEST READ COUNT IS IGNORED.
+    # E.G. IF THIS FILE IS COMPARED WITH THE _PERGENE_INSERTIONS.TXT FILE THE READS DON'T ADD UP (SEE https://groups.google.com/forum/#!category-topic/satayusers/bioinformatics/uaTpKsmgU6Q)
+    # TOO REMOVE THIS HACK, CHANGE THE INITIALIZATION OF THE VARIABLE readpergene
+    per_gene_file = bamfile + "_pergene.txt"
     save_per_gene(per_gene_file, tn_per_gene, reads_per_gene, aliases_designation)
 
-# CREATE TEXT FILE TRANSPOSONS AND READS PER ESSENTIAL GENE
-    per_essential_file = bamfile + '_peressential.txt'
-    save_per_gene(per_essential_file, tn_per_essential, reads_per_essential, aliases_designation)
+    # CREATE TEXT FILE TRANSPOSONS AND READS PER ESSENTIAL GENE
+    per_essential_file = bamfile + "_peressential.txt"
+    save_per_gene(
+        per_essential_file, tn_per_essential, reads_per_essential, aliases_designation
+    )
 
-# CREATE TEXT FILE WITH LOCATION OF INSERTIONS AND READS PER GENE
-    pergeneinsertionsfile = bamfile+'_pergene_insertions.txt'
-    print('Witing pergene_insertions.txt file at: ',pergeneinsertionsfile)
-    print('')
+    # CREATE TEXT FILE WITH LOCATION OF INSERTIONS AND READS PER GENE
+    per_gene_insertions_file = bamfile + "_pergene_insertions.txt"
+    print("Witing pergene_insertions.txt file at: ", per_gene_insertions_file)
+    print("")
 
-    with open(pergeneinsertionsfile, 'w') as f:
+    save_per_gene_insertions(
+        per_gene_insertions_file,
+        tn_coordinates_per_gene,
+        gene_coordinates,
+        chr_lengths_cumsum,
+        ref_tid_roman,
+        aliases_designation,
+    )
 
-        f.write('Gene name\tChromosome\tStart location\tEnd location\tInsertion locations\tReads per insertion location\n')
+    # CREATE TEXT FILE WITH LOCATION OF INSERTIONS AND READS PER ESSENTIAL GENE
+    per_essential_insertions_file = bamfile + "_peressential_insertions.txt"
+    print(
+        "Writing peressential_insertions.txt file at: ", per_essential_insertions_file
+    )
+    print("")
 
-        for gene in tn_coordinates_per_gene:
-            gene_chrom = ref_tid_roman.get(gene_coordinates.get(gene)[0])
-            tncoordinates = [ins - chr_lengths_cumsum.get(gene_chrom) for ins in tn_coordinates_per_gene[gene][3]]
+    save_per_essential_insertions(
+        per_essential_insertions_file,
+        tn_coordinates_per_essential,
+        gene_coordinates,
+        chr_lengths_cumsum,
+        ref_tid_roman,
+        aliases_designation,
+    )
 
-            if gene in aliases_designation:
-                gene_alias = aliases_designation.get(gene)[0]
-            else:
-                gene_alias = gene
-
-            f.write(gene_alias + '\t' + str(tn_coordinates_per_gene[gene][0]) + '\t' + str(tn_coordinates_per_gene[gene][1] - chr_lengths_cumsum.get(gene_chrom)) + '\t' + str(tn_coordinates_per_gene[gene][2] - chr_lengths_cumsum.get(gene_chrom)) + '\t' + str(tncoordinates) + '\t' + str(tn_coordinates_per_gene[gene][4]) + '\n')
-
-
-
-    del (gene, gene_chrom, tncoordinates, gene_alias, pergeneinsertionsfile)
-
-# CREATE TEXT FILE WITH LOCATION OF INSERTIONS AND READS PER ESSENTIAL GENE
-    peressentialinsertionsfile = bamfile+'_peressential_insertions.txt'
-    print('Writing peressential_insertions.txt file at: ', peressentialinsertionsfile)
-    print('')
-
-    with open(peressentialinsertionsfile, 'w') as f:
-
-        f.write('Essential gene name\tChromosome\tStart location\tEnd location\tInsertion locations\tReads per insertion location\n')
-
-        for essential in tn_coordinates_per_essential:
-            gene_chrom = ref_tid_roman.get(gene_coordinates.get(essential)[0])
-            tncoordinates = [ins - chr_lengths_cumsum.get(gene_chrom) for ins in tn_coordinates_per_essential[essential][3]]
-
-            if essential in aliases_designation:
-                essential_alias = aliases_designation.get(essential)[0]
-            else:
-                essential_alias = essential
-
-            f.write(essential_alias + '\t' + str(tn_coordinates_per_essential[essential][0]) + '\t' + str(tn_coordinates_per_essential[essential][1] - chr_lengths_cumsum.get(gene_chrom)) + '\t' + str(tn_coordinates_per_essential[essential][2] - chr_lengths_cumsum.get(gene_chrom)) + '\t' + str(tncoordinates) + '\t' + str(tn_coordinates_per_essential[essential][4]) + '\n')
-
-
-
-    del (essential, gene_chrom, tncoordinates, essential_alias, peressentialinsertionsfile)
-
-# ADD INSERTIONS AT SAME LOCATION BUT WITH DIFFERENT ORIENTATIONS TOGETHER (FOR STORING IN WIG-FILE)
-    wigfile = bamfile+'.wig'
-    print('Writing wig file at: ', wigfile)
-    print('')
-
+    # ADD INSERTIONS AT SAME LOCATION BUT WITH DIFFERENT ORIENTATIONS TOGETHER (FOR STORING IN WIG-FILE)
+    wigfile = bamfile + ".wig"
+    print("Writing wig file at: ", wigfile)
+    print("")
 
     readnumbwig_array = readnumb_array.copy()
 
-
-
-    unique_index_array = np.array([], dtype=int) #=cc
+    unique_index_array = np.array([], dtype=int)  # =cc
     N_uniques_perchr_list = []
     ll = 0
     for kk in ref_names:
-        index = np.where(tncoordinates_array[:,0] == int(ref_tid[kk]+1)) #get indices for current chromosome.
-        unique_index = np.unique(tncoordinates_array[index][:,1], return_index=True)[1] #get all insertion locations (in tncoordinates, all rows, column 1)
+        index = np.where(
+            tncoordinates_array[:, 0] == int(ref_tid[kk] + 1)
+        )  # get indices for current chromosome.
+        unique_index = np.unique(tncoordinates_array[index][:, 1], return_index=True)[
+            1
+        ]  # get all insertion locations (in tncoordinates, all rows, column 1)
 
-        unique_index_array = np.append(unique_index_array, (unique_index+ll), axis=0)
+        unique_index_array = np.append(unique_index_array, (unique_index + ll), axis=0)
 
-        ll += np.count_nonzero(tncoordinates_array[:,0] == int(ref_tid[kk]+1))
-        N_uniques_perchr_list.append(ll) #total amount unique indices found untill current chromosome
-
-
+        ll += np.count_nonzero(tncoordinates_array[:, 0] == int(ref_tid[kk] + 1))
+        N_uniques_perchr_list.append(
+            ll
+        )  # total amount unique indices found untill current chromosome
 
     del (ll, kk, unique_index)
 
-
-
-    duplicate_list = [] #=dd
+    duplicate_list = []  # =dd
     ll = 0
     index_last_unique_previous_chromosome = 0
     for ii in N_uniques_perchr_list:
         index_last_unique = np.where(unique_index_array <= ii)[0][-1]
-        for jj in range(ll,ii):
-            if int(jj) not in unique_index_array[index_last_unique_previous_chromosome:index_last_unique]:
+        for jj in range(ll, ii):
+            if (
+                int(jj)
+                not in unique_index_array[
+                    index_last_unique_previous_chromosome:index_last_unique
+                ]
+            ):
                 duplicate_list.append(jj)
         index_last_unique_previous_chromosome = index_last_unique
         ll = ii
 
-    #SUM READNUMB VALUES AT INDEX IN DUPLICATE_LIST AND DUPLICATE_LIST-1    
+    # SUM READNUMB VALUES AT INDEX IN DUPLICATE_LIST AND DUPLICATE_LIST-1
     for ii in duplicate_list:
-        readnumbwig_array[ii-1] = readnumbwig_array[ii-1] + readnumbwig_array[ii]
-    
-    tncoordinateswig_duplicatesremoved_array = np.delete(tncoordinates_array, duplicate_list, axis=0)
-    readnumbwig_duplicatesremoved_array = np.delete(readnumbwig_array, duplicate_list, axis=0)
+        readnumbwig_array[ii - 1] = readnumbwig_array[ii - 1] + readnumbwig_array[ii]
 
+    tncoordinateswig_duplicatesremoved_array = np.delete(
+        tncoordinates_array, duplicate_list, axis=0
+    )
+    readnumbwig_duplicatesremoved_array = np.delete(
+        readnumbwig_array, duplicate_list, axis=0
+    )
 
+    del (
+        ll,
+        ii,
+        jj,
+        N_uniques_perchr_list,
+        index_last_unique,
+        duplicate_list,
+        readnumbwig_array,
+    )
 
-
-    del (ll, ii, jj, N_uniques_perchr_list, index_last_unique, duplicate_list, readnumbwig_array)
-
-# CREATING WIG FILE    
-    with  open(wigfile, 'w') as f:
-        f.write('track type=wiggle_0 ,maxheightPixels=60 name='+filename+'\n')
+    # CREATING WIG FILE
+    with open(wigfile, "w") as f:
+        f.write("track type=wiggle_0 ,maxheightPixels=60 name=" + filename + "\n")
         for kk in ref_names:
-            f.write('VariableStep chrom=chr' + kk + '\n')
+            f.write("VariableStep chrom=chr" + kk + "\n")
 
-            index = np.where(tncoordinateswig_duplicatesremoved_array[:,0] == int(ref_tid[kk]+1)) #get indices for current chromosome.
+            index = np.where(
+                tncoordinateswig_duplicatesremoved_array[:, 0] == int(ref_tid[kk] + 1)
+            )  # get indices for current chromosome.
             for ii in index[0]:
-                f.write(str(tncoordinateswig_duplicatesremoved_array[ii][1]) + ' ' + str(readnumbwig_duplicatesremoved_array[ii]) + '\n')
-
+                f.write(
+                    str(tncoordinateswig_duplicatesremoved_array[ii][1])
+                    + " "
+                    + str(readnumbwig_duplicatesremoved_array[ii])
+                    + "\n"
+                )
 
     del (wigfile, kk, ii, index)
 
+
 #%%
-if __name__ == '__main__':
-    bamfile= 'satay/data_files/files4test/SRR062634.filt_trimmed.sorted.bam'
+if __name__ == "__main__":
+    bamfile = "satay/data_files/files4test/SRR062634.filt_trimmed.sorted.bam"
     transposonmapper(bamfile=bamfile)
-
-
 
