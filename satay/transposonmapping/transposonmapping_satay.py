@@ -19,20 +19,13 @@ Version history:
     1.5; Added functionality to handle all possible sam flags in the alignment file (bam-file) instead of only flag=0 or flag=16. This is needed for the function to handle paired-end sequencing data [2021-01-11]
 """
 
-import os
-from satay.transposonmapping.exporting.save_per_gene_insertions import (
-    save_per_gene_insertions,
-)
-import numpy as np
 import pysam
 
 # Local imports
 from .python_modules import chromosomename_roman_to_arabic
 from .python_modules import get_chromosome_names
 from .python_modules import get_sequence_length
-from .Files import Files
 from .python_modules import get_reads
-from .python_modules import read_genes
 from .python_modules import add_chromosome_length
 from .python_modules import add_chromosome_length_inserts
 from .python_modules import get_insertions_and_reads
@@ -42,9 +35,10 @@ from .exporting import (
     save_per_gene,
     save_per_gene_insertions,
     save_per_essential_insertions,
+    export_as_wig,
 )
 
-from .importing import load_default_files
+from .importing import load_default_files, read_genes
 
 
 def transposonmapper(bamfile, gff_file=None, essential_file=None, gene_name_file=None):
@@ -74,12 +68,12 @@ def transposonmapper(bamfile, gff_file=None, essential_file=None, gene_name_file
     The function uses the pysam package for handling bam files (see pysam.readthedocs.io/en/latest/index.html) and therefore this function only runs on Linux systems with SAMTools installed.
     """
 
-    # Load required default files
+    # If necessary, load default files
     gff_file, essential_file, gene_name_file = load_default_files(
         gff_file, essential_file, gene_name_file
     )
 
-    # Verify files
+    # Verify presence of files
     data_files = {
         "bam": bamfile,
         "gff3": gff_file,
@@ -206,84 +200,7 @@ def transposonmapper(bamfile, gff_file=None, essential_file=None, gene_name_file
     print("Writing wig file at: ", wigfile)
     print("")
 
-    readnumbwig_array = readnumb_array.copy()
-
-    unique_index_array = np.array([], dtype=int)  # =cc
-    N_uniques_perchr_list = []
-    ll = 0
-    for kk in ref_names:
-        index = np.where(
-            tncoordinates_array[:, 0] == int(ref_tid[kk] + 1)
-        )  # get indices for current chromosome.
-        unique_index = np.unique(tncoordinates_array[index][:, 1], return_index=True)[
-            1
-        ]  # get all insertion locations (in tncoordinates, all rows, column 1)
-
-        unique_index_array = np.append(unique_index_array, (unique_index + ll), axis=0)
-
-        ll += np.count_nonzero(tncoordinates_array[:, 0] == int(ref_tid[kk] + 1))
-        N_uniques_perchr_list.append(
-            ll
-        )  # total amount unique indices found untill current chromosome
-
-    del (ll, kk, unique_index)
-
-    duplicate_list = []  # =dd
-    ll = 0
-    index_last_unique_previous_chromosome = 0
-    for ii in N_uniques_perchr_list:
-        index_last_unique = np.where(unique_index_array <= ii)[0][-1]
-        for jj in range(ll, ii):
-            if (
-                int(jj)
-                not in unique_index_array[
-                    index_last_unique_previous_chromosome:index_last_unique
-                ]
-            ):
-                duplicate_list.append(jj)
-        index_last_unique_previous_chromosome = index_last_unique
-        ll = ii
-
-    # SUM READNUMB VALUES AT INDEX IN DUPLICATE_LIST AND DUPLICATE_LIST-1
-    for ii in duplicate_list:
-        readnumbwig_array[ii - 1] = readnumbwig_array[ii - 1] + readnumbwig_array[ii]
-
-    tncoordinateswig_duplicatesremoved_array = np.delete(
-        tncoordinates_array, duplicate_list, axis=0
-    )
-    readnumbwig_duplicatesremoved_array = np.delete(
-        readnumbwig_array, duplicate_list, axis=0
-    )
-
-    del (
-        ll,
-        ii,
-        jj,
-        N_uniques_perchr_list,
-        index_last_unique,
-        duplicate_list,
-        readnumbwig_array,
-    )
-
-    # CREATING WIG FILE
-    filename = os.path.basename(bamfile)
-    with open(wigfile, "w") as f:
-        f.write("track type=wiggle_0 ,maxheightPixels=60 name=" + filename + "\n")
-        for kk in ref_names:
-            f.write("VariableStep chrom=chr" + kk + "\n")
-
-            index = np.where(
-                tncoordinateswig_duplicatesremoved_array[:, 0] == int(ref_tid[kk] + 1)
-            )  # get indices for current chromosome.
-            for ii in index[0]:
-                f.write(
-                    str(tncoordinateswig_duplicatesremoved_array[ii][1])
-                    + " "
-                    + str(readnumbwig_duplicatesremoved_array[ii])
-                    + "\n"
-                )
-
-    del (wigfile, kk, ii, index)
+    export_as_wig(wigfile, ref_names, readnumb_array, tncoordinates_array, ref_tid)
 
 
 #%%
