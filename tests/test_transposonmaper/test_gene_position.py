@@ -1,9 +1,7 @@
 import os
 import pkg_resources
 
-from satay.transposonmapping.python_modules.chromosome_and_gene_positions import (
-    gene_position,
-)
+from satay.transposonmapping.properties.get_gene_position import gene_position
 
 
 def test_packaged_data():

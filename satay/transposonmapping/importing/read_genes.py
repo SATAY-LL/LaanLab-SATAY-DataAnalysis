@@ -1,5 +1,5 @@
-from ..python_modules.chromosome_and_gene_positions import gene_position
-from ..python_modules.gene_names import gene_aliases
+from ..properties.get_gene_position import gene_position
+from ..properties.gene_aliases import gene_aliases
 
 
 def read_genes(gff_file, essentials_file, gene_names_file):

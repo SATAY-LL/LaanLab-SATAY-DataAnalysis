@@ -1,9 +1,7 @@
 import os
 
-from satay.transposonmapping.python_modules.chromosome_and_gene_positions import (
-    gene_position,
-)
-from satay.transposonmapping.python_modules.gene_names import gene_aliases
+from .get_gene_position import gene_position
+from .gene_aliases import gene_aliases
 
 
 def get_coordinates_genes(path: str = "", data_files: dict = {}):
