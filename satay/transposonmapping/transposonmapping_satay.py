@@ -22,13 +22,16 @@ Version history:
 import pysam
 
 # Local imports
-from .python_modules import chromosomename_roman_to_arabic
-from .python_modules import get_chromosome_names
-from .python_modules import get_sequence_length
-from .python_modules import get_reads
-from .python_modules import add_chromosome_length
-from .python_modules import add_chromosome_length_inserts
-from .python_modules import get_insertions_and_reads
+from .python_modules import (
+    get_chromosome_names,
+    get_sequence_length,
+    get_reads,
+    add_chromosome_length,
+    add_chromosome_length_inserts,
+    get_insertions_and_reads,
+)
+
+from .utils import chromosomename_roman_to_arabic
 
 from .exporting import (
     save_as_bed,
@@ -38,7 +41,10 @@ from .exporting import (
     export_as_wig,
 )
 
-from .importing import load_default_files, read_genes
+from .importing import (
+    load_default_files,
+    read_genes,
+)
 
 
 def transposonmapper(bamfile, gff_file=None, essential_file=None, gene_name_file=None):

@@ -1,4 +1,4 @@
-from .chromosome_and_gene_positions import chromosomename_roman_to_arabic, gene_position
+from .chromosome_and_gene_positions import gene_position
 from .gene_names import gene_aliases
 from .samflag import samflags
 from .get_chromosome_properties import (
@@ -14,7 +14,6 @@ from .get_insertions_and_reads import get_insertions_and_reads
 __all__ = [
     add_chromosome_length,
     add_chromosome_length_inserts,
-    chromosomename_roman_to_arabic,
     gene_aliases,
     gene_position,
     get_chromosome_names,
