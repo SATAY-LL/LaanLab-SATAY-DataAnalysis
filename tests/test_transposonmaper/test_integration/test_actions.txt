@@ -1,0 +1,63 @@
+- output amount :
+	- 6 files , 4 .txt, .wig, .bed
+- Testing output formatting: 
+
+	-  wig file: 
+- 1st line: track type=wiggle_0 ,maxheightPixels=60 name='filename(bamfile)'[name=SRR062634.filt_trimmed.sorted.bam, for the test file ]
+	-  bed file :
+- 1st line: track name=SRR062634.filt_trimmed.sorted.bam useScore=1
+
+
+
+	- _peressential_insertions.txt:
+- 1st line - tab separated:
+Gene name	Chromosome	Start location	End location	Insertion locations	Reads per insertion location
+- data:
+	- string data  ,for the 1st column and 2nd
+	- numerical data , integer for the 3rd  and 4th
+	- list for the 5th and 6th column
+
+- length = length of the essential file 
+
+
+
+
+	- _peressential.txt:
+- 1st line - tab separated:
+Gene name	Number of transposons per gene	Number of reads per gene
+- data:
+	- numerical data , integer for the 2nd and 3rd column
+	- string data  ,for the 1st column
+
+- length = length of the essential file
+
+
+
+	- _pergene.txt
+- 1st line - tab separated:
+Gene name	Number of transposons per gene	Number of reads per gene
+- data:
+	- numerical data , integer for the 2nd and 3rd column
+	- string data  ,for the 1st column
+- length= length of the protein names file(?)
+
+
+- _pergene_insertions.txt
+- 1st line - tab separated:
+Gene name	Chromosome	Start location	End location	Insertion locations	Reads per insertion location
+- data:
+	- string data  ,for the 1st column and 2nd
+	- numerical data , integer for the 3rd  and 4th
+	- list for the 5th and 6th column
+
+- length= length of the protein names file(?)
+
+
+
+###########################################################################
+
+- inside the function: requirements before start
+	- a file with the same name as the bamfile , and in the same location but with extension .sorted.bam.bai
+
+	- it needs in line 338 the filename of the bamfile itself , so with the new implementation this filename was erased from the code , but it is actually needed afterwards. 
+	- and all the input files of essential genes, protein names and the genes annotations gff3

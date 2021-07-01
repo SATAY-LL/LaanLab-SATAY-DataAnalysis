@@ -12,9 +12,11 @@
 *.bam
 *.sam
 *.fai
-*.bai 
+*.bai
 *.xlsx
-
+## Exceptions test data files 
+!satay/data_files/files4test/SRR062634.filt_trimmed.sorted.bam
+!satay/data_files/files4test/SRR062634.filt_trimmed.sorted.bam.bai
 
 # Compiled source #
 *.exe
@@ -162,3 +164,6 @@ cython_debug/
 
 #IDE
 .vscode/
+
+# Data folder
+data/
