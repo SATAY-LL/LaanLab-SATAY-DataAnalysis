@@ -31,24 +31,18 @@ main () {
 
 
 	#CACHEFILE (this is a temporary file that is created to store user settings when 'Quality check interrupt is set to true).
-	#cachefile="/home/gregoryvanbeek/Desktop/processing_workflow_cache.txt"
 	cachefile="/data/processing_workflow_cache.txt"
 
 	#ADAPTERFILE (this refers to the file with adapter sequences that are used for trimming).
-	#adapterfile="/home/gregoryvanbeek/Documents/Software/BBMap/bbmap/resources/adapters.fa"
 	adapterfile=$adapters
 
 	#REFERENCE GENOME (path to the fasta file of the reference genome).
-	#path_refgenome='/home/gregoryvanbeek/Documents/Reference_Sequences/Reference_Sequence_S288C/S288C_reference_sequence_R64-2-1_20150113.fsa'
-	#path_refgenome="/data/localhome/linigodelacruz/Documents/satay/reference_sequences/Cerevisiae_S288C_reference/S288C_reference_sequence_R64-2-1_20150113.fsa"
 	path_refgenome="/opt/satay/data_files/S288C_reference_sequence_R64-2-1_20150113.fsa"
 
 	#DDBUK SOFTWARE (path to bbduk for trimming).
-	#path_bbduk_software=/home/gregoryvanbeek/Documents/Software/BBMap/bbmap/
 	bbduk_software=$bbduk
 
 	#TRIMMOMATIC (path to trimmomatic for trimming).
-	#path_trimm_software=/home/gregoryvanbeek/Documents/Software/Trimmomatic-0.39/
 	path_trimm_software="/opt/conda/bin/trimmomatic"
 
 	#PYTHON CODES (path to python code for transposon_mapping).
@@ -534,6 +528,9 @@ fi
 #SEQUENCE ALIGNMENT
 	if [[ ${paired^} == 'Single-end' ]]
 	then
+		echo 'Index reference genome'
+		bwa index ${path_refgenome}
+		
 		echo 'Sequence alignment ...'
 		bwa mem ${alignment_settings} ${path_refgenome} ${path_trimm_out}/${filename_trimmed1} > ${path_align_out}/${filename_sam}
 	elif [[ ${paired^} == 'Paired-end' ]] && [[ ${filepath2} == 'none' ]]
