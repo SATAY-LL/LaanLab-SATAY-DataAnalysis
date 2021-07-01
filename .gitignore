@@ -7,10 +7,10 @@
 *.rar
 *.tar
 *.zip
-*.bam
-*.wig
-*.sam
 *.bed
+*.wig
+*.bam
+*.sam
 *.fai
 *.bai
 *.xlsx
