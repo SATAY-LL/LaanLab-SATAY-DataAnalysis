@@ -3,7 +3,7 @@
 """
 This is a tool developed for analysing transposon insertions for experiments using SAturated Transposon Analysis in Yeast (SATAY).
 This python code contains one function called transposonmapper().
-For more information about this code and the project, see github.com/Gregory94/LaanLab-SATAY-DataAnalysis
+For more information about this code and the project, see https://satay-ll.github.io/SATAY-jupyter-book/Introduction.html
 
 This code is based on the Matlab code created by the Kornmann lab which is available at: sites.google.com/site/satayusers/
 
@@ -22,13 +22,24 @@ Version history:
 import pysam
 
 # Local imports
-from .python_modules import chromosomename_roman_to_arabic
-from .python_modules import get_chromosome_names
-from .python_modules import get_sequence_length
-from .python_modules import get_reads
-from .python_modules import add_chromosome_length
-from .python_modules import add_chromosome_length_inserts
-from .python_modules import get_insertions_and_reads
+from .properties import (
+    get_chromosome_names,
+    get_sequence_length,
+)
+
+from .mapping import (
+    get_reads,
+    add_chromosome_length,
+    add_chromosome_length_inserts,
+    get_insertions_and_reads,
+)
+
+from .utils import chromosomename_roman_to_arabic
+
+from .importing import (
+    load_default_files,
+    read_genes,
+)
 
 from .exporting import (
     save_as_bed,
@@ -37,8 +48,6 @@ from .exporting import (
     save_per_essential_insertions,
     export_as_wig,
 )
-
-from .importing import load_default_files, read_genes
 
 
 def transposonmapper(bamfile, gff_file=None, essential_file=None, gene_name_file=None):
@@ -84,6 +93,12 @@ def transposonmapper(bamfile, gff_file=None, essential_file=None, gene_name_file
     for filetype, file_path in data_files.items():
         assert file_path, f"{filetype} not found at {file_path}"
 
+    # Read files for all genes and all essential genes
+    print("Getting coordinates of all genes ...")
+    gene_coordinates, essential_coordinates, aliases_designation = read_genes(
+        gff_file, essential_file, gene_name_file
+    )
+
     # Read bam file
     bam = pysam.AlignmentFile(bamfile, "rb")
 
@@ -100,12 +115,6 @@ def transposonmapper(bamfile, gff_file=None, essential_file=None, gene_name_file
 
     # Get all reads within a specified genomic region
     readnumb_array, tncoordinates_array, tncoordinatescopy_array = get_reads(bam)
-
-    # Read files for all genes and all essential genes
-    print("Getting coordinates of all genes ...")
-    gene_coordinates, essential_coordinates, aliases_designation = read_genes(
-        gff_file, essential_file, gene_name_file
-    )
 
     #%% CONCATENATE ALL CHROMOSOMES
 
