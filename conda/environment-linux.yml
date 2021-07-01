@@ -1,0 +1,21 @@
+name: satay-linux
+channels:
+  - conda-forge
+  - bioconda
+  - agbiome
+  - defaults
+dependencies:
+  - python >=3.7,<3.8
+  - pip
+  - fastqc
+  - trimmomatic
+  - bbtools
+  - bwa
+  - samtools
+  - bcftools
+  - sambamba
+  - pysam
+  - numpy
+  - pip:
+      - pytest
+      - pytest-cov
