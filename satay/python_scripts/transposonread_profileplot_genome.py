@@ -8,11 +8,16 @@ import os, sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-file_dirname = os.path.dirname(os.path.abspath('__file__'))
-sys.path.insert(1,os.path.join(file_dirname,'python_modules'))
-from chromosome_and_gene_positions import chromosome_position, gene_position
-from essential_genes_names import list_known_essentials
-from chromosome_names_in_files import chromosome_name_bedfile
+
+from satay.python_scripts.python_modules.chromosome_and_gene_positions import chromosome_position, gene_position
+from satay.python_scripts.python_modules.essential_genes_names import list_known_essentials
+from satay.python_scripts.python_modules.chromosome_names_in_files import chromosome_name_bedfile
+
+
+
+from satay.transposonmapping.importing import (
+    load_default_files, )
+
 
 
 #%%
@@ -21,10 +26,10 @@ from chromosome_names_in_files import chromosome_name_bedfile
 
 
 #%%
-bed_file=r""
-variable="transposons" #"reads" "transposons"
-bar_width=None
-savefig=False
+# bed_file=r""
+# variable="transposons" #"reads" "transposons"
+# bar_width=None
+# savefig=False
 
 #%%
 def profile_genome(bed_file=None, variable="transposons", bar_width=None, savefig=False):
@@ -42,9 +47,24 @@ def profile_genome(bed_file=None, variable="transposons", bar_width=None, savefi
 
 
 #%%
-    gff_file = os.path.join(file_dirname,'..','data_files','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
-    essential_genes_files = [os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
-                            os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_2.txt')]
+    # gff_file = os.path.join(file_dirname,'..','data_files','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
+    # essential_genes_files = [os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
+    #                         os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_2.txt')]
+
+    # If necessary, load default files
+    gff_file, essential_file, gene_name_file = load_default_files(
+        gff_file=None, essentials_file=None, gene_names_file=None
+    )
+
+    # Verify presence of files
+    data_files = {
+        "gff3": gff_file,
+        "essentials": essential_file,
+        "gene_names": gene_name_file,
+    }
+
+    for filetype, file_path in data_files.items():
+        assert file_path, f"{filetype} not found at {file_path}"
 
 
     chrom_list = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI']
@@ -80,7 +100,7 @@ def profile_genome(bed_file=None, variable="transposons", bar_width=None, savefi
 
     gene_pos_dict = gene_position(gff_file)
     genes_currentchrom_pos_list = [k for k, v in gene_pos_dict.items()]
-    genes_essential_list = list_known_essentials(essential_genes_files)
+    genes_essential_list = list_known_essentials(essential_file)
 
 
     with open(bed_file) as f:
