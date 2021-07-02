@@ -10,10 +10,10 @@ This script removes transposon insertions in .bed and .wig files that were mappe
 
 import os, sys
 
-file_dirname = os.path.dirname(os.path.abspath('__file__'))
-sys.path.insert(1,os.path.join(file_dirname,'python_modules'))
-from chromosome_and_gene_positions import chromosome_position
-from chromosome_names_in_files import chromosome_name_bedfile, chromosome_name_wigfile
+# file_dirname = os.path.dirname(os.path.abspath('__file__'))
+# sys.path.insert(1,os.path.join(file_dirname,'python_modules'))
+from satay.python_scripts.python_modules.chromosome_and_gene_positions import chromosome_position
+from satay.python_scripts.python_modules.chromosome_names_in_files import chromosome_name_bedfile, chromosome_name_wigfile
 
 
 
