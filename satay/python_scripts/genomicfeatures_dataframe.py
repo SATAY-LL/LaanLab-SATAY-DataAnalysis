@@ -35,17 +35,19 @@ import os, sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+import numpy as np 
+import pkg_resources
 
 
-file_dirname = os.path.dirname(os.path.abspath('__file__'))
-sys.path.insert(1,os.path.join(file_dirname,'python_modules'))
-from chromosome_and_gene_positions import chromosome_position, chromosomename_roman_to_arabic, gene_position
-from chromosome_names_in_files import chromosome_name_wigfile
-from gene_names import list_gene_names, gene_aliases
-from read_sgdfeatures import sgd_features
+from satay.python_scripts.python_modules.chromosome_and_gene_positions import chromosome_position, chromosomename_roman_to_arabic, gene_position
+from satay.python_scripts.python_modules.chromosome_names_in_files import chromosome_name_wigfile
+from satay.python_scripts.python_modules.gene_names import list_gene_names, gene_aliases
+from satay.python_scripts.python_modules.read_sgdfeatures import sgd_features
 
 
-
+from satay.transposonmapping.importing import (
+    load_default_files, load_sgd_tab
+)
 
 
 
@@ -94,13 +96,31 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
         - sgd_features_file: https://github.com/Gregory94/LaanLab-SATAY-DataAnalysis/blob/master/Data_Files/SGD_features.tab
     '''
 #%% FILES
-    essentials_file = os.path.join(file_dirname,'..','data_files',"Cerevisiae_AllEssentialGenes_List.txt")
+    # essentials_file = os.path.join(file_dirname,'..','data_files',"Cerevisiae_AllEssentialGenes_List.txt")
 
-    gene_information_file = os.path.join(file_dirname,'..','data_files','Yeast_Protein_Names.txt')
+    # gene_information_file = os.path.join(file_dirname,'..','data_files','Yeast_Protein_Names.txt')
 
-    gff_file = os.path.join(file_dirname,'..','data_files','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
+    # gff_file = os.path.join(file_dirname,'..','data_files','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
 
-    sgd_features_file = os.path.join(file_dirname,'..','data_files','SGD_features.tab')
+    # sgd_features_file = os.path.join(file_dirname,'..','data_files','SGD_features.tab')
+
+    # If necessary, load default files
+    gff_file, essentials_file, gene_information_file = load_default_files(
+        gff_file=None, essentials_file=None, gene_names_file=None
+    )
+    sgd_features_file=load_sgd_tab(sgd_features_file=None)
+
+    # Verify presence of files
+    data_files = {
+        "gff3": gff_file,
+        "essentials": essentials_file,
+        "gene_names": gene_information_file,
+        "sgd_features": sgd_features_file
+    }
+
+    for filetype, file_path in data_files.items():
+        assert file_path, f"{filetype} not found at {file_path}"
+
 
     variable = variable.lower()
     if plotting == True:
@@ -562,6 +582,7 @@ def dna_features(region, wig_file, pergene_insertions_file, variable="reads", pl
 
 
         if savefigure == True:
+            file_dirname=pkg_resources.resource_filename("satay/")
             if variable == 'reads':
                 saving_name = os.path.join(file_dirname,'GenomicFeaturesReads_Barplot_Chrom'+chrom+'_NonNormalized')
             else:

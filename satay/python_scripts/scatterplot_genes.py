@@ -14,9 +14,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-file_dirname = os.path.dirname(os.path.abspath('__file__'))
-sys.path.insert(1,os.path.join(file_dirname,'python_modules'))
-from essential_genes_names import list_known_essentials #import essential_genes_names from python modules directory
+
+from satay.python_scripts.python_modules.essential_genes_names import list_known_essentials #import essential_genes_names from python modules directory
 
 
 
@@ -132,6 +131,7 @@ def scatterplot(pergenefile):
 
 
     ax1 = plt.subplot(grid[0,0:15])
+    
     colorpalette = sns.diverging_palette(10, 170, s=90, l=50, n=2) #https://seaborn.pydata.org/generated/seaborn.diverging_palette.html#seaborn.diverging_palette
     sns.scatterplot(x=x_lin, y=read_gene_df.Nreadsperinsrt, hue=read_gene_df.gene_essentiality, palette=colorpalette, alpha=0.5, marker='|', legend=True)
     ax1.grid(linestyle='-', alpha=0.8)

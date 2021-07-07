@@ -5,6 +5,10 @@
 #    from essential_genes import list_known_essentials
 # =============================================================================
 
+import os
+from satay.transposonmapping.importing import (
+    load_default_files,
+)
 
 def list_known_essentials(input_files = None, headerlines=3, verbose=True):
     ''' Get all known essential genes from two different files and combine them in one list.
@@ -18,20 +22,40 @@ def list_known_essentials(input_files = None, headerlines=3, verbose=True):
     '''
     
     if input_files == None:
-        import os
-        file_dirname = os.path.dirname(os.path.abspath('__file__'))
-        if os.path.isfile(os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_1.txt')) and os.path.isfile(os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_2.txt')):
-            essential_genes_files = [os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
-                                     os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_2.txt')]
-        else:
-            essential_genes_files = [os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
-                                     os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_2.txt')]
+        
+        # file_dirname = os.path.dirname(os.path.abspath('__file__'))
+        # if os.path.isfile(os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_1.txt')) and os.path.isfile(os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_2.txt')):
+        #     essential_genes_files = [os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
+        #                              os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_2.txt')]
+        # else:
+        #     essential_genes_files = [os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
+        #                              os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_2.txt')]
+        # If necessary, load default files
+        gff_file, essential_genes_files, gene_name_file = load_default_files(
+            gff_file=None, essentials_file=None, gene_names_file=None
+        )
+
+        # Verify presence of files
+        data_files = {
+            "gff3": gff_file,
+            "essentials": essential_genes_files,
+            "gene_names": gene_name_file,
+        }
+
+        for filetype, file_path in data_files.items():
+            assert file_path, f"{filetype} not found at {file_path}"
+        
+        input_files=essential_genes_files
+
     else:
         essential_genes_files = input_files
 
 
     known_essential_gene_list = []
-    
+    #making sure essential_genes_files is a list
+    if type(essential_genes_files)!=list:
+        essential_genes_files=[input_files]
+        
     for files in essential_genes_files:
         if verbose == True:
             print('Reading file :',files)
@@ -43,7 +67,7 @@ def list_known_essentials(input_files = None, headerlines=3, verbose=True):
                 
     
     return(known_essential_gene_list)
-                
+#%%
 if __name__ == '__main__':
     known_essential_gene_list = list_known_essentials()
 

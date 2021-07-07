@@ -8,13 +8,14 @@ import os, sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-file_dirname = os.path.dirname(os.path.abspath('__file__'))
-sys.path.insert(1,os.path.join(file_dirname,'python_modules'))
-from chromosome_and_gene_positions import chromosome_position, gene_position
-from essential_genes_names import list_known_essentials
-from chromosome_names_in_files import chromosome_name_bedfile
 
+from satay.python_scripts.python_modules.chromosome_and_gene_positions import chromosome_position, gene_position
+from satay.python_scripts.python_modules.essential_genes_names import list_known_essentials
+from satay.python_scripts.python_modules.chromosome_names_in_files import chromosome_name_bedfile
 
+from satay.transposonmapping.importing import (
+    load_default_files,
+)
 
 #%% INPUT
 
@@ -40,9 +41,23 @@ def profile_plot(bed_file, variable="transposons", chrom='I', bar_width=None, sa
     For this a list for essential genes is needed (used in 'list_known_essentials' function) and a .gff file is required (for the functions in 'chromosome_and_gene_positions.py') and a list for gene aliases (used in the function 'gene_aliases')
     '''
 #%% USED FILES
-    gff_file = os.path.join(file_dirname,'..','data_files','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
-    essential_genes_files = [os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
-                            os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_2.txt')]
+    # gff_file = os.path.join(file_dirname,'..','data_files','Saccharomyces_cerevisiae.R64-1-1.99.gff3')
+    # essential_genes_files = [os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_1.txt'),
+    #                         os.path.join(file_dirname,'..','data_files','Cerevisiae_EssentialGenes_List_2.txt')]
+    # If necessary, load default files
+    gff_file, essential_genes_files, gene_name_file = load_default_files(
+        gff_file=None, essentials_file=None, gene_names_file=None
+    )
+
+    # Verify presence of files
+    data_files = {
+        "gff3": gff_file,
+        "essentials": essential_genes_files,
+        "gene_names": gene_name_file,
+    }
+
+    for filetype, file_path in data_files.items():
+        assert file_path, f"{filetype} not found at {file_path}"
 
 #%% GET CHROMOSOME LENGTHS AND POSITIONS
     chr_length_dict, chr_start_pos_dict, chr_end_pos_dict = chromosome_position(gff_file)

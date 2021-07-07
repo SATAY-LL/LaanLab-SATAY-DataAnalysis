@@ -21,9 +21,7 @@ import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
 
-file_dirname = os.path.dirname(os.path.abspath('__file__'))
-sys.path.insert(1,os.path.join(file_dirname,'python_modules'))
-from dataframe_from_pergene import dataframe_from_pergenefile
+from satay.python_scripts.python_modules.dataframe_from_pergene import dataframe_from_pergenefile
 
 
 

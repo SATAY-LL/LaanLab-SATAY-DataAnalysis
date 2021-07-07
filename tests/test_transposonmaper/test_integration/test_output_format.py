@@ -157,4 +157,4 @@ def test_output_format_bed():
                                      'useScore=1'], "wrong columns names"
     assert data.iloc[:,0].dtypes=='int64' , "Incorrect data type"
     assert data.iloc[:,1].dtypes=='object' , "Incorrect data type"
-    assert data.index[0][0] =='chrref|NC_001133|' , "Incorrect first headline"
+    assert data.index[0][0] =='chrref|NC_001133|' or data.index[0][0] =='chrI' , "Incorrect first headline"
