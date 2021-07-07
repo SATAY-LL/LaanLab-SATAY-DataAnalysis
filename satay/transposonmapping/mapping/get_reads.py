@@ -1,10 +1,10 @@
 import numpy as np
 import timeit
 
-from .find_chromosome_reads import find_chromosome_reads
-from .correct_read_position import correct_read_position
+from satay.transposonmapping.mapping.find_chromosome_reads import find_chromosome_reads
+from satay.transposonmapping.mapping.correct_read_position import correct_read_position
 
-from ..properties import (
+from satay.transposonmapping.properties import (
     get_chromosome_names,
     get_sequence_length,
     get_chromosome_reads,
@@ -13,15 +13,21 @@ from ..properties import (
 
 def get_reads(bam):
     """
-
+ This function retrieves  all reads within a specified genomic region. 
+     
+    Usage
+    ----------
+    file1,file2,file3=get_reads(bam)
 
     Parameters
     ----------
-    bam : 
+    bam :  The output for the function pysam.AlignmentFile(bamfile, "rb")
 
     Returns
     -------
-
+    readnumb_array: reads per genomic region
+    tncoordinates_array: Array of three columns where the 2nd one indicated the start position where there was a transposon
+    tncoordinatescopy_array: A copy from tncoordinates_array
     """
 
     # Get chromosome properties
